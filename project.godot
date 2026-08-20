@@ -11,8 +11,16 @@ config_version=5
 [application]
 
 config/name="beneath-five-moons-Lumina-darkness"
+run/main_scene="uid://bmuj8fxxyts7y"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+EventBus="*uid://dnsf0cjt3ucot"
+ServiceRegistry="*uid://bndxcaomonpjl"
+TimeService="*uid://dtn4uk84grvl2"
+SaveService="*uid://c7faadgauiepe"
 
 [display]
 

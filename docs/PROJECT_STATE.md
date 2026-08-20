@@ -7,14 +7,14 @@
 
 ## 1. IDENTIFICAÇÃO DO PROJETO
 
-- **Nome do projeto:** [PREENCHER]
-- **Versão atual:** [PREENCHER]
-- **Versão da Godot:** [PREENCHER]
-- **Plataformas alvo:** [PREENCHER]
-- **Gênero:** [PREENCHER]
-- **Perspectiva:** [PREENCHER]
-- **Status geral:** AUDITORIA / PROTÓTIPO / DESENVOLVIMENTO / ALPHA / BETA / POLISH
-- **Última atualização:** [PREENCHER]
+- **Nome do projeto:** Beneath Five Moons / Lumina Darkness
+- **Versão atual:** 0.1.0-ALPHA.0
+- **Versão da Godot:** Godot 4.7.1
+- **Plataformas alvo:** PC (Windows / Linux / macOS)
+- **Gênero:** RPG de Ação Sandbox 2D / Survival Leve / Simulação Social / Progressão por Uso
+- **Perspectiva:** Top-Down 2D
+- **Status geral:** DESENVOLVIMENTO (SPRINT 1 EM ANDAMENTO)
+- **Última atualização:** 2026-08-20
 
 ---
 
@@ -22,12 +22,12 @@
 
 ### Descrição
 
-[PREENCHER]
+RPG de ação sandbox 2D em mundo aberto focado em identidade emergente, sobrevivência leve, profissões, relacionamentos, iluminação sistêmica e economia local.
 
 ### Core Loop
 
 ```text
-[PREENCHER]
+VIVER → EXPLORAR → COLETAR → PRODUZIR → NEGOCIAR → DESENVOLVER → RELACIONAR-SE → INFLUENCIAR O MUNDOENVOLVER → RELACIONAR-SE → INFLUENCIAR O MUNDO
 ```
 
 ### Objetivo atual do projeto

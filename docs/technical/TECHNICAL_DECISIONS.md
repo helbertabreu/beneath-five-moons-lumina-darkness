@@ -50,203 +50,92 @@ Responsável pela decisão:
 
 # DECISÕES ATIVAS
 
-## ADR-001 — [PREENCHER]
+## ADR-001 — Desacoplamento da Persistência via EntityId
 
-**Data:** [PREENCHER]
-
-**Status:** PROPOSTA / ATIVA
-
-### Contexto
-
-[PREENCHER]
-
-### Problema
-
-[PREENCHER]
-
-### Alternativas consideradas
-
-1. [PREENCHER]
-2. [PREENCHER]
-3. [PREENCHER]
-
-### Decisão
-
-[PREENCHER]
-
-### Motivo
-
-[PREENCHER]
-
-### Consequências positivas
-
-- [PREENCHER]
-
-### Trade-offs
-
-- [PREENCHER]
-
-### Sistemas afetados
-
-- [PREENCHER]
-
----
-
-# DECISÕES ARQUITETURAIS
-
-## ADR-002 — Arquitetura de Scenes e Components
-
-**Status:** PROPOSTA
+**Data:** 2026-08-20  
+**Status:** ATIVA
 
 ### Contexto
-
-O projeto precisa manter sistemas modulares e reutilizáveis.
+O Save/Load não pode depender do caminho dos Nós (`NodePath`) na árvore do Godot, sob risco de corromper dados caso a estrutura da cena mude.
 
 ### Decisão
-
-Priorizar composição por Nodes/Components, Scenes reutilizáveis, Resources e Signals antes de criar hierarquias profundas de herança.
-
-### Motivo
-
-Reduzir acoplamento e facilitar manutenção, testes e evolução do projeto.
+Toda entidade persistente possuirá um `EntityId` estável do tipo `StringName` (ex: `ent.player.001`).
 
 ### Consequências
-
-O projeto deve evitar scripts monolíticos e heranças profundas quando composição resolver o problema.
+Saves imunes à reestruturação de cenas e arquitetura preparada para multiplayer futuro.
 
 ---
 
-## ADR-003 — Uso de Autoloads
+## ADR-002 — Composição de Nós e Componentes em GDScript
 
-**Status:** PROPOSTA
+**Data:** 2026-08-20  
+**Status:** ATIVA
+
+### Contexto
+O projeto precisa manter alto desacoplamento e evitar heranças profundas.
 
 ### Decisão
-
-Autoloads serão utilizados apenas para sistemas realmente globais e persistentes entre Scenes.
-
-### Exemplos
-
-- GameManager
-- SaveManager
-- AudioManager
-- SettingsManager
-- SceneManager
-
-### Regra
-
-Não transformar componentes de gameplay comuns em Autoloads.
+Utilizar o padrão Composição. Nós do Godot representam presença visual/física, enquanto componentes em scripts controlam regras lógicas.
 
 ---
 
-## ADR-004 — Dados Data-Driven
+## ADR-003 — Limites de Autoloads e uso do ServiceRegistry
 
-**Status:** PROPOSTA
+**Data:** 2026-08-20  
+**Status:** ATIVA
+
+### Contexto
+Autoloads em excesso criam acoplamento invisível e "God Objects".
 
 ### Decisão
-
-Quando apropriado, dados configuráveis de gameplay deverão ser separados da lógica utilizando Resources.
-
-### Exemplos
-
-- Items
-- Weapons
-- Enemies
-- Characters
-- Skills
-- Quests
-- Loot Tables
-
-### Motivo
-
-Facilitar balanceamento, manutenção e expansão.
+Apenas serviços puramente globais (ex: `EventBus`, `TimeService`, `SaveService`) serão Autoloads. A localização de serviços será mediada pelo `ServiceRegistry`.
 
 ---
 
-## ADR-005 — Compatibilidade Godot 4
+## ADR-004 — Separação Definition × Instance × State
 
+**Data:** 2026-08-20  
 **Status:** ATIVA
 
 ### Decisão
-
-O projeto será desenvolvido utilizando APIs, sintaxe e práticas compatíveis com Godot 4.x.
-
-### Regra
-
-Não introduzir código ou APIs específicas de Godot 3.x.
+- `Definition` (Godot Resource .tres): Dados estáticos e imutáveis de conteúdo.
+- `Runtime State` (RefCounted/Objects): Estado mutável serializável.
+- `Node/Component` (Node2D/Control): Apresentação visual e física.
 
 ---
 
-# DECISÕES DE GAMEPLAY
+## ADR-005 — Compatibilidade Estrita com Godot 4.7.1 e GDScript 2.0
 
-Registre aqui decisões que afetem diretamente o comportamento do jogo.
+**Data:** 2026-08-20  
+**Status:** ATIVA
 
-## ADR-006 — [PREENCHER]
+### Decisão
+Todo o código deve ser GDScript 2.0 estritamente tipado, sem chamadas obsoletas da Godot 3.x.
 
-**Data:** [PREENCHER]
+---
 
-**Status:** PROPOSTA / ATIVA
+## ADR-008 — Remapeamento de Escopo MVP: Perspectiva 2D e Exclusão da Sede
+
+**Data:** 2026-08-20  
+**Status:** ATIVA
 
 ### Contexto
-
-[PREENCHER]
-
-### Decisão
-
-[PREENCHER]
-
-### Motivo
-
-[PREENCHER]
-
-### Impacto no gameplay
-
-[PREENCHER]
-
----
-
-# DECISÕES DE PERFORMANCE
-
-## ADR-007 — [PREENCHER]
-
-**Data:** [PREENCHER]
-
-**Status:** PROPOSTA / ATIVA
-
-### Problema
-
-[PREENCHER]
+Avaliação da complexidade de escopo durante a Revisão do Gate 0.
 
 ### Decisão
-
-[PREENCHER]
+1. O jogo será desenvolvido **exclusivamente em 2D** (perspectiva Top-Down 2D usando `CharacterBody2D`, `PointLight2D` e `TileMapLayer`).
+2. A necessidade de **Sede** está oficialmente removida do MVP, mantendo a sobrevivência focada em Vida, Fome, Fadiga, Energia, Temperatura e Conforto.
 
 ### Motivo
+Reduzir o risco de produção para um desenvolvedor iniciante, acelerar a entrega do protótipo jogável e garantir 60 FPS estáveis sem gargalos de arte 3D.
 
-[PREENCHER]
+### Consequências Positivas
+- Simplificação na criação de cenas e físicas 2D.
+- Uso de iluminação por `CanvasModulate` e `PointLight2D` com excelente performance.
+- Foco absoluto na diversão dos sistemas sistêmicos.
 
-### Trade-offs
-
-[PREENCHER]
-
----
-
-# DECISÕES SUPERADAS
-
-Quando uma decisão deixar de ser válida, NÃO apague o registro.
-
-Mova ou marque como `SUPERADA`.
-
-## ADR-[ID]
-
-**Decisão original:** [PREENCHER]
-
-**Data original:** [PREENCHER]
-
-**Status:** SUPERADA
-
-**Substituída por:** ADR-[ID]
-
-**Motivo da alteração:** [PREENCHER]
+### Sistemas Afetados
+- Player (`CharacterBody2D`), Câmera (`Camera2D`), Iluminação (`PointLight2D`), Sobrevivência (`SurvivalComponent`).
 
 ---
 
