@@ -1,9 +1,42 @@
 # TECHNICAL_DECISIONS.md
 
 > Registro permanente das decisões técnicas e arquiteturais importantes do projeto.
+>
 > O objetivo é evitar que decisões previamente aprovadas sejam alteradas ou esquecidas sem justificativa.
 
 ---
+
+# COMO REGISTRAR UMA DECISÃO
+
+Para cada decisão importante, utilize:
+
+```text
+ID:
+Data:
+Título:
+Status:
+
+Contexto:
+Problema:
+
+Alternativas consideradas:
+
+Decisão:
+
+Motivo:
+
+Consequências positivas:
+
+Trade-offs / consequências negativas:
+
+Impactos no projeto:
+
+Arquivos ou sistemas afetados:
+
+Plano de migração, se aplicável:
+
+Responsável pela decisão:
+```
 
 # STATUS POSSÍVEIS
 
@@ -12,11 +45,9 @@
 - SUPERADA
 - CANCELADA
 
----
-
 # DECISÕES ATIVAS
 
-## ADR-001 — ServiceRegistry & Injeção de Dependências Desacoplada
+## ADR-001 — Adoção da Perspectiva 2D Top-Down para a Vertical Slice MVP
 
 **Data:** 2026-08-18
 
@@ -24,15 +55,141 @@
 
 ### Contexto
 
-Sistemas do jogo precisam se comunicar de forma desacoplada sem que tudo se torne um singleton/Autoload rígido.
+O projeto precisava de uma validação funcional rápida dos sistemas sistêmicos (sobrevivência, coleta, forja, combate, quests e iluminação).
 
 ### Decisão
 
-Utilizar o `ServiceRegistry` como nó central de registro e obtenção de serviços do sistema no Boot (`TimeService`, `SaveService`, `InventoryService`, `LightingService`, `QuestService`, `ProfessionService`, `PricingService`, `FactionService`).
+Desenvolver a Vertical Slice em perspectiva 2D Top-Down mantendo a camada de domínio desacoplada.
+
+### Motivo
+
+Reduzir a complexidade de assets 3D na fase de validação mantendo a arquitetura pronta para migração futura.
+
+### Consequências positivas
+
+- Agilidade de prototipagem e facilidade na criação de testes automatizados.
+
+### Trade-offs
+
+- A apresentação visual inicial difere da visão de longo prazo em 3ª pessoa.
+
+### Sistemas afetados
+
+- Player, Inimigos, Câmera e Iluminação.
 
 ---
 
-## ADR-008 — Migração para 2D Top-Down no Godot 4.7.1
+## ADR-002 — Arquitetura de Scenes e Components
+
+**Status:** ATIVA
+
+### Contexto
+
+O projeto precisa manter sistemas modulares e reutilizáveis.
+
+### Decisão
+
+Priorizar composição por Nodes/Components, Scenes reutilizáveis, Resources e Signals antes de criar hierarquias profundas de herança.
+
+### Motivo
+
+Reduzir acoplamento e facilitar manutenção, testes e evolução do projeto.
+
+### Consequências
+
+O projeto deve evitar scripts monolíticos e heranças profundas quando composição resolver o problema.
+
+---
+
+## ADR-003 — Uso de Autoloads
+
+**Status:** ATIVA
+
+### Decisão
+
+Autoloads serão utilizados apenas para sistemas realmente globais e persistentes entre Scenes.
+
+### Exemplos
+
+- EventBus
+- TimeService
+- GameState
+- SaveService
+- SceneManager
+- ServiceRegistry
+
+### Regra
+
+Não transformar componentes de gameplay comuns em Autoloads.
+
+---
+
+## ADR-004 — Dados Data-Driven
+
+**Status:** ATIVA
+
+### Decisão
+
+Quando apropriado, dados configuráveis de gameplay deverão ser separados da lógica utilizando Resources.
+
+### Exemplos
+
+- Items
+- Weapons
+- Enemies
+- Characters
+- Skills
+- Quests
+- Loot Tables
+
+### Motivo
+
+Facilitar balanceamento, manutenção e expansão.
+
+---
+
+## ADR-005 — Compatibilidade Godot 4
+
+**Status:** ATIVA
+
+### Decisão
+
+O projeto será desenvolvido utilizando APIs, sintaxe e práticas compatíveis com Godot 4.x (especificamente Godot 4.7.1).
+
+### Regra
+
+Não introduzir código ou APIs específicas de Godot 3.x.
+
+---
+
+## ADR-012 — Padrão MVVM/Presentation Model para a Interface de Comércio (TASK-301)
+
+**Data:** 2026-08-21
+
+**Status:** ATIVA
+
+### Contexto
+
+A interface de comércio (`ShopInterface.tscn` / `shop_interface.gd`) precisava exibir preços dinâmicos baseados no estado do mercado e reputação com a facção do comerciante, sem duplicar regras econômicas dentro da camada visual de UI.
+
+### Decisão
+
+Implementar a `ShopInterface` seguindo o padrão Presentation Model/MVVM. A UI apenas lê os preços calculados via `PricingService.calculate_buy_price()` e `calculate_sell_price()` e executa transações chamando a API do `InventoryService`.
+
+### Motivo
+
+Garante que as regras de precificação, margem de venda (60%), descontos de facção e taxas permaneçam isoladas e testáveis na camada de domínio, mantendo a UI totalmente desacoplada e reutilizável.
+
+### Consequências Positivas
+
+- A interface de UI pode ser reaproveitada por qualquer comerciante ou vilarejo.
+- Testes unitários do sistema de comércio rodam sem necessidade de carregar a árvore de visualização física do Godot.
+
+---
+
+# DECISÕES DE GAMEPLAY
+
+## ADR-008 — Remoção do Parâmetro de Sede do MVP
 
 **Data:** 2026-08-18
 
@@ -40,152 +197,59 @@ Utilizar o `ServiceRegistry` como nó central de registro e obtenção de servi�
 
 ### Contexto
 
-GDD original citava 3ª Pessoa 3D, exigindo um volume massivo de assets e complexidade física incompatível com o desenvolvimento solo do MVP.
+O GDD previa o parâmetro Sede no SurvivalComponent junto com Fome, Fadiga, Energia, Temperatura e Conforto.
 
 ### Decisão
 
-Migrar a perspectiva e toda a simulação física/renderização para **2D Top-Down**, mantendo todas as mecânicas sistêmicas intactas (`CharacterBody2D`, `PointLight2D`, `Area2D`).
+Adiar a mecânica de Sede para fases pós-MVP.
+
+### Motivo
+
+Evitar atrito excessivo de micromanagement na fase de testes iniciais.
+
+### Impacto no gameplay
+
+O SurvivalComponent foca em 5 necessidades fundamentais durante o MVP.
 
 ---
 
-## ADR-009 — Contrato Genérico para Interações 2D (`IInteractable`)
+# DECISÕES DE PERFORMANCE
+
+## ADR-010 — Frequências Diferenciadas de Simulação (Ticks)
 
 **Data:** 2026-08-20
 
 **Status:** ATIVA
 
-### Contexto
+### Problema
 
-A Sprint 3 exigia que o jogador interagisse com múltiplos elementos do mapa (baús, nós de minério, NPCs) sem que o Player precisasse conhecer a classe concreta de cada objeto.
+Processar economia, regeneração de recursos e simulação de NPCs a cada frame gerava desperdício de CPU.
 
 ### Decisão
 
-Adotar o padrão de detecção dinâmica via `InteractionDetector2D` baseado em `Area2D`, que valida a existência dos métodos de contrato (`can_interact` e `interact`) nos nós detectados.
+Isolar simulações de baixo ciclo em ticks do `TimeService` (ex: a cada minuto do jogo) em vez de usar `_process(delta)`.
+
+### Motivo
+
+Manter a performance em 60 FPS estáveis sem gargalos de CPU.
+
+### Trade-offs
+
+Ações de mundo são processadas em intervalos discretos.
 
 ---
 
-## ADR-010 — Arquitetura de Inventário Transactional Resource-Driven
+# DECISÕES SUPERADAS
 
-**Data:** 2026-08-21
+*(Nenhuma decisão superada no momento)*
 
-**Status:** ATIVA
+# REGRAS DO DOCUMENTO
 
-### Contexto
-
-A Sprint 4 exigia a gestão de itens empilháveis e instâncias de equipamentos com durabilidade, sem acoplar regras de itens a nós visuais de UI.
-
-### Decisão
-
-Separar rigorosamente a definição estática (`ItemDefinition` como `Resource`), o estado runtime de pilhas (`ItemStack` como `RefCounted`), as instâncias com durabilidade (`EquipmentInstance`) e o gerenciador transactional (`InventoryService`).
-
----
-
-## ADR-011 — Iluminação Sistêmica Desacoplada (`LightingContext` & `LightingService`)
-
-**Data:** 2026-08-21
-
-**Status:** ATIVA
-
-### Contexto
-
-A TASK-109 exigia um sistema de luz que alterasse os estados de visibilidade sem acoplar diretamente nós de renderização com combate ou stealth.
-
-### Decisão
-
-Criar o `LightingContext` (objeto `RefCounted` com normalização de 0.0 a 1.0) e o `LightingService` global. A iluminação transmite alterações categorizadas via `EventBus` (`LightLevelChanged`), permitindo que criaturas e mecânicas de sobrevivência consumam o nível de luz sem acoplamento direto com os nós de luz.
-
----
-
-## ADR-012 — Sistema de Combate Action 2D e Sensibilidade à Luz (`IDamageable`)
-
-**Data:** 2026-08-21
-
-**Status:** ATIVA
-
-### Contexto
-
-A TASK-110 exigia a implementação do combate 2D melee e do primeiro inimigo (Lobo Esfomeado) reativo ao nível de luz, sem acoplar o Player diretamente à classe do inimigo.
-
-### Decisão
-
-Implementar o `DamageContext` (dados da intenção de dano) e delegar a recepção ao contrato `receive_damage` no nó do inimigo. O inimigo consulta o `LightingService` no momento do impacto e aplica modificadores defensivos (dobrando o dano recebido caso exposto à Luz Plena).
-
----
-
-## ADR-013 — Sistema de Quests Transacionais e Recompensas SOCIAIS/FINANCEIRAS
-
-**Data:** 2026-08-21
-
-**Status:** ATIVA
-
-### Contexto
-
-A TASK-111 exigia um sistema de missões orientado a dados (`QuestDefinition`) e um runtime de controle (`QuestService`) capaz de validar inventários antes da entrega.
-
-### Decisão
-
-Implementar o `QuestService` registrado no `ServiceRegistry`. NPCs avaliam o estado da Quest de forma transacional, consumindo itens requeridos do `InventoryService`, emitindo alterações de reputação via `EventBus` e concedendo moedas sem acoplamento rígido.
-
----
-
-## ADR-014 — Suporte a Save/Load Payload Genérico no SaveService
-
-**Data:** 2026-08-21
-
-**Status:** ATIVA
-
-### Contexto
-
-A suíte de testes de integração da Vertical Slice (TASK-112) precisava validar o ciclo atômico de gravação e leitura em disco de dicionários de estado arbitrários do jogo sem desacoplar do objeto `GameStateData`.
-
-### Decisão
-
-Expandir a API pública do `SaveService.gd` adicionando os métodos `save_game_data(payload: Dictionary, slot_name: String)` e `load_game_data(slot_name: String) -> Dictionary`, fazendo com que os métodos de alto nível `save_game()` e `load_game()` consumam essas rotinas utilitárias.
-
----
-
-## ADR-015 — Engine de Profissões e Maestria Desacoplada (Fase 2)
-
-**Data:** 2026-08-21
-
-**Status:** ATIVA
-
-### Contexto
-
-A Fase 2 do projeto exige a expansão do sistema para suportar 17 profissões com 5 Tiers de Maestria (1–100 XP por Tier) sem duplicar código para cada profissão concreta.
-
-### Decisão
-
-Criar a arquitetura genérica composta por `ProfessionDefinition` (Resource estático com requisitos e bônus), `ProfessionState` (RefCounted mutável com cálculo de XP/Tier) e `ProfessionService` (Gerenciador global registrado no `ServiceRegistry`).
-
----
-
-## ADR-016 — Precificação Flutuante e Clamps de Economia Dinâmica
-
-**Data:** 2026-08-21
-
-**Status:** ATIVA
-
-### Contexto
-
-A TASK-202 exigia um serviço de preços capaz de calcular dinamicamente valores de compra e venda de itens variando por oferta, demanda, reputação e impostos locais, evitando desequilíbrios na economia.
-
-### Decisão
-
-Criar o `PricingService` (registrado no `ServiceRegistry`) consumindo a definição `MarketDefinition`. O preço final aplica a fórmula oficial do GDD/BALANCE, travando multiplicadores finais no intervalo estrito de `0.25x` a `3.00x` (Clamps de segurança) e atribuindo a margem fixa de 60% para vendas do jogador.
-
----
-
-## ADR-017 — Gestão de Reputação Multidimensional e Reação Social Cruzada
-
-**Data:** 2026-08-21
-
-**Status:** ATIVA
-
-### Contexto
-
-A TASK-203 exigia a criação de um gerenciador social capaz de rastrear a reputação individual de 0 a 10.000 com facções, religiões e vilarejos, alterando níveis de postura (Hated, Neutral, Recognized, Respected, Allied) e calculando reações sociais com facções rivais.
-
-### Decisão
-
-Criar o `FactionService` (registrado no `ServiceRegistry`) e o Resource `FactionDefinition`. Ganhos de reputação com uma facção processam automaticamente penalidades proporcionais no dicionário de rivalidades cruzadas (`rival_factions`), notificando o `EventBus` sobre alterações de postura e disponibilizando métodos genéricos para serialização e persistência no `SaveService`.
+1. Nunca apagar decisões importantes.
+2. Nunca alterar uma decisão ATIVA silenciosamente.
+3. Se uma nova decisão contradizer uma decisão anterior, registrar uma nova ADR.
+4. Explicar o motivo da mudança.
+5. Preservar o histórico.
+6. Referenciar arquivos e sistemas afetados quando relevante.
+7. O documento deve representar decisões realmente aprovadas, não apenas sugestões.
+8. Decisões provisórias devem ser claramente marcadas como PROPOSTA.

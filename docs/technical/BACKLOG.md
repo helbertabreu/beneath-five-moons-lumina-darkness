@@ -26,13 +26,13 @@
 
 # 1. SPRINT ATUAL
 
-**Sprint:** Transição para a Fase 3 (Economia, Profissões & Social Avançado)
+**Sprint:** Sprint 12 — Interface Comercial e Precificação Dinâmica
 
-**Objetivo:** Planejar as tarefas de integração entre Lojas de NPCs, Cálculo de Preços Flutuantes e Bônus de Profissão.
+**Objetivo:** Conclusão, correção de runtime e validação atômica da TASK-301 (Interface Comercial 2D e Integração com PricingService).
 
 | ID | Tarefa | Tipo | Prioridade | Sprint | Dependência | Status | Critério de aceitação |
 |---|---|---|---|---|---|---|---|
-| TASK-301 | Interface Comercial e Integração com PricingService | UI/Systems | P1 | 12 | TASK-204 | TODO | Criar a janela de loja de NPCs consumindo preços calculados pelo PricingService e descontos de reputação. |
+| TASK-301 | Interface Comercial e Integração com PricingService | UI/Systems | P1 | 12 | TASK-204 | DONE | Criar a janela de loja de NPCs consumindo preços calculados pelo PricingService, descontos de reputação e validada via `test_shop_system.gd` com `[TEST PASSED]`. |
 
 ---
 
@@ -40,7 +40,7 @@
 
 | ID | Tarefa | Tipo | Prioridade | Dependência | Status |
 |---|---|---|---|---|---|
-| TASK-301 | Interface Comercial e Integração com PricingService | UI/Systems | P1 | TASK-204 | TODO |
+| TASK-301 | Interface Comercial e Integração com PricingService | UI/Systems | P1 | TASK-204 | DONE |
 | TASK-302 | Sistema de Relacionamentos com NPCs e Afinidade | Social | P1 | TASK-301 | TODO |
 | TASK-303 | Múltiplas Receitas e Estações de Trabalho | Crafting | P1 | TASK-302 | TODO |
 | TASK-304 | Loja do Jogador e Mercado Local | Economy | P1 | TASK-303 | TODO |
@@ -149,12 +149,16 @@ Uma tarefa somente pode ser marcada como `DONE` quando:
 **Objetivo:** Implementar o `WorldRegionManager` e `RegionDefinition` para descarregar regiões mantendo simulação temporal e persistência.  
 **Resultado:** CONCLUÍDA COM SUCESSO. TASK-204 validada com a execução de `test_world_streaming.gd` e retorno `[TEST PASSED]` no Output!
 
+## Sprint 12 — Interface Comercial e Integração com PricingService (Fase 3 / TASK-301)
+**Objetivo:** Implementar a interface `shop_interface.gd`, a cena `ShopInterface.tscn` e integrar atomicamente a compra e venda de itens com `PricingService`, `InventoryService` e `FactionService`.  
+**Resultado:** CONCLUÍDA E VALIDADA. A suíte `test_shop_system.gd` executou com sucesso imprimindo `[TEST PASSED]` no Output sem exceções de runtime!
+
 ---
 
 # 11. PRÓXIMA TAREFA
 
-**ID:** TASK-301
+**ID:** TASK-302
 
-**Tarefa:** Interface Comercial e Integração com PricingService.
+**Tarefa:** Sistema de Relacionamentos com NPCs e Afinidade.
 
-**Motivo da prioridade:** Habilitar a negociação visual de compra/venda em NPCs consumindo a precificação flutuante e descontos de reputação.
+**Motivo da prioridade:** Expandir o engajamento social e diálogos com NPCs após a consolidação da infraestrutura comercial.

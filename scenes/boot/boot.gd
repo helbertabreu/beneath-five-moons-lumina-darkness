@@ -1,12 +1,13 @@
 ## boot.gd
 ## Script anexado à cena principal de Boot (Boot.tscn).
-## Instancia serviços, executa validações de infraestrutura, integração e profissões, e instancia as entidades do mundo.
+## Instancia serviços, executa validações de infraestrutura, integração, profissões e economia comercial, e instancia as entidades do mundo.
 
 extends Node2D
 
 const TestRunner = preload("res://tests/test_core_infrastructure.gd")
 const IntegrationTestRunner = preload("res://tests/test_vertical_slice_integration.gd")
 const ProfessionTestRunner = preload("res://tests/test_profession_system.gd")
+const ShopTestRunner = preload("res://tests/unit/test_shop_system.gd")
 
 const PlayerScene = preload("res://scenes/player/Player.tscn")
 const TestChestScript = preload("res://entities/interactables/test_chest.gd")
@@ -24,6 +25,7 @@ var _inventory_service: Node = null
 var _lighting_service: Node = null
 var _quest_service: Node = null
 var _profession_service: Node = null
+var _faction_service: FactionService = null
 
 
 func _ready() -> void:
@@ -54,8 +56,12 @@ func _run_bootstrap_and_profession_tests() -> bool:
 	var profession_runner = ProfessionTestRunner.new()
 	var profession_ok = profession_runner.run_profession_tests()
 	
-	if infra_ok and integration_ok and profession_ok:
-		print("[Boot] INTEGRALMENTE VALIDADO: Infraestrutura, Persistência e Engine de Profissões 100% Funcionais!")
+	# 4. Executa Teste do Sistema Comercial e Precificação (Sprint 12 / TASK-301)
+	var shop_runner = ShopTestRunner.new()
+	var shop_ok = shop_runner.run_shop_tests()
+	
+	if infra_ok and integration_ok and profession_ok and shop_ok:
+		print("[Boot] INTEGRALMENTE VALIDADO: Infraestrutura, Persistência, Profissões e Sistema de Comércio 100% Funcionais!")
 		return true
 	else:
 		push_error("[Boot] ERRO CRÍTICO NOS TESTES DE UNIDADE OU INTEGRAÇÃO!")
@@ -82,6 +88,12 @@ func _setup_services() -> void:
 	_profession_service = ProfessionServiceScript.new()
 	_profession_service.name = "ProfessionService"
 	add_child(_profession_service)
+	
+	# 5. FactionService (Sprint 12 / TASK-301)
+	_faction_service = FactionService.new()
+	if ServiceRegistry:
+		ServiceRegistry.register_service(&"FactionService", _faction_service)
+		print("[Boot] FactionService registrado com sucesso.")
 
 
 func _setup_environment_lighting() -> void:

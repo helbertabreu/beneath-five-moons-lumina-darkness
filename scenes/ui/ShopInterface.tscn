@@ -1,0 +1,65 @@
+[gd_scene format=3 uid="uid://c8yshopui301"]
+
+[ext_resource type="Script" uid="uid://cf4eator83yqv" path="res://ui/shop/shop_interface.gd" id="1_shop"]
+
+[node name="ShopInterface" type="Control" unique_id=1729448902]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_shop")
+
+[node name="Panel" type="Panel" parent="." unique_id=454552314]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -200.0
+offset_right = 250.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel" unique_id=386969438]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer" unique_id=826062032]
+layout_mode = 2
+
+[node name="Header" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=1377250571]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/Header" unique_id=58167954]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Loja de Mercador"
+
+[node name="GoldLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/Header" unique_id=812594738]
+layout_mode = 2
+text = "Moedas: 0"
+
+[node name="CloseButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/Header" unique_id=1325617988]
+layout_mode = 2
+text = " X "
+
+[node name="HSeparator" type="HSeparator" parent="Panel/MarginContainer/VBoxContainer" unique_id=814791334]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=1072181684]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ItemsContainer" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer/ScrollContainer" unique_id=1556595431]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3

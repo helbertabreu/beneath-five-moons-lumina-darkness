@@ -1,9 +1,9 @@
 # Beneath Five Moons — Balance Database
 ## Planilha de Balanceamento em Markdown
 
-**Versão:** 2.2.0  
-**Status:** Atualizado com Matriz de Ranks, Tiers e Penalidades de Reputação Multidimensional (Sprint 10)  
-**Fonte:** GDD, TDD e especificações do FactionService / PricingService / QuestService  
+**Versão:** 3.0.0  
+**Status:** Atualizado com Parâmetros de Comércio, Taxas Comerciais e Margens do PricingService (Sprint 12 / TASK-301)  
+**Fonte:** GDD, TDD e especificações do FactionService / PricingService / QuestService / ShopInterface  
 
 ---
 
@@ -19,6 +19,7 @@
 | 2.0.0 | 2026-08-21 | Tech Lead | Expansão da Fase 2: Tabela de Profissões, Tiers de Maestria e XP Base |
 | 2.1.0 | 2026-08-21 | Tech Lead | Parâmetros da Sprint 9 (TASK-202): Limites de Flutuação Econômica e Margens de Venda |
 | 2.2.0 | 2026-08-21 | Tech Lead | Parâmetros da Sprint 10 (TASK-203): Ranks de Reputação Multidimensional e Matriz de Rivalidade |
+| 3.0.0 | 2026-08-21 | Tech Lead | Parâmetros da Sprint 12 (TASK-301): Matriz de Compra/Venda da ShopInterface, Impostos de Mercado e Reembolso |
 
 ---
 
@@ -33,7 +34,7 @@
 
 ---
 
-# 3. Economia Dinâmica & Parâmetros do PricingService
+# 3. Economia Dinâmica & Parâmetros do PricingService (Sprint 12)
 
 $$\text{Preço Final} = \text{Preço Base} \times \text{Multiplicador de Reputação} \times \left(1 + \frac{\text{Demanda} - \text{Estoque}}{\text{Estoque Mínimo}}\right) \times (1 + \text{Taxa de Imposto})$$
 
@@ -42,7 +43,7 @@ $$\text{Preço Final} = \text{Preço Base} \times \text{Multiplicador de Reputa�
 | Base Price Multiplier | 1.00 | 0.25x | 3.00x | Trava de segurança global para flutuações de preços |
 | Player Sell Margin | 60% (0.60) | N/A | N/A | Jogadores vendem itens por 60% do valor de compra calculado |
 | Supply/Demand Factor | Dinâmico | 0.25x | 3.00x | Sensibilidade da variação pelo estoque versus demanda local |
-| Max Village Tax Rate | 0%–25% (0.00–0.25) | 0.00 | 0.25 | Imposto mercantil adicionado ao valor final de compra |
+| Max Village Tax Rate | 5% (0.05) | 0.00 | 0.25 | Imposto mercantil adicionado ao valor final de compra |
 
 ---
 
