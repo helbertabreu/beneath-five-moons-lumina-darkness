@@ -1,12 +1,14 @@
 ## boot.gd
 ## Script anexado à cena principal de Boot (Boot.tscn).
-## Executa a validação de inicialização e instancia o Player, Baú e o InventoryService.
+## Executa a validação de inicialização e instancia o Player, Baú, Mina de Ferro, Forja e o InventoryService.
 
 extends Node2D
 
 const TestRunner = preload("res://tests/test_core_infrastructure.gd")
 const PlayerScene = preload("res://scenes/player/Player.tscn")
 const TestChestScript = preload("res://entities/interactables/test_chest.gd")
+const IronMineScript = preload("res://entities/resources/iron_mine_node.gd")
+const ForgeNodeScript = preload("res://entities/interactables/forge_node.gd")
 const InventoryServiceScript = preload("res://inventory/inventory_service.gd")
 
 var _player_instance: CharacterBody2D = null
@@ -25,7 +27,6 @@ func _ready() -> void:
 	if tests_passed:
 		_setup_services()
 		_spawn_test_environment()
-		_run_inventory_test()
 
 
 func _run_bootstrap_tests() -> bool:
@@ -47,7 +48,7 @@ func _setup_services() -> void:
 	add_child(_inventory_service)
 
 
-## Instancia o Player 2D e o Baú de Teste no centro da janela
+## Instancia o Player 2D e todos os elementos de teste no ambiente da Vertical Slice
 func _spawn_test_environment() -> void:
 	if not PlayerScene:
 		push_error("[Boot] Não foi possível carregar a cena do Player em res://scenes/player/Player.tscn")
@@ -70,18 +71,19 @@ func _spawn_test_environment() -> void:
 	chest.position = center_pos + Vector2(30, 0)
 	add_child(chest)
 	print("[Boot] Baú de Teste instanciado na posição: ", chest.position)
-
-
-## Teste unitário/integração do InventoryService no Boot
-func _run_inventory_test() -> void:
-	var iron_ore = ItemDefinition.new()
-	iron_ore.id = &"item.material.iron_ore"
-	iron_ore.name = "Minério de Ferro"
-	iron_ore.is_stackable = true
-	iron_ore.max_stack_size = 99
 	
-	var inv_service = ServiceRegistry.get_service(&"InventoryService") as InventoryService
-	if inv_service:
-		inv_service.add_item(iron_ore, 5)
-		var qty = inv_service.get_total_quantity(&"item.material.iron_ore")
-		print("[Boot Test] Quantidade de Minério de Ferro no inventário: ", qty)
+	# 3. Instancia a Mina de Ferro 30px à esquerda do jogador
+	var iron_mine = Area2D.new()
+	iron_mine.set_script(IronMineScript)
+	iron_mine.name = "IronMine"
+	iron_mine.position = center_pos + Vector2(-30, 0)
+	add_child(iron_mine)
+	print("[Boot] Mina de Ferro instanciada na posição: ", iron_mine.position)
+	
+	# 4. Instancia a Forja de Ferreiro 30px acima do jogador
+	var forge = Area2D.new()
+	forge.set_script(ForgeNodeScript)
+	forge.name = "ForgeNode"
+	forge.position = center_pos + Vector2(0, -30)
+	add_child(forge)
+	print("[Boot] Forja de Ferreiro instanciada na posição: ", forge.position)

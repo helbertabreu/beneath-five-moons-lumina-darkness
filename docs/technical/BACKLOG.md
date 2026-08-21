@@ -26,13 +26,14 @@
 
 # 1. SPRINT ATUAL
 
-**Sprint:** Sprint 4 — Inventory Engine & Item Instances
+**Sprint:** Sprint 5 — Lighting System & Basic Combat 2D
 
-**Objetivo:** Implementar a arquitetura desacoplada de itens (`ItemDefinition` e `EquipmentInstance`), o `InventoryService` e o componente de inventário do jogador desacoplado de UI.
+**Objetivo:** Implementar o sistema de iluminação sistêmica (`PointLight2D` e `LightingContext`) e o combate base 2D contra o primeiro inimigo sensível à luz (Lobo Esfomeado/Inimigo Sombrio).
 
 | ID | Tarefa | Tipo | Prioridade | Sprint | Dependência | Status | Critério de aceitação |
 |---|---|---|---|---|---|---|---|
-| TASK-106 | Engine de Inventário & Instância de Itens | Gameplay | P1 | 4 | TASK-105 | TODO | Criar `ItemDefinition`, `InventoryState`, `ItemStack` e `InventoryService` desacoplados de UI. |
+| TASK-109 | Iluminação 2D (`PointLight2D` & `LightingContext`) | Gameplay | P1 | 5 | TASK-102 | TODO | Criar iluminação dinâmica portátil/ambiente e propagar `LightingContext` (0.0 a 1.0) para gameplay. |
+| TASK-110 | Combate 2D Base & Inimigo Sensível à Luz | Gameplay | P1 | 5 | TASK-109 | TODO | Criar máquina de estados de combate 2D com `IDamageable` e inimigo reagindo à luz. |
 
 ---
 
@@ -45,9 +46,9 @@
 | TASK-103 | Câmera 2D & Mapeamento de Foco | Gameplay | P1 | TASK-102 | DONE |
 | TASK-104 | `SurvivalComponent` (6 Necessidades) | Gameplay | P1 | TASK-102 | DONE |
 | TASK-105 | Sistema de Interação 2D (`Area2D` / `IInteractable`) | Gameplay | P1 | TASK-102 | DONE |
-| TASK-106 | Engine de Inventário & Instância de Itens | Gameplay | P1 | TASK-105 | TODO |
-| TASK-107 | Coleta de Recurso (Mina de Ferro 2D) | Gameplay | P1 | TASK-106 | TODO |
-| TASK-108 | Estação de Crafting & Profissão Ferreiro | Gameplay | P1 | TASK-106 | TODO |
+| TASK-106 | Engine de Inventário & Instância de Itens | Gameplay | P1 | TASK-105 | DONE |
+| TASK-107 | Coleta de Recurso (Mina de Ferro 2D) | Gameplay | P1 | TASK-106 | DONE |
+| TASK-108 | Estação de Crafting & Profissão Ferreiro | Gameplay | P1 | TASK-107 | DONE |
 | TASK-109 | Iluminação 2D (`PointLight2D` & `LightingContext`) | Gameplay | P1 | TASK-102 | TODO |
 | TASK-110 | Combate 2D Base & Inimigo Sensível à Luz | Gameplay | P1 | TASK-109 | TODO |
 | TASK-111 | NPC Ferreiro, Diálogo & Quest 01 | Social | P1 | TASK-105 | TODO |
@@ -142,12 +143,18 @@ Uma tarefa somente pode ser marcada como `DONE` quando:
 
 **Resultado:** CONCLUÍDA COM SUCESSO. Decaimento de Fome validado via `TimeService` e interação do baú com a tecla 'E' testada com sucesso.
 
+## Sprint 4 — Inventory Engine & Crafting Systems
+
+**Objetivo:** Construir o sistema de itens Resource-driven, pilhas, durabilidade de equipamentos, `InventoryService`, nó de coleta e estação de forja.
+
+**Resultado:** CONCLUÍDA COM SUCESSO. TASK-106, TASK-107 e TASK-108 testadas e validadas no Output com sucesso!
+
 ---
 
 # 10. PRÓXIMA TAREFA
 
-**ID:** TASK-106
+**ID:** TASK-109
 
-**Tarefa:** Engine de Inventário & Instância de Itens (`ItemDefinition`, `ItemStack`, `InventoryService`).
+**Tarefa:** Iluminação 2D (`PointLight2D` & `LightingContext`).
 
-**Motivo da prioridade:** Fundamental para permitir que o jogador colete minérios, guarde equipamentos e abasteça o sistema de crafting na Vertical Slice.
+**Motivo da prioridade:** Construir o sistema de luz ambiente e lanterna portátil, permitindo que o jogador explore zonas escuras e que o combate contra monstros sensíveis à luz seja implementado na TASK-110.

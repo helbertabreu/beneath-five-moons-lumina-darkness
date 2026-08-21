@@ -592,7 +592,7 @@ Profissão
 ├── Nível 4
 │   └── 1–100
 └── Nível 5
-    └── 1–100
+	└── 1–100
 ```
 
 ---
@@ -703,11 +703,11 @@ Exemplo:
 
 ```text
 Combate + Espadas + Armaduras
-        ↓
+		↓
 Perfil Guerreiro
 
 Stealth + Adagas + Exploração
-        ↓
+		↓
 Perfil Ladino
 ```
 
@@ -724,9 +724,9 @@ Exemplo:
 ```text
 Espada
 Nível de uso ↑
-        ↓
+		↓
 Maior eficiência
-        ↓
+		↓
 Talentos específicos
 ```
 
@@ -1127,15 +1127,15 @@ Exemplo:
 
 ```text
 Mina explorada excessivamente
-        ↓
+		↓
 Escassez de minério
-        ↓
+		↓
 Ferreiros sofrem
-        ↓
+		↓
 Preço das armas aumenta
-        ↓
+		↓
 Cidade solicita minério
-        ↓
+		↓
 Quest de mineração aparece
 ```
 
@@ -1325,22 +1325,22 @@ Exemplo:
 ```text
 Jogador A
 Mineiro
-      ↓
+	  ↓
 Minério
-      ↓
+	  ↓
 Jogador B
 Ferreiro
-      ↓
+	  ↓
 Armas
-      ↓
+	  ↓
 Jogador C
 Caçador
-      ↓
+	  ↓
 Peles
-      ↓
+	  ↓
 Jogador D
 Coureiro
-      ↓
+	  ↓
 Armaduras
 ```
 
@@ -1463,25 +1463,25 @@ Esses sistemas não devem influenciar a arquitetura do MVP além do necessário 
 ```text
 FASE 0
 Fundação e Prototipagem
-        ↓
+		↓
 FASE 1
 MVP — Core Gameplay
-        ↓
+		↓
 FASE 2
 Expansão do Sandbox
-        ↓
+		↓
 FASE 3
 Economia + Profissões + Social
-        ↓
+		↓
 FASE 4
 Multiplayer Cooperativo
-        ↓
+		↓
 FASE 5
 Territórios + Governo
-        ↓
+		↓
 FASE 6
 Endgame
-        ↓
+		↓
 FASE 7
 Expansões / DLC
 ```

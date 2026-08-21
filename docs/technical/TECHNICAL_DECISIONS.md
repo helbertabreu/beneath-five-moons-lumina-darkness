@@ -62,6 +62,34 @@ A Sprint 3 exigia que o jogador interagisse com múltiplos elementos do mapa (ba
 
 Adotar o padrão de detecção dinâmica via `InteractionDetector2D` baseado em `Area2D`, que valida a existência dos métodos de contrato (`can_interact` e `interact`) nos nós detectados.
 
-### Consequências
+---
 
-Qualquer nó do jogo pode se tornar interagível bastando ter um nó de colisão e implementar as funções de contrato, sem herança rígida obrigatória.
+## ADR-010 — Arquitetura de Inventário Transactional Resource-Driven
+
+**Data:** 2026-08-21
+
+**Status:** ATIVA
+
+### Contexto
+
+A Sprint 4 exigia a gestão de itens empilháveis e instâncias de equipamentos com durabilidade, sem acoplar regras de itens a nós visuais de UI.
+
+### Decisão
+
+Separar rigorosamente a definição estática (`ItemDefinition` como `Resource`), o estado runtime de pilhas (`ItemStack` como `RefCounted`), as instâncias com durabilidade (`EquipmentInstance`) e o gerenciador transactional (`InventoryService`).
+
+---
+
+## ADR-011 — Coleta Transactional de Recursos com Custo Vital
+
+**Data:** 2026-08-21
+
+**Status:** ATIVA
+
+### Contexto
+
+A TASK-107 exigia que a extração de minério no mapa consumisse recursos do jogador e depositasse itens de forma atômica no inventário.
+
+### Decisão
+
+Implementar os nós de recurso (`iron_mine_node.gd`) validando a energia do `SurvivalComponent` antes do consumo e delegando a entrega de itens diretamente ao `InventoryService` registrado no `ServiceRegistry`.
