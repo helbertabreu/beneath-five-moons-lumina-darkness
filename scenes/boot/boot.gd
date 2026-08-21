@@ -1,11 +1,12 @@
 ## boot.gd
 ## Script anexado à cena principal de Boot (Boot.tscn).
-## Executa a validação de inicialização e instancia o Player 2D para testes de movimentação.
+## Executa a validação de inicialização e instancia o Player 2D e o Baú de Teste para interações.
 
 extends Node2D
 
 const TestRunner = preload("res://tests/test_core_infrastructure.gd")
 const PlayerScene = preload("res://scenes/player/Player.tscn")
+const TestChestScript = preload("res://entities/interactables/test_chest.gd")
 
 var _player_instance: CharacterBody2D = null
 
@@ -20,7 +21,7 @@ func _ready() -> void:
 	var tests_passed = _run_bootstrap_tests()
 	
 	if tests_passed:
-		_spawn_test_player()
+		_spawn_test_environment()
 
 
 func _run_bootstrap_tests() -> bool:
@@ -28,24 +29,33 @@ func _run_bootstrap_tests() -> bool:
 	var test_result = runner.run_all_tests()
 	
 	if test_result:
-		print("[Boot] Infraestrutura Validada com Sucesso! Projeto pronto para a Sprint 2.")
+		print("[Boot] Infraestrutura Validada com Sucesso! Projeto pronto para a Sprint 3.")
 		return true
 	else:
 		push_error("[Boot] ERRO CRÍTICO DE INFRAESTRUTURA: Verifique o Output de mensagens.")
 		return false
 
 
-## Instancia o Player 2D no centro da janela para testes de movimentação
-func _spawn_test_player() -> void:
+## Instancia o Player 2D e o Baú de Teste no centro da janela
+func _spawn_test_environment() -> void:
 	if not PlayerScene:
 		push_error("[Boot] Não foi possível carregar a cena do Player em res://scenes/player/Player.tscn")
 		return
 	
+	var viewport_size = get_viewport_rect().size
+	var center_pos = viewport_size / 2.0
+	
+	# 1. Instancia o Player
 	_player_instance = PlayerScene.instantiate() as CharacterBody2D
 	if _player_instance:
-		# Centraliza a posição do jogador no viewport do jogo (ex: 576, 324 em 1152x648)
-		var viewport_size = get_viewport_rect().size
-		_player_instance.position = viewport_size / 2.0
-		
+		_player_instance.position = center_pos
 		add_child(_player_instance)
-		print("[Boot] Player 2D instanciado com sucesso na posição: ", _player_instance.position)
+		print("[Boot] Player 2D instanciado na posição: ", _player_instance.position)
+	
+	# 2. Instancia o Baú de Teste 40px à direita do jogador
+	var chest = Area2D.new()
+	chest.set_script(TestChestScript)
+	chest.name = "TestChest"
+	chest.position = center_pos + Vector2(40, 0)
+	add_child(chest)
+	print("[Boot] Baú de Teste instanciado na posição: ", chest.position)

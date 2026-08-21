@@ -1,8 +1,9 @@
----
+# Beneath Five Moons — Balance Database
+## Planilha de Balanceamento em Markdown
 
-# BALANCE.md
-
-> Planilha e base central de dados de balanceamento em Markdown.
+**Versão:** 1.1.0  
+**Status:** Atualizado para a Sprint 2 / Sprint 3  
+**Fonte:** GDD existente + parâmetros propostos para expansão[cite: 16]
 
 ---
 
@@ -10,25 +11,24 @@
 
 | Versão | Data | Autor | Alterações |
 |---|---|---|---|
-| 1.1.0 | 2026-08-20 | Tech Lead | Atualizado para 2D e removido parâmetro de Sede do MVP |
 | 1.0.0 | 2026-08-18 | Equipe de Desenvolvimento | Base inicial para expansão |
+| 1.1.0 | 2026-08-20 | Tech Lead | Atualização dos parâmetros de movimentação e velocidade 2D |
 
 ---
 
-# 2. Sobrevivência (Valores Base do MVP)
+# 2. Movimentação do Player (2D Top-Down)
 
-| Parâmetro | Valor Inicial | Taxa de Decaimento (por minuto de jogo) | Efeito ao Zerar | Status |
-|---|---:|---:|---|---|
-| Vida (Health) | 100.0 | 0.0 | Morte / Game Over | MVP |
-| Fome (Hunger) | 100.0 | -0.5 | Inicia dano à Vida (-1 HP/tick) | MVP |
-| Fadiga (Fatigue) | 0.0 | +0.2 (Aumenta com ações) | Impede corrida e reduz acerto | MVP |
-| Energia (Energy) | 100.0 | -0.1 | Bloqueia ações de trabalho/coleta | MVP |
-| Temperatura (Temp) | 37.0 (Celsius) | Variável por clima/região | < 30°C: Frio extremo / > 42°C: Calor | MVP |
-| Conforto (Comfort) | 50.0 | 0.0 (Baseado em abrigo) | Modifica regeneração de Energia | MVP |
+| Parâmetro | Valor Base | Unidade | Observações | Status |
+|---|---:|---|---|---|
+| Move Speed (Andar) | 120.0 | px/s | Velocidade normal de deslocamento | MVP |
+| Sprint Speed (Correr) | 200.0 | px/s | Velocidade com a tecla Shift pressionada | MVP |
+| Acceleration | 800.0 | px/s² | Taxa de aceleração da movimentação | MVP |
+| Friction | 1000.0 | px/s² | Taxa de desaceleração ao soltar os controles | MVP |
+| Camera Smoothing Speed | 5.0 | px/s | Taxa de suavização de acompanhamento da Camera2D | MVP |
 
 ---
 
-# 3. Itens do MVP
+# 3. Itens
 
 | ID | Nome | Tipo | Custo Base | Atributo | Multiplicador Resource | Status |
 |---|---|---|---:|---|---:|---|
@@ -47,59 +47,51 @@
 
 ---
 
-# 4. Monstros (Ajustados para 2D)
+# 4. Reputação
 
-| ID | Nome | HP | Dano | Velocidade (px/s) | XP | Drops | Status |
+O GDD define reputação local de 0 a 10.000[cite: 16].
+
+| Pontuação | Rank | Desconto | Multiplicador |
+|---:|---|---:|---:|
+| 0–999 | Desconhecido | 0% | 1.00 |
+| 1.000–2.999 | Reconhecido | 5% | 0.95 |
+| 3.000–5.999 | Respeitado | 10% | 0.90 |
+| 6.000–8.999 | Ilustre | 15% | 0.85 |
+| 9.000–10.000 | Elegível (Líder) | 20% | 0.80 |
+
+---
+
+# 5. Monstros
+
+| ID | Nome | HP | Dano | Velocidade | XP | Drops | Status |
 |---|---|---:|---:|---:|---:|---|---|
-| ENM-001 | Lobo Esfomeado | 40 | 12 | 110 | 25 | Carne, Couro | MVP |
-| ENM-002 | Salteador da Noite | 60 | 15 | 120 | 45 | Moedas, Equipamento | MVP |
-| ENM-003 | Goblin | 80 | 18 | 95 | 60 | Moedas, Material | Expand |
-| ENM-004 | Orc | 180 | 30 | 70 | 120 | Arma, Couro | Expand |
-| ENM-005 | Troll | 450 | 55 | 45 | 350 | Material Raro | Expand |
-| ENM-006 | Wraith | 250 | 40 | 100 | 200 | Essência Sombria | Expand |
-| ENM-007 | Basilisk | 700 | 65 | 55 | 500 | Veneno, Escama | Expand |
-| ENM-008 | Warlord | 2.500 | 100 | 65 | 2000 | Artefato | Boss |
+| ENM-001 | Lobo Esfomeado | 40 | 12 | 110 | TBD | Carne, Couro | MVP |
+| ENM-002 | Salteador da Noite | 60 | 15 | 120 | TBD | Moedas, Equipamento | MVP |
+| ENM-003 | Goblin | 80 | 18 | 95 | TBD | Moedas, Material | Expand |
+| ENM-004 | Orc | 180 | 30 | 70 | TBD | Arma, Couro | Expand |
+| ENM-005 | Troll | 450 | 55 | 45 | TBD | Material Raro | Expand |
+| ENM-006 | Wraith | 250 | 40 | 100 | TBD | Essência Sombria | Expand |
+| ENM-007 | Basilisk | 700 | 65 | 55 | TBD | Veneno, Escama | Expand |
+| ENM-008 | Warlord | 2.500 | 100 | 65 | TBD | Artefato | Boss |
 
 ---
 
-# 5. Balanceamento de Drop
+# 6. Sobrevivência (6 Necessidades)
 
-## 5.1 Raridade
-
-| Raridade | Chance Base | Multiplicador de Valor |
-|---|---:|---:|
-| Common | 60.00% | 1.00 |
-| Uncommon | 25.00% | 1.50 |
-| Rare | 10.00% | 3.00 |
-| Epic | 4.00% | 7.50 |
-| Legendary | 1.00% | 20.00 |
-
-## 5.2 Drop Tables
-
-| Drop Table ID | Inimigo/Origem | Item | Quantidade Min | Quantidade Max | Chance | Peso | Condição |
-|---|---|---|---:|---:|---:|---:|---|
-| DROP-WOLF-01 | ENM-001 | Carne | 1 | 3 | 75% | 75 | Sempre |
-| DROP-WOLF-02 | ENM-001 | Couro | 1 | 2 | 40% | 40 | Sempre |
-| DROP-WOLF-03 | ENM-001 | Presa | 1 | 2 | 15% | 15 | Sempre |
-| DROP-BANDIT-01 | ENM-002 | Gold | 5 | 20 | 80% | 80 | Sempre |
-| DROP-BANDIT-02 | ENM-002 | Consumable | 1 | 1 | 25% | 25 | Sempre |
-| DROP-BANDIT-03 | ENM-002 | Equipment | 1 | 1 | 8% | 8 | Elite/variante |
-
----
-
-# 6. Economia Básica
-
-| Parâmetro | Valor Inicial | Limite Mínimo | Limite Máximo | Status |
-|---|---:|---:|---:|---|
-| Base Price Multiplier | 1.00 | 0.25 | 3.00 | Proposto |
-| Reputation Multiplier | 1.00 | 0.80 | 1.00 | GDD |
-| Supply Modifier | 1.00 | 0.30 | 2.50 | Proposto |
-| Demand Modifier | 1.00 | 0.50 | 3.00 | Proposto |
-| Tax Rate | 0% | 0% | 25% | GDD |
+| Sistema | Base Máxima | Parâmetro de Decaimento/Ação | Status |
+|---|---:|---|---|
+| Vida (Health) | 100 | Regeneração por descanso / Dano por combate ou starvation | MVP |
+| Fome (Hunger) | 100 | -1.0 por minuto virtual / -3 em combate / -5 em viagem | MVP |
+| Fadiga (Fatigue) | 100 | Aumenta ao correr ou minerar / Reduz ao descansar | MVP |
+| Energia (Energy) | 100 | Consumo por atividades de coleta (-10 por mineração) | MVP |
+| Temperatura | 0 (Neutro) | Escala de -50 (Frio Extremo) a +50 (Calor Extremo) | MVP |
+| Conforto | 100 | Reduz exposição a intempéries / Aumenta recuperação de sono | MVP |
 
 ---
 
 # 7. Convenções
 
-- IDs em formato de texto estável (`item.categoria.nome`).
-- Todos os parâmetros de taxa e combate devem ser lidos a partir de `Resource` ou deste arquivo, nunca hardcoded em scripts GDScript.
+- IDs em `UPPER_SNAKE_CASE`[cite: 16].
+- Dados em `Resource`[cite: 16].
+- Estado persistente separado de dados estáticos[cite: 16].
+- Nenhum valor crítico deve ser hardcoded em scripts quando for balanceável[cite: 16].

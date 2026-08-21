@@ -1,41 +1,13 @@
 # TECHNICAL_DECISIONS.md
 
-> Registro permanente das decisões técnicas e arquiteturais importantes do projeto.
+> Registro permanente das decisões técnicas e arquiteturais importantes do projeto Beneath Five Moons / Lumina Darkness.
 > O objetivo é evitar que decisões previamente aprovadas sejam alteradas ou esquecidas sem justificativa.
 
 ---
 
 # COMO REGISTRAR UMA DECISÃO
 
-Para cada decisão importante, utilize:
-
-```text
-ID:
-Data:
-Título:
-Status:
-
-Contexto:
-Problema:
-
-Alternativas consideradas:
-
-Decisão:
-
-Motivo:
-
-Consequências positivas:
-
-Trade-offs / consequências negativas:
-
-Impactos no projeto:
-
-Arquivos ou sistemas afetados:
-
-Plano de migração, se aplicável:
-
-Responsável pela decisão:
-```
+Para cada decisão importante, utilize o modelo ADR.
 
 ---
 
@@ -50,102 +22,85 @@ Responsável pela decisão:
 
 # DECISÕES ATIVAS
 
-## ADR-001 — Desacoplamento da Persistência via EntityId
+## ADR-001 — Desacoplamento de Persistência via EntityId
 
 **Data:** 2026-08-20  
-**Status:** ATIVA
+**Status:** ATIVA  
 
 ### Contexto
-O Save/Load não pode depender do caminho dos Nós (`NodePath`) na árvore do Godot, sob risco de corromper dados caso a estrutura da cena mude.
+O projeto exige suporte a Save/Load seguro e arquitetura preparada para futuro Multiplayer.
 
 ### Decisão
-Toda entidade persistente possuirá um `EntityId` estável do tipo `StringName` (ex: `ent.player.001`).
-
-### Consequências
-Saves imunes à reestruturação de cenas e arquitetura preparada para multiplayer futuro.
-
----
-
-## ADR-002 — Composição de Nós e Componentes em GDScript
-
-**Data:** 2026-08-20  
-**Status:** ATIVA
-
-### Contexto
-O projeto precisa manter alto desacoplamento e evitar heranças profundas.
-
-### Decisão
-Utilizar o padrão Composição. Nós do Godot representam presença visual/física, enquanto componentes em scripts controlam regras lógicas.
-
----
-
-## ADR-003 — Limites de Autoloads e uso do ServiceRegistry
-
-**Data:** 2026-08-20  
-**Status:** ATIVA
-
-### Contexto
-Autoloads em excesso criam acoplamento invisível e "God Objects".
-
-### Decisão
-Apenas serviços puramente globais (ex: `EventBus`, `TimeService`, `SaveService`) serão Autoloads. A localização de serviços será mediada pelo `ServiceRegistry`.
-
----
-
-## ADR-004 — Separação Definition × Instance × State
-
-**Data:** 2026-08-20  
-**Status:** ATIVA
-
-### Decisão
-- `Definition` (Godot Resource .tres): Dados estáticos e imutáveis de conteúdo.
-- `Runtime State` (RefCounted/Objects): Estado mutável serializável.
-- `Node/Component` (Node2D/Control): Apresentação visual e física.
-
----
-
-## ADR-005 — Compatibilidade Estrita com Godot 4.7.1 e GDScript 2.0
-
-**Data:** 2026-08-20  
-**Status:** ATIVA
-
-### Decisão
-Todo o código deve ser GDScript 2.0 estritamente tipado, sem chamadas obsoletas da Godot 3.x.
-
----
-
-## ADR-008 — Remapeamento de Escopo MVP: Perspectiva 2D e Exclusão da Sede
-
-**Data:** 2026-08-20  
-**Status:** ATIVA
-
-### Contexto
-Avaliação da complexidade de escopo durante a Revisão do Gate 0.
-
-### Decisão
-1. O jogo será desenvolvido **exclusivamente em 2D** (perspectiva Top-Down 2D usando `CharacterBody2D`, `PointLight2D` e `TileMapLayer`).
-2. A necessidade de **Sede** está oficialmente removida do MVP, mantendo a sobrevivência focada em Vida, Fome, Fadiga, Energia, Temperatura e Conforto.
+Utilizar identificadores estáveis (`EntityId` em `StringName`) em vez de referências por `NodePath` para identificar entidades persitentes e dados salvos.
 
 ### Motivo
-Reduzir o risco de produção para um desenvolvedor iniciante, acelerar a entrega do protótipo jogável e garantir 60 FPS estáveis sem gargalos de arte 3D.
-
-### Consequências Positivas
-- Simplificação na criação de cenas e físicas 2D.
-- Uso de iluminação por `CanvasModulate` e `PointLight2D` com excelente performance.
-- Foco absoluto na diversão dos sistemas sistêmicos.
-
-### Sistemas Afetados
-- Player (`CharacterBody2D`), Câmera (`Camera2D`), Iluminação (`PointLight2D`), Sobrevivência (`SurvivalComponent`).
+Garantir a integridade dos dados salvos independente da hierarquia visual da cena e prevenir quebras de Save ao mover nós no editor.
 
 ---
 
-# REGRAS DO DOCUMENTO
+## ADR-002 — Arquitetura de Scenes e Components
 
-1. Nunca apagar decisões importantes.
-2. Nunca alterar uma decisão ATIVA silenciosamente.
-3. Se uma nova decisão contradizer uma decisão anterior, registrar uma nova ADR.
-4. Explicar o motivo da mudança.
-5. Preservar o histórico.
-6. Referenciar arquivos e sistemas afetados quando relevante.
-7. O documento deve representar decisões realmente aprovadas, não apenas sugestões.
-8. Decisões provisórias devem ser claramente marcadas como PROPOSTA.
+**Data:** 2026-08-20  
+**Status:** ATIVA  
+
+### Contexto
+O projeto precisa manter sistemas modulares e reutilizáveis.
+
+### Decisão
+Priorizar composição por Nodes/Components, Scenes reutilizáveis, Resources e Signals antes de criar hierarquias profundas de herança.
+
+### Motivo
+Reduzir acoplamento e facilitar manutenção, testes e evolução do projeto.
+
+---
+
+## ADR-003 — Uso de Autoloads
+
+**Data:** 2026-08-20  
+**Status:** ATIVA  
+
+### Decisão
+Autoloads serão utilizados apenas para serviços genuinamente globais e desacoplados (`ServiceRegistry`, `EventBus`, `TimeService`, `SaveService`).
+
+### Motivo
+Evitar dependências diretas de singletons rígidos e facilitar testes isolados.
+
+---
+
+## ADR-004 — Dados Data-Driven via Resources
+
+**Data:** 2026-08-20  
+**Status:** ATIVA  
+
+### Decisão
+Dados configuráveis de gameplay (itens, receitas, monstros, atributos de sobrevivência) deverão ser separados da lógica utilizando `Resource`.
+
+### Motivo
+Facilitar o balanceamento no `BALANCE.md` sem exigir alteração nos scripts do jogo.
+
+---
+
+## ADR-005 — Compatibilidade Godot 4.7.1 e GDScript 2.0
+
+**Data:** 2026-08-20  
+**Status:** ATIVA  
+
+### Decisão
+O projeto será desenvolvido rigorosamente utilizando GDScript 2.0 e APIs nativas do Godot 4.7.1.
+
+---
+
+## ADR-008 — Transição do MVP para Perspectiva 2D e Exclusão da Sede
+
+**Data:** 2026-08-20  
+**Status:** ATIVA  
+
+### Contexto
+Auditoria de pré-produção indicou alto risco de escopo para um desenvolvedor iniciante em um jogo 3D de mundo aberto.
+
+### Decisão
+1. Converter a perspectiva do MVP para Top-Down 2D (`CharacterBody2D`, `PointLight2D`, `TileMapLayer`).
+2. Remover o parâmetro de Sede no MVP, focando a sobrevivência em 6 necessidades fundamentais (Vida, Fome, Fadiga, Energia, Temperatura e Conforto).
+
+### Motivo
+Garantir a entrega da Vertical Slice e do MVP de forma viável, sustentável e testável.

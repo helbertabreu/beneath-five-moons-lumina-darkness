@@ -1,24 +1,47 @@
-[gd_scene format=3 uid="uid://duyntvwy6j8ny"]
+[gd_scene format=3 uid="uid://xg2stnpp8hg"]
 
-[ext_resource type="Script" uid="uid://c53uga4plpv2k" path="res://gameplay/player/player.gd" id="1_gfjak"]
-[ext_resource type="Script" uid="uid://2ky5ybig80kr" path="res://gameplay/movement/movement_component_2d.gd" id="2_4kuee"]
+[ext_resource type="Script" uid="uid://c53uga4plpv2k" path="res://gameplay/player/player.gd" id="1_player"]
+[ext_resource type="Script" uid="uid://2ky5ybig80kr" path="res://gameplay/movement/movement_component_2d.gd" id="2_movement"]
+[ext_resource type="Script" uid="uid://crnssittler7v" path="res://gameplay/survival/survival_component.gd" id="3_survival"]
+[ext_resource type="Script" uid="uid://cmnii4ir04ho4" path="res://gameplay/interaction/interaction_detector_2d.gd" id="4_interaction"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_u0ya7"]
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_player"]
 height = 26.0
 
-[node name="Player" type="CharacterBody2D" unique_id=1981674000]
-script = ExtResource("1_gfjak")
+[sub_resource type="CircleShape2D" id="CircleShape2D_interaction"]
+radius = 24.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=841967533]
-shape = SubResource("CapsuleShape2D_u0ya7")
+[node name="Player" type="CharacterBody2D" unique_id=104479462]
+script = ExtResource("1_player")
 
-[node name="MovementComponent2D" type="Node" parent="." unique_id=1959095382]
-script = ExtResource("2_4kuee")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1127408472]
+shape = SubResource("CapsuleShape2D_player")
 
-[node name="PlaceholderVisual" type="ColorRect" parent="." unique_id=1053711842]
-anchors_preset = -1
+[node name="MovementComponent2D" type="Node" parent="." unique_id=1930143610]
+script = ExtResource("2_movement")
+
+[node name="SurvivalComponent" type="Node" parent="." unique_id=1147244276]
+script = ExtResource("3_survival")
+
+[node name="InteractionDetector2D" type="Area2D" parent="." unique_id=1588768757]
+script = ExtResource("4_interaction")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionDetector2D" unique_id=1643893248]
+shape = SubResource("CircleShape2D_interaction")
+
+[node name="PlaceholderVisual" type="ColorRect" parent="." unique_id=1387842793]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
 offset_left = -10.0
 offset_top = -14.0
 offset_right = 10.0
 offset_bottom = 14.0
-color = Color(0.047058824, 0.011764706, 1, 1)
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.2, 0.6, 1, 1)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1003900977]
+position_smoothing_enabled = true
