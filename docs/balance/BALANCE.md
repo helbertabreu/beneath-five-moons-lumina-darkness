@@ -2,8 +2,8 @@
 ## Planilha de Balanceamento em Markdown
 
 **Versão:** 1.1.0  
-**Status:** Atualizado para a Sprint 2 / Sprint 3  
-**Fonte:** GDD existente + parâmetros propostos para expansão[cite: 16]
+**Status:** Atualizado com taxas da Sprint 3  
+**Fonte:** GDD e definições dos componentes de sobrevivência  
 
 ---
 
@@ -12,23 +12,11 @@
 | Versão | Data | Autor | Alterações |
 |---|---|---|---|
 | 1.0.0 | 2026-08-18 | Equipe de Desenvolvimento | Base inicial para expansão |
-| 1.1.0 | 2026-08-20 | Tech Lead | Atualização dos parâmetros de movimentação e velocidade 2D |
+| 1.1.0 | 2026-08-20 | Tech Lead | Atualização das taxas do SurvivalComponent |
 
 ---
 
-# 2. Movimentação do Player (2D Top-Down)
-
-| Parâmetro | Valor Base | Unidade | Observações | Status |
-|---|---:|---|---|---|
-| Move Speed (Andar) | 120.0 | px/s | Velocidade normal de deslocamento | MVP |
-| Sprint Speed (Correr) | 200.0 | px/s | Velocidade com a tecla Shift pressionada | MVP |
-| Acceleration | 800.0 | px/s² | Taxa de aceleração da movimentação | MVP |
-| Friction | 1000.0 | px/s² | Taxa de desaceleração ao soltar os controles | MVP |
-| Camera Smoothing Speed | 5.0 | px/s | Taxa de suavização de acompanhamento da Camera2D | MVP |
-
----
-
-# 3. Itens
+# 2. Itens
 
 | ID | Nome | Tipo | Custo Base | Atributo | Multiplicador Resource | Status |
 |---|---|---|---:|---|---:|---|
@@ -47,51 +35,13 @@
 
 ---
 
-# 4. Reputação
+# 3. Sobrevivência (Valores do SurvivalComponent)
 
-O GDD define reputação local de 0 a 10.000[cite: 16].
-
-| Pontuação | Rank | Desconto | Multiplicador |
-|---:|---|---:|---:|
-| 0–999 | Desconhecido | 0% | 1.00 |
-| 1.000–2.999 | Reconhecido | 5% | 0.95 |
-| 3.000–5.999 | Respeitado | 10% | 0.90 |
-| 6.000–8.999 | Ilustre | 15% | 0.85 |
-| 9.000–10.000 | Elegível (Líder) | 20% | 0.80 |
-
----
-
-# 5. Monstros
-
-| ID | Nome | HP | Dano | Velocidade | XP | Drops | Status |
-|---|---|---:|---:|---:|---:|---|---|
-| ENM-001 | Lobo Esfomeado | 40 | 12 | 110 | TBD | Carne, Couro | MVP |
-| ENM-002 | Salteador da Noite | 60 | 15 | 120 | TBD | Moedas, Equipamento | MVP |
-| ENM-003 | Goblin | 80 | 18 | 95 | TBD | Moedas, Material | Expand |
-| ENM-004 | Orc | 180 | 30 | 70 | TBD | Arma, Couro | Expand |
-| ENM-005 | Troll | 450 | 55 | 45 | TBD | Material Raro | Expand |
-| ENM-006 | Wraith | 250 | 40 | 100 | TBD | Essência Sombria | Expand |
-| ENM-007 | Basilisk | 700 | 65 | 55 | TBD | Veneno, Escama | Expand |
-| ENM-008 | Warlord | 2.500 | 100 | 65 | TBD | Artefato | Boss |
-
----
-
-# 6. Sobrevivência (6 Necessidades)
-
-| Sistema | Base Máxima | Parâmetro de Decaimento/Ação | Status |
-|---|---:|---|---|
-| Vida (Health) | 100 | Regeneração por descanso / Dano por combate ou starvation | MVP |
-| Fome (Hunger) | 100 | -1.0 por minuto virtual / -3 em combate / -5 em viagem | MVP |
-| Fadiga (Fatigue) | 100 | Aumenta ao correr ou minerar / Reduz ao descansar | MVP |
-| Energia (Energy) | 100 | Consumo por atividades de coleta (-10 por mineração) | MVP |
-| Temperatura | 0 (Neutro) | Escala de -50 (Frio Extremo) a +50 (Calor Extremo) | MVP |
-| Conforto | 100 | Reduz exposição a intempéries / Aumenta recuperação de sono | MVP |
-
----
-
-# 7. Convenções
-
-- IDs em `UPPER_SNAKE_CASE`[cite: 16].
-- Dados em `Resource`[cite: 16].
-- Estado persistente separado de dados estáticos[cite: 16].
-- Nenhum valor crítico deve ser hardcoded em scripts quando for balanceável[cite: 16].
+| Parâmetro | Valor Máximo | Taxa de Variação (Por Minuto de Jogo) | Efeito ao Esgotar |
+|---|---:|---:|---|
+| Vida (Health) | 100.0 | 0.0 | Morte / Game Over |
+| Fome (Hunger) | 100.0 | -0.5 (Decaimento) | Aplica 1.0 de dano contínuo à Vida (Starvation) |
+| Fadiga (Fatigue) | 100.0 | +0.2 (Acúmulo) | Penalidade de velocidade/ações |
+| Energia (Energy) | 100.0 | Consumo por Ação (-10.0 Coleta) | Impede ações pesadas |
+| Temperatura | 0.0 (Neutro) | Dependente do Clima/Região | Penalidades térmicas |
+| Conforto | 100.0 | Recuperado ao descansar | Modificador de fadiga |

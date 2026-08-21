@@ -26,14 +26,13 @@
 
 # 1. SPRINT ATUAL
 
-**Sprint:** Sprint 3 — Survival & Interaction Systems
+**Sprint:** Sprint 4 — Inventory Engine & Item Instances
 
-**Objetivo:** Implementar a mecânica de sobrevivência (6 necessidades essenciais) e o sistema de detecção e disparo de interações 2D via `Area2D`.
+**Objetivo:** Implementar a arquitetura desacoplada de itens (`ItemDefinition` e `EquipmentInstance`), o `InventoryService` e o componente de inventário do jogador desacoplado de UI.
 
 | ID | Tarefa | Tipo | Prioridade | Sprint | Dependência | Status | Critério de aceitação |
 |---|---|---|---|---|---|---|---|
-| TASK-104 | `SurvivalComponent` (6 Necessidades) | Gameplay | P1 | 3 | TASK-102 | DONE | Gerenciar necessidades vitais e decair Fome/Fadiga via `TimeService` sem erros. |
-| TASK-105 | Sistema de Interação 2D (`Area2D` / `IInteractable`) | Gameplay | P1 | 3 | TASK-102 | IN PROGRESS | Detectar áreas e corpos interagíveis no raio do jogador e responder à tecla 'E'. |
+| TASK-106 | Engine de Inventário & Instância de Itens | Gameplay | P1 | 4 | TASK-105 | TODO | Criar `ItemDefinition`, `InventoryState`, `ItemStack` e `InventoryService` desacoplados de UI. |
 
 ---
 
@@ -45,7 +44,7 @@
 | TASK-102 | Player `CharacterBody2D` & `MovementComponent2D` | Gameplay | P1 | TASK-101 | DONE |
 | TASK-103 | Câmera 2D & Mapeamento de Foco | Gameplay | P1 | TASK-102 | DONE |
 | TASK-104 | `SurvivalComponent` (6 Necessidades) | Gameplay | P1 | TASK-102 | DONE |
-| TASK-105 | Sistema de Interação 2D (`Area2D` / `IInteractable`) | Gameplay | P1 | TASK-102 | IN PROGRESS |
+| TASK-105 | Sistema de Interação 2D (`Area2D` / `IInteractable`) | Gameplay | P1 | TASK-102 | DONE |
 | TASK-106 | Engine de Inventário & Instância de Itens | Gameplay | P1 | TASK-105 | TODO |
 | TASK-107 | Coleta de Recurso (Mina de Ferro 2D) | Gameplay | P1 | TASK-106 | TODO |
 | TASK-108 | Estação de Crafting & Profissão Ferreiro | Gameplay | P1 | TASK-106 | TODO |
@@ -141,14 +140,14 @@ Uma tarefa somente pode ser marcada como `DONE` quando:
 
 **Objetivo:** Implementar a mecânica de sobrevivência (6 necessidades) e o detector de interação 2D.
 
-**Resultado:** EM ANDAMENTO. TASK-104 (Fome/Tempo) corrigida e testada com sucesso. TASK-105 em validação de colisão física.
+**Resultado:** CONCLUÍDA COM SUCESSO. Decaimento de Fome validado via `TimeService` e interação do baú com a tecla 'E' testada com sucesso.
 
 ---
 
 # 10. PRÓXIMA TAREFA
 
-**ID:** TASK-105
+**ID:** TASK-106
 
-**Tarefa:** Validação do sistema de interação 2D (`InteractionDetector2D` & `IInteractable`) com o baú de teste.
+**Tarefa:** Engine de Inventário & Instância de Itens (`ItemDefinition`, `ItemStack`, `InventoryService`).
 
-**Motivo da prioridade:** Necessário para permitir a coleta de recursos, abertura de containers e conversas com NPCs na próxima Sprint.
+**Motivo da prioridade:** Fundamental para permitir que o jogador colete minérios, guarde equipamentos e abasteça o sistema de crafting na Vertical Slice.
