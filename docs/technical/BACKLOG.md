@@ -26,28 +26,39 @@
 
 # 1. SPRINT ATUAL
 
-**Sprint:** Sprint 10 — Reputação Multidimensional e Facções (Fase 2)
+**Sprint:** Transição para a Fase 3 (Economia, Profissões & Social Avançado)
 
-**Objetivo:** Implementar o `FactionService` e `FactionDefinition` para gerenciar reputações multidimensionais de 0 a 10.000, posturas sociais e rivalidades cruzadas com testes unitários validados.
+**Objetivo:** Planejar as tarefas de integração entre Lojas de NPCs, Cálculo de Preços Flutuantes e Bônus de Profissão.
 
 | ID | Tarefa | Tipo | Prioridade | Sprint | Dependência | Status | Critério de aceitação |
 |---|---|---|---|---|---|---|---|
-| TASK-203 | Reputação Multidimensional e Facções | Social | P1 | 10 | TASK-202 | DONE | Criar o FactionService, FactionDefinition e test_faction_system.gd com 100% de sucesso nos testes unitários. |
+| TASK-301 | Interface Comercial e Integração com PricingService | UI/Systems | P1 | 12 | TASK-204 | TODO | Criar a janela de loja de NPCs consumindo preços calculados pelo PricingService e descontos de reputação. |
 
 ---
 
-# 2. BACKLOG DA FASE 2 (PÓS-MVP / EXPANSÃO SANDBOX)
+# 2. BACKLOG DA FASE 3 (ECONOMIA + PROFISSÕES + SOCIAL)
+
+| ID | Tarefa | Tipo | Prioridade | Dependência | Status |
+|---|---|---|---|---|---|
+| TASK-301 | Interface Comercial e Integração com PricingService | UI/Systems | P1 | TASK-204 | TODO |
+| TASK-302 | Sistema de Relacionamentos com NPCs e Afinidade | Social | P1 | TASK-301 | TODO |
+| TASK-303 | Múltiplas Receitas e Estações de Trabalho | Crafting | P1 | TASK-302 | TODO |
+| TASK-304 | Loja do Jogador e Mercado Local | Economy | P1 | TASK-303 | TODO |
+
+---
+
+# 3. BACKLOG DA FASE 2 (CONCLUÍDO)
 
 | ID | Tarefa | Tipo | Prioridade | Dependência | Status |
 |---|---|---|---|---|---|
 | TASK-201 | Engine de Profissões e Maestria | Systems | P1 | TASK-112 | DONE |
 | TASK-202 | Economia Dinâmica e Cálculo de Preços | Economy | P1 | TASK-201 | DONE |
 | TASK-203 | Reputação Multidimensional e Facções | Social | P1 | TASK-202 | DONE |
-| TASK-204 | World Streaming e Simulação Offline | World | P1 | TASK-203 | TODO |
+| TASK-204 | World Streaming e Simulação Offline | World | P1 | TASK-203 | DONE |
 
 ---
 
-# 3. BACKLOG DO MVP (CONCLUÍDO)
+# 4. BACKLOG DO MVP (CONCLUÍDO)
 
 | ID | Tarefa | Tipo | Prioridade | Dependência | Status |
 |---|---|---|---|---|---|
@@ -66,19 +77,19 @@
 
 ---
 
-# 4. BUGS
+# 5. BUGS
 
 *(Nenhum bug registrado no momento)*
 
 ---
 
-# 5. DÍVIDA TÉCNICA
+# 6. DÍVIDA TÉCNICA
 
 *(Nenhuma dívida técnica registrada no momento)*
 
 ---
 
-# 6. POLISH
+# 7. POLISH
 
 | ID | Melhoria | Prioridade | Sistema | Status |
 |---|---|---|---|---|
@@ -86,7 +97,7 @@
 
 ---
 
-# 7. FUTURO / NICE TO HAVE
+# 8. FUTURO / NICE TO HAVE
 
 | ID | Funcionalidade | Prioridade | Motivo para não implementar agora | Status |
 |---|---|---|---|---|
@@ -96,7 +107,7 @@
 
 ---
 
-# 8. DEFINITION OF DONE
+# 9. DEFINITION OF DONE
 
 Uma tarefa somente pode ser marcada como `DONE` quando:
 
@@ -112,54 +123,15 @@ Uma tarefa somente pode ser marcada como `DONE` quando:
 
 ---
 
-# 9. REGRAS DO BACKLOG
-
-1. Não criar tarefas duplicadas.
-2. Antes de criar uma tarefa, verificar se ela já existe.
-3. Não marcar tarefas como DONE sem validação.
-4. Dependências devem ser registradas.
-5. Bugs críticos têm prioridade sobre polish.
-6. O backlog deve refletir o estado real do projeto.
-7. Funcionalidades fora do MVP devem ser claramente identificadas.
-8. Quando uma tarefa crescer demais, dividi-la em tarefas menores.
-9. Ao alterar significativamente o escopo, atualizar o backlog.
-10. Manter IDs únicos.
-
----
-
 # 10. HISTÓRICO DE SPRINTS
 
 ## Sprint 0 — Auditoria
 **Objetivo:** compreender o estado atual do projeto e alinhar o escopo da Vertical Slice 2D.  
 **Resultado:** Aprovado. Decidido transição para perspectiva 2D Top-Down e remoção do parâmetro de Sede do MVP.
 
-## Sprint 1 — Core Architecture & Infrastructure Setup
-**Objetivo:** Criar a estrutura base de diretórios, serviços globais, barramento de eventos, relógio lógico e sistema de save atômico.  
-**Resultado:** CONCLUÍDA COM SUCESSO. Infrastructure e serviços validados (`[TEST PASSED]`).
-
-## Sprint 2 — Player 2D, Input Map Semântico, Movimento & Câmera 2D
-**Objetivo:** Criar a estrutura do jogador 2D, capturar entradas semânticas e permitir movimentação fluida com câmera de enquadramento.  
-**Resultado:** CONCLUÍDA COM SUCESSO. Movimentação 2D e acompanhamento da Camera2D validados em execução real.
-
-## Sprint 3 — Survival & Interaction Systems
-**Objetivo:** Implementar a mecânica de sobrevivência (6 necessidades) e o detector de interação 2D.  
-**Resultado:** CONCLUÍDA COM SUCESSO. Decaimento de Fome validado via `TimeService` e interação do baú com a tecla 'E' testada com sucesso.
-
-## Sprint 4 — Inventory Engine & Crafting Systems
-**Objetivo:** Construir o sistema de itens Resource-driven, pilhas, durabilidade de equipamentos, `InventoryService`, nó de coleta e estação de forja.  
-**Resultado:** CONCLUÍDA COM SUCESSO. TASK-106, TASK-107 e TASK-108 testadas e validadas no Output com sucesso!
-
-## Sprint 5 — Lighting System & Basic Combat 2D
-**Objetivo:** Criar o modelo e serviço de iluminação 2D sistêmica e o combate base 2D reativo à luz.  
-**Resultado:** CONCLUÍDA COM SUCESSO. TASK-109 e TASK-110 testadas e validadas no Output com o combate e sensibilidade do Lobo à luz!
-
-## Sprint 6 — NPC Ferreiro, Sistema de Diálogos & Quest 01
-**Objetivo:** Criar o NPC Ferreiro (Gorn), o modelo de diálogos, o serviço de quests e o fluxo da Quest 01.  
-**Resultado:** CONCLUÍDA COM SUCESSO. TASK-111 validada com aceite, cobrança, entrega e recompensas no Output!
-
-## Sprint 7 — Integration & Vertical Slice Consolidation
-**Objetivo:** Consolidar a integração da Vertical Slice 2D, validar os testes de regressão/persistência de todo o ciclo (Coleta -> Crafting -> Combate -> Quests -> Save/Load) e garantir o estado estável da versão 1.0 do MVP.  
-**Resultado:** CONCLUÍDA COM SUCESSO. TASK-112 validada com execução da suíte de teste de integração e persistência com 100% de sucesso!
+## Sprint 1 a 7 — MVP 1.0 (Vertical Slice 2D)
+**Objetivo:** Construção e integração de todos os sistemas base de movimentação, sobrevivência, iluminação, coleta, forja, combate, quests e Save/Load.  
+**Resultado:** CONCLUÍDAS COM SUCESSO. Todos os testes de integração e persistência aprovados com 100% de sucesso.
 
 ## Sprint 8 — Engine de Profissões e Maestria (Fase 2)
 **Objetivo:** Implementar o `ProfessionService`, o Resource `ProfessionDefinition` e a classe `ProfessionState` para suportar 17 profissões em 5 Tiers.  
@@ -173,12 +145,16 @@ Uma tarefa somente pode ser marcada como `DONE` quando:
 **Objetivo:** Implementar o `FactionService` e `FactionDefinition` para gerenciar reputações de 0 a 10.000, posturas e penalidades de rivalidades cruzadas.  
 **Resultado:** CONCLUÍDA COM SUCESSO. TASK-203 validada com a execução de `test_faction_system.gd` e retorno `[TEST PASSED]` no Output!
 
+## Sprint 11 — World Streaming e Simulação Offline (Fase 2)
+**Objetivo:** Implementar o `WorldRegionManager` e `RegionDefinition` para descarregar regiões mantendo simulação temporal e persistência.  
+**Resultado:** CONCLUÍDA COM SUCESSO. TASK-204 validada com a execução de `test_world_streaming.gd` e retorno `[TEST PASSED]` no Output!
+
 ---
 
 # 11. PRÓXIMA TAREFA
 
-**ID:** TASK-204
+**ID:** TASK-301
 
-**Tarefa:** World Streaming e Simulação Offline (`WorldRegionManager`).
+**Tarefa:** Interface Comercial e Integração com PricingService.
 
-**Motivo da prioridade:** Habilitar a simulação abstrata offline de regiões e transição por mapas no ecossistema de Quintalia.
+**Motivo da prioridade:** Habilitar a negociação visual de compra/venda em NPCs consumindo a precificação flutuante e descontos de reputação.
