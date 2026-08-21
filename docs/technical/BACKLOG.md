@@ -26,13 +26,13 @@
 
 # 1. SPRINT ATUAL
 
-**Sprint:** Sprint 9 — Economia Dinâmica e Cálculo de Preços (Fase 2)
+**Sprint:** Sprint 10 — Reputação Multidimensional e Facções (Fase 2)
 
-**Objetivo:** Implementar o `PricingService` para calcular preços flutuantes baseados na fórmula oficial (Oferta/Demanda, Reputação, Impostos) e a classe `MarketDefinition`, com testes unitários aprovados.
+**Objetivo:** Implementar o `FactionService` e `FactionDefinition` para gerenciar reputações multidimensionais de 0 a 10.000, posturas sociais e rivalidades cruzadas com testes unitários validados.
 
 | ID | Tarefa | Tipo | Prioridade | Sprint | Dependência | Status | Critério de aceitação |
 |---|---|---|---|---|---|---|---|
-| TASK-202 | Economia Dinâmica e Cálculo de Preços | Economy | P1 | 9 | TASK-201 | DONE | Criar o PricingService, MarketDefinition e test_pricing_system.gd com 100% de sucesso nos testes unitários. |
+| TASK-203 | Reputação Multidimensional e Facções | Social | P1 | 10 | TASK-202 | DONE | Criar o FactionService, FactionDefinition e test_faction_system.gd com 100% de sucesso nos testes unitários. |
 
 ---
 
@@ -42,7 +42,7 @@
 |---|---|---|---|---|---|
 | TASK-201 | Engine de Profissões e Maestria | Systems | P1 | TASK-112 | DONE |
 | TASK-202 | Economia Dinâmica e Cálculo de Preços | Economy | P1 | TASK-201 | DONE |
-| TASK-203 | Reputação Multidimensional e Facções | Social | P1 | TASK-202 | TODO |
+| TASK-203 | Reputação Multidimensional e Facções | Social | P1 | TASK-202 | DONE |
 | TASK-204 | World Streaming e Simulação Offline | World | P1 | TASK-203 | TODO |
 
 ---
@@ -169,12 +169,16 @@ Uma tarefa somente pode ser marcada como `DONE` quando:
 **Objetivo:** Implementar o `PricingService` e `MarketDefinition` para calcular flutuações de preços baseados em oferta/demanda, reputação e impostos.  
 **Resultado:** CONCLUÍDA COM SUCESSO. TASK-202 validada com a execução de `test_pricing_system.gd` e retorno `[TEST PASSED]` no Output!
 
+## Sprint 10 — Reputação Multidimensional e Facções (Fase 2)
+**Objetivo:** Implementar o `FactionService` e `FactionDefinition` para gerenciar reputações de 0 a 10.000, posturas e penalidades de rivalidades cruzadas.  
+**Resultado:** CONCLUÍDA COM SUCESSO. TASK-203 validada com a execução de `test_faction_system.gd` e retorno `[TEST PASSED]` no Output!
+
 ---
 
 # 11. PRÓXIMA TAREFA
 
-**ID:** TASK-203
+**ID:** TASK-204
 
-**Tarefa:** Reputação Multidimensional e Facções (`FactionService`).
+**Tarefa:** World Streaming e Simulação Offline (`WorldRegionManager`).
 
-**Motivo da prioridade:** Estender o sistema social para suportar as 4 grandes facções do GDD e rastrear reputações multidimensionais com vilarejos e religiões.
+**Motivo da prioridade:** Habilitar a simulação abstrata offline de regiões e transição por mapas no ecossistema de Quintalia.

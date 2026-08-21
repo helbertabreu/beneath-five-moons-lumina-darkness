@@ -1,9 +1,9 @@
 # Beneath Five Moons — Balance Database
 ## Planilha de Balanceamento em Markdown
 
-**Versão:** 2.1.0  
-**Status:** Atualizado com Parâmetros de Economia Dinâmica, Oferta/Demanda e Descontos de Reputação (Sprint 9)  
-**Fonte:** GDD, TDD e especificações do PricingService / InventoryService / SurvivalComponent  
+**Versão:** 2.2.0  
+**Status:** Atualizado com Matriz de Ranks, Tiers e Penalidades de Reputação Multidimensional (Sprint 10)  
+**Fonte:** GDD, TDD e especificações do FactionService / PricingService / QuestService  
 
 ---
 
@@ -18,10 +18,22 @@
 | 1.4.0 | 2026-08-21 | Tech Lead | Adicionadas recompensas da Quest 01 e tabela de quests |
 | 2.0.0 | 2026-08-21 | Tech Lead | Expansão da Fase 2: Tabela de Profissões, Tiers de Maestria e XP Base |
 | 2.1.0 | 2026-08-21 | Tech Lead | Parâmetros da Sprint 9 (TASK-202): Limites de Flutuação Econômica e Margens de Venda |
+| 2.2.0 | 2026-08-21 | Tech Lead | Parâmetros da Sprint 10 (TASK-203): Ranks de Reputação Multidimensional e Matriz de Rivalidade |
 
 ---
 
-# 2. Economia Dinâmica & Parâmetros do PricingService (Sprint 9)
+# 2. Facções Principais & Matriz de Rivalidades (Sprint 10)
+
+| ID da Facção | Nome Visível | Reputação Inicial Padrão | Facções Rivais Diretas | Fator de Penalidade Cruzada |
+|---|---|---:|---|---:|
+| `faction.alignment_guardians` | Os Guardiões do Alinhamento | 0.0 | `faction.umbra_syndicate` | 0.5x (-50% do ganho) |
+| `faction.umbra_syndicate` | O Sindicato de Umbra | 0.0 | `faction.alignment_guardians` | 1.0x (-100% do ganho) |
+| `faction.bronze_brotherhood` | A Irmandade de Bronze | 1000.0 | N/A | 0.0x |
+| `faction.fifth_moon_devotees` | Os Devotos da Quinta Lua | 0.0 | `faction.alignment_guardians` | 0.8x (-80% do ganho) |
+
+---
+
+# 3. Economia Dinâmica & Parâmetros do PricingService
 
 $$\text{Preço Final} = \text{Preço Base} \times \text{Multiplicador de Reputação} \times \left(1 + \frac{\text{Demanda} - \text{Estoque}}{\text{Estoque Mínimo}}\right) \times (1 + \text{Taxa de Imposto})$$
 
@@ -34,7 +46,7 @@ $$\text{Preço Final} = \text{Preço Base} \times \text{Multiplicador de Reputa�
 
 ---
 
-# 3. Profissões & Tiers de Maestria (Fase 2)
+# 4. Profissões & Tiers de Maestria (Fase 2)
 
 | ID da Profissão | Nome Visível | Foco / Categoria | Tiers | XP por Tier | Bônus de Eficiência por Tier |
 |---|---|---|---:|---:|---:|
@@ -58,7 +70,7 @@ $$\text{Preço Final} = \text{Preço Base} \times \text{Multiplicador de Reputa�
 
 ---
 
-# 4. Quests & Recompensas
+# 5. Quests & Recompensas
 
 | ID | Nome da Quest | Tipo | Requisito de Item | Recompensa em Moedas | Recompensa em Reputação Local | XP Recompensa |
 |---|---|---|---|---:|---:|---:|
@@ -66,7 +78,7 @@ $$\text{Preço Final} = \text{Preço Base} \times \text{Multiplicador de Reputa�
 
 ---
 
-# 5. Itens
+# 6. Itens
 
 | ID | Nome | Tipo | Custo Base | Atributo | Multiplicador Resource | Stack Máximo | Status |
 |---|---|---|---:|---|---:|---:|---|
@@ -85,21 +97,21 @@ $$\text{Preço Final} = \text{Preço Base} \times \text{Multiplicador de Reputa�
 
 ---
 
-# 6. Reputação & Facções (Fase 2)
+# 7. Reputação & Ranks de Postura (Stances)
 
 O GDD define a escala de reputação local de 0 a 10.000.
 
-| Pontuação | Rank / Postura | Desconto Comercial | Multiplicador de Preço |
-|---:|---|---:|---:|
-| 0–999 | Desconhecido / Neutro | 0% | 1.00 |
-| 1.000–2.999 | Reconhecido | 5% | 0.95 |
-| 3.000–5.999 | Respeitado | 10% | 0.90 |
-| 6.000–8.999 | Ilustre | 15% | 0.85 |
-| 9.000–10.000 | Elegível / Aliado Máximo | 20% | 0.80 |
+| Pontuação (0–10.000) | Enum / Stance | Status Social / Postura | Desconto Comercial | Comportamento dos Guardas |
+|---:|---|---|---:|---|
+| 0–999 | `Stance.HATED` | Odiado / Hostil | 0% | Atacam à vista |
+| 1.000–2.999 | `Stance.NEUTRAL` | Neutro / Desconhecido | 0% | Indiferente |
+| 3.000–5.999 | `Stance.RECOGNIZED` | Reconhecido | 5% | Tolerante |
+| 6.000–8.999 | `Stance.RESPECTED` | Respeitado / Ilustre | 10%–15% | Proteção prioritária |
+| 9.000–10.000 | `Stance.ALLIED` | Aliado Máximo / Líder | 20% | Acesso a aposentos e quests da elite |
 
 ---
 
-# 7. Combate & Inimigos
+# 8. Combate & Inimigos
 
 | ID | Entidade / Inimigo | HP | Dano Base Melee | Multiplicador em Penumbra | Multiplicador sob Luz Plena (>= 0.70) | XP Recompensa |
 |---|---|---:|---:|---:|---:|---:|
@@ -108,7 +120,7 @@ O GDD define a escala de reputação local de 0 a 10.000.
 
 ---
 
-# 8. Custos de Ações de Gameplay (Energy & Survival)
+# 9. Custos de Ações de Gameplay (Energy & Survival)
 
 | Ação | Custo de Energia | Custo de Fome | Quantidade de Recurso Gerada | XP de Profissão | Cooldown |
 |---|---:|---:|---|---|---:|
@@ -118,7 +130,7 @@ O GDD define a escala de reputação local de 0 a 10.000.
 
 ---
 
-# 9. Sobrevivência (Valores do SurvivalComponent)
+# 10. Sobrevivência (Valores do SurvivalComponent)
 
 | Parâmetro | Valor Máximo | Taxa de Variação (Por Minuto de Jogo) | Efeito ao Esgotar |
 |---|---:|---:|---|

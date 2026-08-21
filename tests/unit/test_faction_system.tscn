@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cmfaad55j5vtd"]
+
+[ext_resource type="Script" uid="uid://bfbuo0c8tx1m3" path="res://tests/unit/test_faction_system.gd" id="1_7kq7l"]
+
+[node name="TestFactionSystem" type="Node2D" unique_id=1036789534]
+script = ExtResource("1_7kq7l")

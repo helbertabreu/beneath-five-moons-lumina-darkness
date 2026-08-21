@@ -28,7 +28,7 @@ Sistemas do jogo precisam se comunicar de forma desacoplada sem que tudo se torn
 
 ### Decisão
 
-Utilizar o `ServiceRegistry` como nó central de registro e obtenção de serviços do sistema no Boot (`TimeService`, `SaveService`, `InventoryService`, `LightingService`, `QuestService`, `ProfessionService`, `PricingService`).
+Utilizar o `ServiceRegistry` como nó central de registro e obtenção de serviços do sistema no Boot (`TimeService`, `SaveService`, `InventoryService`, `LightingService`, `QuestService`, `ProfessionService`, `PricingService`, `FactionService`).
 
 ---
 
@@ -173,3 +173,19 @@ A TASK-202 exigia um serviço de preços capaz de calcular dinamicamente valores
 ### Decisão
 
 Criar o `PricingService` (registrado no `ServiceRegistry`) consumindo a definição `MarketDefinition`. O preço final aplica a fórmula oficial do GDD/BALANCE, travando multiplicadores finais no intervalo estrito de `0.25x` a `3.00x` (Clamps de segurança) e atribuindo a margem fixa de 60% para vendas do jogador.
+
+---
+
+## ADR-017 — Gestão de Reputação Multidimensional e Reação Social Cruzada
+
+**Data:** 2026-08-21
+
+**Status:** ATIVA
+
+### Contexto
+
+A TASK-203 exigia a criação de um gerenciador social capaz de rastrear a reputação individual de 0 a 10.000 com facções, religiões e vilarejos, alterando níveis de postura (Hated, Neutral, Recognized, Respected, Allied) e calculando reações sociais com facções rivais.
+
+### Decisão
+
+Criar o `FactionService` (registrado no `ServiceRegistry`) e o Resource `FactionDefinition`. Ganhos de reputação com uma facção processam automaticamente penalidades proporcionais no dicionário de rivalidades cruzadas (`rival_factions`), notificando o `EventBus` sobre alterações de postura e disponibilizando métodos genéricos para serialização e persistência no `SaveService`.
