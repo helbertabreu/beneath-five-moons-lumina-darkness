@@ -1,9 +1,9 @@
 # Beneath Five Moons — Balance Database
 ## Planilha de Balanceamento em Markdown
 
-**Versão:** 2.0.0  
-**Status:** Atualizado com Parâmetros de Profissões, Tiers de Maestria e Recompensas da Fase 2  
-**Fonte:** GDD, TDD e especificações do ProfessionService / InventoryService / SurvivalComponent  
+**Versão:** 2.1.0  
+**Status:** Atualizado com Parâmetros de Economia Dinâmica, Oferta/Demanda e Descontos de Reputação (Sprint 9)  
+**Fonte:** GDD, TDD e especificações do PricingService / InventoryService / SurvivalComponent  
 
 ---
 
@@ -17,10 +17,24 @@
 | 1.3.0 | 2026-08-21 | Tech Lead | Adicionados parâmetros da TASK-109 e valores de combate da TASK-110 |
 | 1.4.0 | 2026-08-21 | Tech Lead | Adicionadas recompensas da Quest 01 e tabela de quests |
 | 2.0.0 | 2026-08-21 | Tech Lead | Expansão da Fase 2: Tabela de Profissões, Tiers de Maestria e XP Base |
+| 2.1.0 | 2026-08-21 | Tech Lead | Parâmetros da Sprint 9 (TASK-202): Limites de Flutuação Econômica e Margens de Venda |
 
 ---
 
-# 2. Profissões & Tiers de Maestria (Fase 2)
+# 2. Economia Dinâmica & Parâmetros do PricingService (Sprint 9)
+
+$$\text{Preço Final} = \text{Preço Base} \times \text{Multiplicador de Reputação} \times \left(1 + \frac{\text{Demanda} - \text{Estoque}}{\text{Estoque Mínimo}}\right) \times (1 + \text{Taxa de Imposto})$$
+
+| Parâmetro Econômico | Valor Inicial / Regra | Limite Mínimo (Clamp) | Limite Máximo (Clamp) | Descrição / Função |
+|---|---:|---:|---:|---|
+| Base Price Multiplier | 1.00 | 0.25x | 3.00x | Trava de segurança global para flutuações de preços |
+| Player Sell Margin | 60% (0.60) | N/A | N/A | Jogadores vendem itens por 60% do valor de compra calculado |
+| Supply/Demand Factor | Dinâmico | 0.25x | 3.00x | Sensibilidade da variação pelo estoque versus demanda local |
+| Max Village Tax Rate | 0%–25% (0.00–0.25) | 0.00 | 0.25 | Imposto mercantil adicionado ao valor final de compra |
+
+---
+
+# 3. Profissões & Tiers de Maestria (Fase 2)
 
 | ID da Profissão | Nome Visível | Foco / Categoria | Tiers | XP por Tier | Bônus de Eficiência por Tier |
 |---|---|---|---:|---:|---:|
@@ -44,7 +58,7 @@
 
 ---
 
-# 3. Quests & Recompensas
+# 4. Quests & Recompensas
 
 | ID | Nome da Quest | Tipo | Requisito de Item | Recompensa em Moedas | Recompensa em Reputação Local | XP Recompensa |
 |---|---|---|---|---:|---:|---:|
@@ -52,7 +66,7 @@
 
 ---
 
-# 4. Itens
+# 5. Itens
 
 | ID | Nome | Tipo | Custo Base | Atributo | Multiplicador Resource | Stack Máximo | Status |
 |---|---|---|---:|---|---:|---:|---|
@@ -71,7 +85,7 @@
 
 ---
 
-# 5. Reputação & Facções (Fase 2)
+# 6. Reputação & Facções (Fase 2)
 
 O GDD define a escala de reputação local de 0 a 10.000.
 
@@ -85,7 +99,7 @@ O GDD define a escala de reputação local de 0 a 10.000.
 
 ---
 
-# 6. Combate & Inimigos
+# 7. Combate & Inimigos
 
 | ID | Entidade / Inimigo | HP | Dano Base Melee | Multiplicador em Penumbra | Multiplicador sob Luz Plena (>= 0.70) | XP Recompensa |
 |---|---|---:|---:|---:|---:|---:|
@@ -94,7 +108,7 @@ O GDD define a escala de reputação local de 0 a 10.000.
 
 ---
 
-# 7. Custos de Ações de Gameplay (Energy & Survival)
+# 8. Custos de Ações de Gameplay (Energy & Survival)
 
 | Ação | Custo de Energia | Custo de Fome | Quantidade de Recurso Gerada | XP de Profissão | Cooldown |
 |---|---:|---:|---|---|---:|
@@ -104,7 +118,7 @@ O GDD define a escala de reputação local de 0 a 10.000.
 
 ---
 
-# 8. Sobrevivência (Valores do SurvivalComponent)
+# 9. Sobrevivência (Valores do SurvivalComponent)
 
 | Parâmetro | Valor Máximo | Taxa de Variação (Por Minuto de Jogo) | Efeito ao Esgotar |
 |---|---:|---:|---|

@@ -26,13 +26,13 @@
 
 # 1. SPRINT ATUAL
 
-**Sprint:** Sprint 8 — Engine de Profissões e Maestria (Fase 2)
+**Sprint:** Sprint 9 — Economia Dinâmica e Cálculo de Preços (Fase 2)
 
-**Objetivo:** Criar a estrutura base do `ProfessionService`, o recurso `ProfessionDefinition` para até 17 profissões e o estado runtime `ProfessionState` com 5 Tiers de progressão (1–100 XP por Tier).
+**Objetivo:** Implementar o `PricingService` para calcular preços flutuantes baseados na fórmula oficial (Oferta/Demanda, Reputação, Impostos) e a classe `MarketDefinition`, com testes unitários aprovados.
 
 | ID | Tarefa | Tipo | Prioridade | Sprint | Dependência | Status | Critério de aceitação |
 |---|---|---|---|---|---|---|---|
-| TASK-201 | Engine de Profissões e Maestria | Systems | P1 | 8 | TASK-112 | DONE | Criar o ProfessionService, ProfessionDefinition e ProfessionState com suporte a 5 Tiers e testes unitários aprovados. |
+| TASK-202 | Economia Dinâmica e Cálculo de Preços | Economy | P1 | 9 | TASK-201 | DONE | Criar o PricingService, MarketDefinition e test_pricing_system.gd com 100% de sucesso nos testes unitários. |
 
 ---
 
@@ -41,7 +41,7 @@
 | ID | Tarefa | Tipo | Prioridade | Dependência | Status |
 |---|---|---|---|---|---|
 | TASK-201 | Engine de Profissões e Maestria | Systems | P1 | TASK-112 | DONE |
-| TASK-202 | Economia Dinâmica e Cálculo de Preços | Economy | P1 | TASK-201 | TODO |
+| TASK-202 | Economia Dinâmica e Cálculo de Preços | Economy | P1 | TASK-201 | DONE |
 | TASK-203 | Reputação Multidimensional e Facções | Social | P1 | TASK-202 | TODO |
 | TASK-204 | World Streaming e Simulação Offline | World | P1 | TASK-203 | TODO |
 
@@ -165,12 +165,16 @@ Uma tarefa somente pode ser marcada como `DONE` quando:
 **Objetivo:** Implementar o `ProfessionService`, o Resource `ProfessionDefinition` e a classe `ProfessionState` para suportar 17 profissões em 5 Tiers.  
 **Resultado:** CONCLUÍDA COM SUCESSO. TASK-201 validada com a execução de `test_profession_system.gd` e retorno `[TEST PASSED]` no Output!
 
+## Sprint 9 — Economia Dinâmica e Cálculo de Preços (Fase 2)
+**Objetivo:** Implementar o `PricingService` e `MarketDefinition` para calcular flutuações de preços baseados em oferta/demanda, reputação e impostos.  
+**Resultado:** CONCLUÍDA COM SUCESSO. TASK-202 validada com a execução de `test_pricing_system.gd` e retorno `[TEST PASSED]` no Output!
+
 ---
 
 # 11. PRÓXIMA TAREFA
 
-**ID:** TASK-202
+**ID:** TASK-203
 
-**Tarefa:** Economia Dinâmica e Cálculo de Preços (`PricingService`).
+**Tarefa:** Reputação Multidimensional e Facções (`FactionService`).
 
-**Motivo da prioridade:** Implementar a precificação flutuante baseada em oferta, demanda, reputação e estação para o ecossistema comercial da Fase 2.
+**Motivo da prioridade:** Estender o sistema social para suportar as 4 grandes facções do GDD e rastrear reputações multidimensionais com vilarejos e religiões.

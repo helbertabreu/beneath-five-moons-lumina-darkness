@@ -28,7 +28,7 @@ Sistemas do jogo precisam se comunicar de forma desacoplada sem que tudo se torn
 
 ### Decisão
 
-Utilizar o `ServiceRegistry` como nó central de registro e obtenção de serviços do sistema no Boot (`TimeService`, `SaveService`, `InventoryService`, `LightingService`, `QuestService`, `ProfessionService`).
+Utilizar o `ServiceRegistry` como nó central de registro e obtenção de serviços do sistema no Boot (`TimeService`, `SaveService`, `InventoryService`, `LightingService`, `QuestService`, `ProfessionService`, `PricingService`).
 
 ---
 
@@ -157,3 +157,19 @@ A Fase 2 do projeto exige a expansão do sistema para suportar 17 profissões co
 ### Decisão
 
 Criar a arquitetura genérica composta por `ProfessionDefinition` (Resource estático com requisitos e bônus), `ProfessionState` (RefCounted mutável com cálculo de XP/Tier) e `ProfessionService` (Gerenciador global registrado no `ServiceRegistry`).
+
+---
+
+## ADR-016 — Precificação Flutuante e Clamps de Economia Dinâmica
+
+**Data:** 2026-08-21
+
+**Status:** ATIVA
+
+### Contexto
+
+A TASK-202 exigia um serviço de preços capaz de calcular dinamicamente valores de compra e venda de itens variando por oferta, demanda, reputação e impostos locais, evitando desequilíbrios na economia.
+
+### Decisão
+
+Criar o `PricingService` (registrado no `ServiceRegistry`) consumindo a definição `MarketDefinition`. O preço final aplica a fórmula oficial do GDD/BALANCE, travando multiplicadores finais no intervalo estrito de `0.25x` a `3.00x` (Clamps de segurança) e atribuindo a margem fixa de 60% para vendas do jogador.
