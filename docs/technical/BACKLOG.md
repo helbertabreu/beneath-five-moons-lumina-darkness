@@ -49,9 +49,9 @@
 
 | ID | Tarefa | Tipo | Prioridade | Sprint | Dependência | Status | Critério de aceitação |
 |---|---|---|---|---|---|---|---|
-| TASK-101 | Input Map Semântico 2D | Technical | P1 | 2 | TASK-005 | IN PROGRESS | Configurar no `project.godot` ações de movimento, corrida e uso de luz. |
-| TASK-102 | Player `CharacterBody2D` & `MovementComponent2D` | Gameplay | P1 | 2 | TASK-101 | TODO | Personagem se movimenta suavemente em 8 direções usando vetores semânticos. |
-| TASK-103 | Câmera 2D & Mapeamento de Foco | Gameplay | P1 | 2 | TASK-102 | TODO | `Camera2D` segue o jogador com suavização (smoothing) configurada. |
+| TASK-101 | Input Map Semântico 2D | Technical | P1 | 2 | TASK-005 | DONE | Configurar no `project.godot` ações de movimento, corrida e uso de luz. |
+| TASK-102 | Player `CharacterBody2D` & `MovementComponent2D` | Gameplay | P1 | 2 | TASK-101 | DONE | Personagem se movimenta suavemente em 8 direções usando vetores semânticos. |
+| TASK-103 | Câmera 2D & Mapeamento de Foco | Gameplay | P1 | 2 | TASK-102 | IN PROGRESS | `Camera2D` segue o jogador com suavização (smoothing) configurada. |
 
 ---
 
@@ -59,9 +59,9 @@
 
 | ID | Tarefa | Tipo | Prioridade | Dependência | Status |
 |---|---|---|---|---|---|
-| TASK-101 | Input Map Semântico 2D | Technical | P1 | TASK-005 | IN PROGRESS |
-| TASK-102 | Player `CharacterBody2D` & `MovementComponent2D` | Gameplay | P1 | TASK-101 | TODO |
-| TASK-103 | Câmera 2D & Mapeamento de Foco | Gameplay | P1 | TASK-102 | TODO |
+| TASK-101 | Input Map Semântico 2D | Technical | P1 | TASK-005 | DONE |
+| TASK-102 | Player `CharacterBody2D` & `MovementComponent2D` | Gameplay | P1 | TASK-101 | DONE |
+| TASK-103 | Câmera 2D & Mapeamento de Foco | Gameplay | P1 | TASK-102 | IN PROGRESS |
 | TASK-104 | `SurvivalComponent` (6 Necessidades) | Gameplay | P1 | TASK-102 | TODO |
 | TASK-105 | Sistema de Interação 2D (`Area2D` / `IInteractable`) | Gameplay | P1 | TASK-102 | TODO |
 | TASK-106 | Engine de Inventário & Instância de Itens | Gameplay | P1 | TASK-105 | TODO |
@@ -70,7 +70,7 @@
 | TASK-109 | Iluminação 2D (`PointLight2D` & `LightingContext`) | Gameplay | P1 | TASK-102 | TODO |
 | TASK-110 | Combate 2D Base & Inimigo Sensível à Luz | Gameplay | P1 | TASK-109 | TODO |
 | TASK-111 | NPC Ferreiro, Diálogo & Quest 01 | Social | P1 | TASK-105 | TODO |
-| TASK-112 | Integração da Gameplay Vertical Slice 2D | Integration | P1 | TASK-111 | TODO |
+| TASK-112 | Integração da Gameplay Vertical Slice 2D | Integration | P1 | TASK-110 | TODO |
 
 ---
 
@@ -136,14 +136,14 @@ Uma tarefa somente pode ser marcada como `DONE` quando:
 
 **Objetivo:** Criar a estrutura do jogador 2D, capturar entradas semânticas e permitir movimentação fluida.
 
-**Resultado:** EM ANDAMENTO.
+**Resultado:** EM ANDAMENTO. Passos 2.1 e 2.2 concluídos.
 
 ---
 
 # 9. PRÓXIMA TAREFA
 
-**ID:** TASK-101
+**ID:** TASK-103
 
-**Tarefa:** Mapear o Input Map Semântico 2D no Godot.
+**Tarefa:** Adicionar a Câmera 2D com suavização de movimento no Player.
 
-**Motivo da prioridade:** Bloqueador técnico para o Player 2D (P1).
+**Motivo da prioridade:** Necessário para permitir a navegação de tela do jogador em mapas maiores.

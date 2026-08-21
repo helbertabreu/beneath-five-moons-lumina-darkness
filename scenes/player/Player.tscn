@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://duyntvwy6j8ny"]
+
+[ext_resource type="Script" uid="uid://c53uga4plpv2k" path="res://gameplay/player/player.gd" id="1_gfjak"]
+[ext_resource type="Script" uid="uid://2ky5ybig80kr" path="res://gameplay/movement/movement_component_2d.gd" id="2_4kuee"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_u0ya7"]
+height = 26.0
+
+[node name="Player" type="CharacterBody2D" unique_id=1981674000]
+script = ExtResource("1_gfjak")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=841967533]
+shape = SubResource("CapsuleShape2D_u0ya7")
+
+[node name="MovementComponent2D" type="Node" parent="." unique_id=1959095382]
+script = ExtResource("2_4kuee")
+
+[node name="PlaceholderVisual" type="ColorRect" parent="." unique_id=1053711842]
+anchors_preset = -1
+offset_left = -10.0
+offset_top = -14.0
+offset_right = 10.0
+offset_bottom = 14.0
+color = Color(0.047058824, 0.011764706, 1, 1)
