@@ -27,10 +27,6 @@ func save_game(slot_name: String = "save_slot_1") -> bool:
 	
 	_ensure_save_directory_exists()
 	
-	var file_path: String = SAVES_DIR + slot_name + ".json"
-	var temp_path: String = file_path + ".tmp"
-	var backup_path: String = file_path + ".bak"
-	
 	# Sincroniza dados do TimeService se estiver ativo
 	if ServiceRegistry and ServiceRegistry.has_service(&"TimeService"):
 		var time_svc = ServiceRegistry.get_service(&"TimeService")
@@ -39,7 +35,18 @@ func save_game(slot_name: String = "save_slot_1") -> bool:
 		current_state.current_minute = time_svc.current_minute
 	
 	var save_dict: Dictionary = current_state.serialize()
-	var json_string: String = JSON.stringify(save_dict, "\t")
+	return save_game_data(save_dict, slot_name)
+
+
+## Salva um dicionário arbitrário de dados de save de forma atômica em disco.
+func save_game_data(payload: Dictionary, slot_name: String = "save_slot_1") -> bool:
+	_ensure_save_directory_exists()
+	
+	var file_path: String = SAVES_DIR + slot_name + ".json"
+	var temp_path: String = file_path + ".tmp"
+	var backup_path: String = file_path + ".bak"
+	
+	var json_string: String = JSON.stringify(payload, "\t")
 	
 	# Gravação em arquivo temporário
 	var file = FileAccess.open(temp_path, FileAccess.WRITE)
@@ -78,29 +85,8 @@ func load_game(slot_name: String = "save_slot_1") -> bool:
 	if EventBus:
 		EventBus.load_started.emit(slot_name)
 	
-	var file_path: String = SAVES_DIR + slot_name + ".json"
-	
-	if not FileAccess.file_exists(file_path):
-		push_warning("SaveService: Arquivo de save não encontrado: %s" % file_path)
-		return false
-	
-	var file = FileAccess.open(file_path, FileAccess.READ)
-	if not file:
-		push_error("SaveService: Erro ao abrir arquivo de save para leitura: %s" % file_path)
-		return false
-	
-	var content: String = file.get_as_text()
-	file.close()
-	
-	var json = JSON.new()
-	var parse_result = json.parse(content)
-	if parse_result != OK:
-		push_error("SaveService: Erro ao interpretar JSON de save: %s" % json.get_error_message())
-		return false
-	
-	var data = json.get_data()
-	if not (data is Dictionary):
-		push_error("SaveService: Estrutura do JSON é inválida (Esperado Dicionário).")
+	var data = load_game_data(slot_name)
+	if data.is_empty():
 		return false
 	
 	var new_state = GameStateData.new()
@@ -121,3 +107,33 @@ func load_game(slot_name: String = "save_slot_1") -> bool:
 	if EventBus:
 		EventBus.load_completed.emit(slot_name)
 	return true
+
+
+## Carrega e retorna o Dicionário de dados salvos de um slot JSON.
+func load_game_data(slot_name: String = "save_slot_1") -> Dictionary:
+	var file_path: String = SAVES_DIR + slot_name + ".json"
+	
+	if not FileAccess.file_exists(file_path):
+		push_warning("SaveService: Arquivo de save não encontrado: %s" % file_path)
+		return {}
+	
+	var file = FileAccess.open(file_path, FileAccess.READ)
+	if not file:
+		push_error("SaveService: Erro ao abrir arquivo de save para leitura: %s" % file_path)
+		return {}
+	
+	var content: String = file.get_as_text()
+	file.close()
+	
+	var json = JSON.new()
+	var parse_result = json.parse(content)
+	if parse_result != OK:
+		push_error("SaveService: Erro ao interpretar JSON de save: %s" % json.get_error_message())
+		return {}
+	
+	var data = json.get_data()
+	if not (data is Dictionary):
+		push_error("SaveService: Estrutura do JSON é inválida (Esperado Dicionário).")
+		return {}
+		
+	return data

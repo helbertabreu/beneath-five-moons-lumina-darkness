@@ -26,14 +26,13 @@
 
 # 1. SPRINT ATUAL
 
-**Sprint:** Sprint 5 — Lighting System & Basic Combat 2D
+**Sprint:** Sprint 7 — Integration & Vertical Slice Consolidation
 
-**Objetivo:** Implementar o sistema de iluminação sistêmica (`PointLight2D` e `LightingContext`) e o combate base 2D contra o primeiro inimigo sensível à luz (Lobo Esfomeado/Inimigo Sombrio).
+**Objetivo:** Consolidar a integração da Vertical Slice 2D, validar os testes de regressão/persistência de todo o ciclo (Coleta -> Crafting -> Combate -> Quests -> Save/Load) e garantir o estado estável da versão 1.0 do MVP.
 
 | ID | Tarefa | Tipo | Prioridade | Sprint | Dependência | Status | Critério de aceitação |
 |---|---|---|---|---|---|---|---|
-| TASK-109 | Iluminação 2D (`PointLight2D` & `LightingContext`) | Gameplay | P1 | 5 | TASK-102 | DONE | Criar iluminação dinâmica portátil/ambiente e propagar `LightingContext` (0.0 a 1.0) para gameplay. |
-| TASK-110 | Combate 2D Base & Inimigo Sensível à Luz | Gameplay | P1 | 5 | TASK-109 | TODO | Criar máquina de estados de combate 2D com `IDamageable` e inimigo reagindo à luz. |
+| TASK-112 | Integração da Gameplay Vertical Slice 2D | Integration | P1 | 7 | TASK-111 | DONE | Consolidar o ciclo completo do MVP, validar persistência via Save/Load e suíte de testes de integração. |
 
 ---
 
@@ -50,9 +49,9 @@
 | TASK-107 | Coleta de Recurso (Mina de Ferro 2D) | Gameplay | P1 | TASK-106 | DONE |
 | TASK-108 | Estação de Crafting & Profissão Ferreiro | Gameplay | P1 | TASK-107 | DONE |
 | TASK-109 | Iluminação 2D (`PointLight2D` & `LightingContext`) | Gameplay | P1 | TASK-102 | DONE |
-| TASK-110 | Combate 2D Base & Inimigo Sensível à Luz | Gameplay | P1 | TASK-109 | TODO |
-| TASK-111 | NPC Ferreiro, Diálogo & Quest 01 | Social | P1 | TASK-105 | TODO |
-| TASK-112 | Integração da Gameplay Vertical Slice 2D | Integration | P1 | TASK-110 | TODO |
+| TASK-110 | Combate 2D Base & Inimigo Sensível à Luz | Gameplay | P1 | TASK-109 | DONE |
+| TASK-111 | NPC Ferreiro, Diálogo & Quest 01 | Social | P1 | TASK-105 | DONE |
+| TASK-112 | Integração da Gameplay Vertical Slice 2D | Integration | P1 | TASK-110 | DONE |
 
 ---
 
@@ -151,16 +150,28 @@ Uma tarefa somente pode ser marcada como `DONE` quando:
 
 ## Sprint 5 — Lighting System & Basic Combat 2D
 
-**Objetivo:** Criar o modelo e serviço de iluminação 2D sistêmica e o combate base 2D.
+**Objetivo:** Criar o modelo e serviço de iluminação 2D sistêmica e o combate base 2D reativo à luz.
 
-**Resultado:** EM ANDAMENTO. TASK-109 validada com sucesso via tecla F e logs de alternância de iluminação.
+**Resultado:** CONCLUÍDA COM SUCESSO. TASK-109 e TASK-110 testadas e validadas no Output com o combate e sensibilidade do Lobo à luz!
+
+## Sprint 6 — NPC Ferreiro, Sistema de Diálogos & Quest 01
+
+**Objetivo:** Criar o NPC Ferreiro (Gorn), o modelo de diálogos, o serviço de quests e o fluxo da Quest 01.
+
+**Resultado:** CONCLUÍDA COM SUCESSO. TASK-111 validada com aceite, cobrança, entrega e recompensas no Output!
+
+## Sprint 7 — Integration & Vertical Slice Consolidation
+
+**Objetivo:** Consolidar a integração da Vertical Slice 2D, validar os testes de regressão/persistência de todo o ciclo (Coleta -> Crafting -> Combate -> Quests -> Save/Load) e garantir o estado estável da versão 1.0 do MVP.
+
+**Resultado:** CONCLUÍDA COM SUCESSO. TASK-112 validada com execução da suíte de teste de integração e persistência com 100% de sucesso!
 
 ---
 
 # 10. PRÓXIMA TAREFA
 
-**ID:** TASK-110
+**ID:** MVP-V1-COMPLETE
 
-**Tarefa:** Combate 2D Base & Inimigo Sensível à Luz.
+**Tarefa:** MVP 1.0 Finalizado. Pronto para planejamento da expansão Pós-MVP (ou Polimento de Ilhas Bioluminescentes POLISH-001).
 
-**Motivo da prioridade:** Utilizar a iluminação recém-criada na TASK-109 para implementar o combate com `IDamageable` contra o primeiro inimigo (Lobo Esfomeado) que reage enfraquecendo na presença de luz.
+**Motivo da prioridade:** Todas as tarefas do escopo do MVP foram concluídas e validadas com sucesso.

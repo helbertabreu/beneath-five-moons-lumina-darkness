@@ -1,9 +1,9 @@
 # Beneath Five Moons — Balance Database
 ## Planilha de Balanceamento em Markdown
 
-**Versão:** 1.2.0  
-**Status:** Atualizado com a Engine de Inventário e Custos de Ação da Sprint 4  
-**Fonte:** GDD e definições do InventoryService / SurvivalComponent  
+**Versão:** 1.4.0  
+**Status:** Atualizado com Parâmetros de Quests, Diálogos e Recompensas da Sprint 6  
+**Fonte:** GDD e definições do QuestService / InventoryService / SurvivalComponent  
 
 ---
 
@@ -14,10 +14,20 @@
 | 1.0.0 | 2026-08-18 | Equipe de Desenvolvimento | Base inicial para expansão |
 | 1.1.0 | 2026-08-20 | Tech Lead | Atualização das taxas do SurvivalComponent |
 | 1.2.0 | 2026-08-21 | Tech Lead | Adicionados parâmetros da TASK-106 e custos da TASK-107/108 |
+| 1.3.0 | 2026-08-21 | Tech Lead | Adicionados parâmetros da TASK-109 e valores de combate da TASK-110 |
+| 1.4.0 | 2026-08-21 | Tech Lead | Adicionadas recompensas da Quest 01 e tabela de quests |
 
 ---
 
-# 2. Itens
+# 2. Quests & Recompensas
+
+| ID | Nome da Quest | Tipo | Requisito de Item | Recompensa em Moedas | Recompensa em Reputação Local | XP Recompensa |
+|---|---|---|---|---:|---:|---:|
+| QUEST-001 | A Providência do Ferro | Local | 1x Lingote de Ferro (`item.material.iron_ingot`) | 100 Moedas | +50.0 (Vilarejo Inicial) | +100.0 XP |
+
+---
+
+# 3. Itens
 
 | ID | Nome | Tipo | Custo Base | Atributo | Multiplicador Resource | Stack Máximo | Status |
 |---|---|---|---:|---|---:|---:|---|
@@ -36,7 +46,16 @@
 
 ---
 
-# 3. Custos de Ações de Gameplay (Energy & Survival)
+# 4. Combate & Inimigos
+
+| ID | Entidade / Inimigo | HP | Dano Base Melee | Multiplicador em Penumbra | Multiplicador sob Luz Plena (>= 0.70) | XP Recompensa |
+|---|---|---:|---:|---:|---:|---:|
+| PLR-001 | Player (Ataque Básico) | 100.0 | 15.0 | 1.0x | 1.0x | N/A |
+| ENM-001 | Lobo Esfomeado (`hungry_wolf_node.gd`) | 40.0 | 12.0 | 1.0x | 2.0x (Dano Recebido Dobrado) | +50.0 XP |
+
+---
+
+# 5. Custos de Ações de Gameplay (Energy & Survival)
 
 | Ação | Custo de Energia | Custo de Fome | Quantidade de Recurso Gerada | XP de Profissão | Cooldown |
 |---|---:|---:|---:|---:|---:|
@@ -46,7 +65,7 @@
 
 ---
 
-# 4. Sobrevivência (Valores do SurvivalComponent)
+# 6. Sobrevivência (Valores do SurvivalComponent)
 
 | Parâmetro | Valor Máximo | Taxa de Variação (Por Minuto de Jogo) | Efeito ao Esgotar |
 |---|---:|---:|---|

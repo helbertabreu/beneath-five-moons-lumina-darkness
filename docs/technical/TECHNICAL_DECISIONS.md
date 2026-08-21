@@ -28,7 +28,7 @@ Sistemas do jogo precisam se comunicar de forma desacoplada sem que tudo se torn
 
 ### Decisão
 
-Utilizar o `ServiceRegistry` como nó central de registro e obtenção de serviços do sistema no Boot (`TimeService`, `SaveService`, `InventoryService`, `LightingService`).
+Utilizar o `ServiceRegistry` como nó central de registro e obtenção de serviços do sistema no Boot (`TimeService`, `SaveService`, `InventoryService`, `LightingService`, `QuestService`).
 
 ---
 
@@ -93,3 +93,35 @@ A TASK-109 exigia um sistema de luz que alterasse os estados de visibilidade sem
 ### Decisão
 
 Criar o `LightingContext` (objeto `RefCounted` com normalização de 0.0 a 1.0) e o `LightingService` global. A iluminação transmite alterações categorizadas via `EventBus` (`LightLevelChanged`), permitindo que criaturas e mecânicas de sobrevivência consumam o nível de luz sem acoplamento direto com os nós de luz.
+
+---
+
+## ADR-012 — Sistema de Combate Action 2D e Sensibilidade à Luz (`IDamageable`)
+
+**Data:** 2026-08-21
+
+**Status:** ATIVA
+
+### Contexto
+
+A TASK-110 exigia a implementação do combate 2D melee e do primeiro inimigo (Lobo Esfomeado) reativo ao nível de luz, sem acoplar o Player diretamente à classe do inimigo.
+
+### Decisão
+
+Implementar o `DamageContext` (dados da intenção de dano) e delegar a recepção ao contrato `receive_damage` no nó do inimigo. O inimigo consulta o `LightingService` no momento do impacto e aplica modificadores defensivos (dobrando o dano recebido caso exposto à Luz Plena).
+
+---
+
+## ADR-013 — Sistema de Quests Transacionais e Recompensas SOCIAIS/FINANCEIRAS
+
+**Data:** 2026-08-21
+
+**Status:** ATIVA
+
+### Contexto
+
+A TASK-111 exigia um sistema de missões orientado a dados (`QuestDefinition`) e um runtime de controle (`QuestService`) capaz de validar inventários antes da entrega.
+
+### Decisão
+
+Implementar o `QuestService` registrado no `ServiceRegistry`. NPCs avaliam o estado da Quest de forma transacional, consumindo itens requeridos do `InventoryService`, emitindo alterações de reputação via `EventBus` e concedendo moedas sem acoplamento rígido.
