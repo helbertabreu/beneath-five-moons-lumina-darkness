@@ -28,7 +28,7 @@ Sistemas do jogo precisam se comunicar de forma desacoplada sem que tudo se torn
 
 ### Decisão
 
-Utilizar o `ServiceRegistry` como nó central de registro e obtenção de serviços do sistema no Boot (`TimeService`, `SaveService`, `InventoryService`, `LightingService`, `QuestService`).
+Utilizar o `ServiceRegistry` como nó central de registro e obtenção de serviços do sistema no Boot (`TimeService`, `SaveService`, `InventoryService`, `LightingService`, `QuestService`, `ProfessionService`).
 
 ---
 
@@ -125,3 +125,35 @@ A TASK-111 exigia um sistema de missões orientado a dados (`QuestDefinition`) e
 ### Decisão
 
 Implementar o `QuestService` registrado no `ServiceRegistry`. NPCs avaliam o estado da Quest de forma transacional, consumindo itens requeridos do `InventoryService`, emitindo alterações de reputação via `EventBus` e concedendo moedas sem acoplamento rígido.
+
+---
+
+## ADR-014 — Suporte a Save/Load Payload Genérico no SaveService
+
+**Data:** 2026-08-21
+
+**Status:** ATIVA
+
+### Contexto
+
+A suíte de testes de integração da Vertical Slice (TASK-112) precisava validar o ciclo atômico de gravação e leitura em disco de dicionários de estado arbitrários do jogo sem desacoplar do objeto `GameStateData`.
+
+### Decisão
+
+Expandir a API pública do `SaveService.gd` adicionando os métodos `save_game_data(payload: Dictionary, slot_name: String)` e `load_game_data(slot_name: String) -> Dictionary`, fazendo com que os métodos de alto nível `save_game()` e `load_game()` consumam essas rotinas utilitárias.
+
+---
+
+## ADR-015 — Engine de Profissões e Maestria Desacoplada (Fase 2)
+
+**Data:** 2026-08-21
+
+**Status:** ATIVA
+
+### Contexto
+
+A Fase 2 do projeto exige a expansão do sistema para suportar 17 profissões com 5 Tiers de Maestria (1–100 XP por Tier) sem duplicar código para cada profissão concreta.
+
+### Decisão
+
+Criar a arquitetura genérica composta por `ProfessionDefinition` (Resource estático com requisitos e bônus), `ProfessionState` (RefCounted mutável com cálculo de XP/Tier) e `ProfessionService` (Gerenciador global registrado no `ServiceRegistry`).

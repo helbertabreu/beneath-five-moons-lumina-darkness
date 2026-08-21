@@ -1,11 +1,13 @@
 ## boot.gd
 ## Script anexado à cena principal de Boot (Boot.tscn).
-## Instancia serviços, executa a validação de integração e instancia todas as entidades da Vertical Slice.
+## Instancia serviços, executa validações de infraestrutura, integração e profissões, e instancia as entidades do mundo.
 
 extends Node2D
 
 const TestRunner = preload("res://tests/test_core_infrastructure.gd")
 const IntegrationTestRunner = preload("res://tests/test_vertical_slice_integration.gd")
+const ProfessionTestRunner = preload("res://tests/test_profession_system.gd")
+
 const PlayerScene = preload("res://scenes/player/Player.tscn")
 const TestChestScript = preload("res://entities/interactables/test_chest.gd")
 const IronMineScript = preload("res://entities/resources/iron_mine_node.gd")
@@ -15,11 +17,13 @@ const LightingServiceScript = preload("res://world/lighting/lighting_service.gd"
 const HungryWolfScript = preload("res://entities/enemies/hungry_wolf_node.gd")
 const QuestServiceScript = preload("res://quests/runtime/quest_service.gd")
 const BlacksmithNPCScript = preload("res://entities/npc/blacksmith_npc_node.gd")
+const ProfessionServiceScript = preload("res://progression/professions/profession_service.gd")
 
 var _player_instance: CharacterBody2D = null
 var _inventory_service: Node = null
 var _lighting_service: Node = null
 var _quest_service: Node = null
+var _profession_service: Node = null
 
 
 func _ready() -> void:
@@ -30,14 +34,14 @@ func _ready() -> void:
 	
 	_setup_services()
 	
-	var tests_passed = _run_bootstrap_and_integration_tests()
+	var tests_passed = _run_bootstrap_and_profession_tests()
 	
 	if tests_passed:
 		_setup_environment_lighting()
 		_spawn_test_environment()
 
 
-func _run_bootstrap_and_integration_tests() -> bool:
+func _run_bootstrap_and_profession_tests() -> bool:
 	# 1. Executa Teste da Infraestrutura Base
 	var infra_runner = TestRunner.new()
 	var infra_ok = infra_runner.run_all_tests()
@@ -46,11 +50,15 @@ func _run_bootstrap_and_integration_tests() -> bool:
 	var integration_runner = IntegrationTestRunner.new()
 	var integration_ok = integration_runner.run_vertical_slice_tests()
 	
-	if infra_ok and integration_ok:
-		print("[Boot] INTEGRALMENTE VALIDADO: Infraestrutura e Vertical Slice 2D 100% Funcionais!")
+	# 3. Executa Teste da Engine de Profissões (Sprint 8 / TASK-201)
+	var profession_runner = ProfessionTestRunner.new()
+	var profession_ok = profession_runner.run_profession_tests()
+	
+	if infra_ok and integration_ok and profession_ok:
+		print("[Boot] INTEGRALMENTE VALIDADO: Infraestrutura, Persistência e Engine de Profissões 100% Funcionais!")
 		return true
 	else:
-		push_error("[Boot] ERRO CRÍTICO NOS TESTES DE INTEGRAÇÃO!")
+		push_error("[Boot] ERRO CRÍTICO NOS TESTES DE UNIDADE OU INTEGRAÇÃO!")
 		return false
 
 
@@ -69,6 +77,11 @@ func _setup_services() -> void:
 	_quest_service = QuestServiceScript.new()
 	_quest_service.name = "QuestService"
 	add_child(_quest_service)
+	
+	# 4. ProfessionService (Sprint 8 / TASK-201)
+	_profession_service = ProfessionServiceScript.new()
+	_profession_service.name = "ProfessionService"
+	add_child(_profession_service)
 
 
 func _setup_environment_lighting() -> void:
@@ -93,35 +106,35 @@ func _spawn_test_environment() -> void:
 		add_child(_player_instance)
 		print("[Boot] Player 2D instanciado na posição: ", _player_instance.position)
 	
-	# 2. Baú de Teste (Direita distante)
+	# 2. Baú de Teste
 	var chest = Area2D.new()
 	chest.set_script(TestChestScript)
 	chest.name = "TestChest"
 	chest.position = center_pos + Vector2(70, 0)
 	add_child(chest)
 	
-	# 3. Mina de Ferro (Esquerda)
+	# 3. Mina de Ferro
 	var iron_mine = Area2D.new()
 	iron_mine.set_script(IronMineScript)
 	iron_mine.name = "IronMine"
 	iron_mine.position = center_pos + Vector2(-30, 0)
 	add_child(iron_mine)
 	
-	# 4. Forja de Ferreiro (Cima)
+	# 4. Forja de Ferreiro
 	var forge = Area2D.new()
 	forge.set_script(ForgeNodeScript)
 	forge.name = "ForgeNode"
 	forge.position = center_pos + Vector2(0, -30)
 	add_child(forge)
 	
-	# 5. Lobo Esfomeado (Baixo)
+	# 5. Lobo Esfomeado
 	var wolf = Area2D.new()
 	wolf.set_script(HungryWolfScript)
 	wolf.name = "HungryWolf"
 	wolf.position = center_pos + Vector2(0, 40)
 	add_child(wolf)
 	
-	# 6. NPC Ferreiro Gorn (Direita)
+	# 6. NPC Ferreiro Gorn
 	var npc_gorn = Area2D.new()
 	npc_gorn.set_script(BlacksmithNPCScript)
 	npc_gorn.name = "BlacksmithNPC"
