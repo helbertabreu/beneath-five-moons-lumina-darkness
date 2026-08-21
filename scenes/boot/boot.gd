@@ -1,6 +1,6 @@
 ## boot.gd
 ## Script anexado à cena principal de Boot (Boot.tscn).
-## Executa a validação de inicialização e instancia o Player, Baú, Mina de Ferro, Forja e o InventoryService.
+## Executa a validação de inicialização e instancia serviços, Player, Baú, Mina de Ferro, Forja e Iluminação.
 
 extends Node2D
 
@@ -10,9 +10,11 @@ const TestChestScript = preload("res://entities/interactables/test_chest.gd")
 const IronMineScript = preload("res://entities/resources/iron_mine_node.gd")
 const ForgeNodeScript = preload("res://entities/interactables/forge_node.gd")
 const InventoryServiceScript = preload("res://inventory/inventory_service.gd")
+const LightingServiceScript = preload("res://world/lighting/lighting_service.gd")
 
 var _player_instance: CharacterBody2D = null
 var _inventory_service: Node = null
+var _lighting_service: Node = null
 
 
 func _ready() -> void:
@@ -26,6 +28,7 @@ func _ready() -> void:
 	
 	if tests_passed:
 		_setup_services()
+		_setup_environment_lighting()
 		_spawn_test_environment()
 
 
@@ -34,7 +37,7 @@ func _run_bootstrap_tests() -> bool:
 	var test_result = runner.run_all_tests()
 	
 	if test_result:
-		print("[Boot] Infraestrutura Validada com Sucesso! Projeto pronto para a Sprint 4.")
+		print("[Boot] Infraestrutura Validada com Sucesso! Projeto pronto para a Sprint 5.")
 		return true
 	else:
 		push_error("[Boot] ERRO CRÍTICO DE INFRAESTRUTURA: Verifique o Output de mensagens.")
@@ -42,10 +45,23 @@ func _run_bootstrap_tests() -> bool:
 
 
 func _setup_services() -> void:
-	# Instancia o InventoryService no Boot caso não exista
+	# 1. Instancia o InventoryService
 	_inventory_service = InventoryServiceScript.new()
 	_inventory_service.name = "InventoryService"
 	add_child(_inventory_service)
+	
+	# 2. Instancia o LightingService
+	_lighting_service = LightingServiceScript.new()
+	_lighting_service.name = "LightingService"
+	add_child(_lighting_service)
+
+
+## Adiciona Penumbra Ambiental ao mapa de testes usando CanvasModulate
+func _setup_environment_lighting() -> void:
+	var canvas_modulate = CanvasModulate.new()
+	canvas_modulate.name = "AmbientDarkness"
+	canvas_modulate.color = Color(0.25, 0.25, 0.35, 1.0) # Penumbra Azulada
+	add_child(canvas_modulate)
 
 
 ## Instancia o Player 2D e todos os elementos de teste no ambiente da Vertical Slice
@@ -70,7 +86,6 @@ func _spawn_test_environment() -> void:
 	chest.name = "TestChest"
 	chest.position = center_pos + Vector2(30, 0)
 	add_child(chest)
-	print("[Boot] Baú de Teste instanciado na posição: ", chest.position)
 	
 	# 3. Instancia a Mina de Ferro 30px à esquerda do jogador
 	var iron_mine = Area2D.new()
@@ -78,7 +93,6 @@ func _spawn_test_environment() -> void:
 	iron_mine.name = "IronMine"
 	iron_mine.position = center_pos + Vector2(-30, 0)
 	add_child(iron_mine)
-	print("[Boot] Mina de Ferro instanciada na posição: ", iron_mine.position)
 	
 	# 4. Instancia a Forja de Ferreiro 30px acima do jogador
 	var forge = Area2D.new()
@@ -86,4 +100,3 @@ func _spawn_test_environment() -> void:
 	forge.name = "ForgeNode"
 	forge.position = center_pos + Vector2(0, -30)
 	add_child(forge)
-	print("[Boot] Forja de Ferreiro instanciada na posição: ", forge.position)

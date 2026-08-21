@@ -32,7 +32,7 @@
 
 | ID | Tarefa | Tipo | Prioridade | Sprint | Dependência | Status | Critério de aceitação |
 |---|---|---|---|---|---|---|---|
-| TASK-109 | Iluminação 2D (`PointLight2D` & `LightingContext`) | Gameplay | P1 | 5 | TASK-102 | TODO | Criar iluminação dinâmica portátil/ambiente e propagar `LightingContext` (0.0 a 1.0) para gameplay. |
+| TASK-109 | Iluminação 2D (`PointLight2D` & `LightingContext`) | Gameplay | P1 | 5 | TASK-102 | DONE | Criar iluminação dinâmica portátil/ambiente e propagar `LightingContext` (0.0 a 1.0) para gameplay. |
 | TASK-110 | Combate 2D Base & Inimigo Sensível à Luz | Gameplay | P1 | 5 | TASK-109 | TODO | Criar máquina de estados de combate 2D com `IDamageable` e inimigo reagindo à luz. |
 
 ---
@@ -49,7 +49,7 @@
 | TASK-106 | Engine de Inventário & Instância de Itens | Gameplay | P1 | TASK-105 | DONE |
 | TASK-107 | Coleta de Recurso (Mina de Ferro 2D) | Gameplay | P1 | TASK-106 | DONE |
 | TASK-108 | Estação de Crafting & Profissão Ferreiro | Gameplay | P1 | TASK-107 | DONE |
-| TASK-109 | Iluminação 2D (`PointLight2D` & `LightingContext`) | Gameplay | P1 | TASK-102 | TODO |
+| TASK-109 | Iluminação 2D (`PointLight2D` & `LightingContext`) | Gameplay | P1 | TASK-102 | DONE |
 | TASK-110 | Combate 2D Base & Inimigo Sensível à Luz | Gameplay | P1 | TASK-109 | TODO |
 | TASK-111 | NPC Ferreiro, Diálogo & Quest 01 | Social | P1 | TASK-105 | TODO |
 | TASK-112 | Integração da Gameplay Vertical Slice 2D | Integration | P1 | TASK-110 | TODO |
@@ -149,12 +149,18 @@ Uma tarefa somente pode ser marcada como `DONE` quando:
 
 **Resultado:** CONCLUÍDA COM SUCESSO. TASK-106, TASK-107 e TASK-108 testadas e validadas no Output com sucesso!
 
+## Sprint 5 — Lighting System & Basic Combat 2D
+
+**Objetivo:** Criar o modelo e serviço de iluminação 2D sistêmica e o combate base 2D.
+
+**Resultado:** EM ANDAMENTO. TASK-109 validada com sucesso via tecla F e logs de alternância de iluminação.
+
 ---
 
 # 10. PRÓXIMA TAREFA
 
-**ID:** TASK-109
+**ID:** TASK-110
 
-**Tarefa:** Iluminação 2D (`PointLight2D` & `LightingContext`).
+**Tarefa:** Combate 2D Base & Inimigo Sensível à Luz.
 
-**Motivo da prioridade:** Construir o sistema de luz ambiente e lanterna portátil, permitindo que o jogador explore zonas escuras e que o combate contra monstros sensíveis à luz seja implementado na TASK-110.
+**Motivo da prioridade:** Utilizar a iluminação recém-criada na TASK-109 para implementar o combate com `IDamageable` contra o primeiro inimigo (Lobo Esfomeado) que reage enfraquecendo na presença de luz.

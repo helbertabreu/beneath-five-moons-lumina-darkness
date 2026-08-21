@@ -28,7 +28,7 @@ Sistemas do jogo precisam se comunicar de forma desacoplada sem que tudo se torn
 
 ### Decisão
 
-Utilizar o `ServiceRegistry` como nó central de registro e obtenção de serviços do sistema no Boot (`TimeService`, `SaveService`, `InventoryService`).
+Utilizar o `ServiceRegistry` como nó central de registro e obtenção de serviços do sistema no Boot (`TimeService`, `SaveService`, `InventoryService`, `LightingService`).
 
 ---
 
@@ -80,7 +80,7 @@ Separar rigorosamente a definição estática (`ItemDefinition` como `Resource`)
 
 ---
 
-## ADR-011 — Coleta Transactional de Recursos com Custo Vital
+## ADR-011 — Iluminação Sistêmica Desacoplada (`LightingContext` & `LightingService`)
 
 **Data:** 2026-08-21
 
@@ -88,8 +88,8 @@ Separar rigorosamente a definição estática (`ItemDefinition` como `Resource`)
 
 ### Contexto
 
-A TASK-107 exigia que a extração de minério no mapa consumisse recursos do jogador e depositasse itens de forma atômica no inventário.
+A TASK-109 exigia um sistema de luz que alterasse os estados de visibilidade sem acoplar diretamente nós de renderização com combate ou stealth.
 
 ### Decisão
 
-Implementar os nós de recurso (`iron_mine_node.gd`) validando a energia do `SurvivalComponent` antes do consumo e delegando a entrega de itens diretamente ao `InventoryService` registrado no `ServiceRegistry`.
+Criar o `LightingContext` (objeto `RefCounted` com normalização de 0.0 a 1.0) e o `LightingService` global. A iluminação transmite alterações categorizadas via `EventBus` (`LightLevelChanged`), permitindo que criaturas e mecânicas de sobrevivência consumam o nível de luz sem acoplamento direto com os nós de luz.
