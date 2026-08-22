@@ -1,6 +1,6 @@
 # BACKLOG.md
 
-> Backlog técnico e de produção do projeto Beneath Five Moons / Lumina Darkness.
+> Backlog técnico e de produção do projeto.
 > O backlog deve representar o trabalho real necessário para levar o projeto ao estado definido pelo GDD.
 
 ---
@@ -26,13 +26,13 @@
 
 # 1. SPRINT ATUAL
 
-**Sprint:** Sprint 12 — Interface Comercial e Precificação Dinâmica
+**Sprint:** Sprint 13 — Sistema de Relacionamentos com NPCs e Afinidade
 
-**Objetivo:** Conclusão, correção de runtime e validação atômica da TASK-301 (Interface Comercial 2D e Integração com PricingService).
+**Objetivo:** Conclusão, integração e validação atômica da TASK-302 (RelationshipService, Afinidade e Modificadores Comerciais por Afinidade).
 
 | ID | Tarefa | Tipo | Prioridade | Sprint | Dependência | Status | Critério de aceitação |
 |---|---|---|---|---|---|---|---|
-| TASK-301 | Interface Comercial e Integração com PricingService | UI/Systems | P1 | 12 | TASK-204 | DONE | Criar a janela de loja de NPCs consumindo preços calculados pelo PricingService, descontos de reputação e validada via `test_shop_system.gd` com `[TEST PASSED]`. |
+| TASK-302 | Sistema de Relacionamentos com NPCs e Afinidade | Social | P1 | 13 | TASK-301 | DONE | Criar `RelationshipService`, escala de -100 a +100, doação de presentes e validação via `test_relationship_system.gd` com `[TEST PASSED]`. |
 
 ---
 
@@ -41,24 +41,13 @@
 | ID | Tarefa | Tipo | Prioridade | Dependência | Status |
 |---|---|---|---|---|---|
 | TASK-301 | Interface Comercial e Integração com PricingService | UI/Systems | P1 | TASK-204 | DONE |
-| TASK-302 | Sistema de Relacionamentos com NPCs e Afinidade | Social | P1 | TASK-301 | TODO |
+| TASK-302 | Sistema de Relacionamentos com NPCs e Afinidade | Social | P1 | TASK-301 | DONE |
 | TASK-303 | Múltiplas Receitas e Estações de Trabalho | Crafting | P1 | TASK-302 | TODO |
 | TASK-304 | Loja do Jogador e Mercado Local | Economy | P1 | TASK-303 | TODO |
 
 ---
 
-# 3. BACKLOG DA FASE 2 (CONCLUÍDO)
-
-| ID | Tarefa | Tipo | Prioridade | Dependência | Status |
-|---|---|---|---|---|---|
-| TASK-201 | Engine de Profissões e Maestria | Systems | P1 | TASK-112 | DONE |
-| TASK-202 | Economia Dinâmica e Cálculo de Preços | Economy | P1 | TASK-201 | DONE |
-| TASK-203 | Reputação Multidimensional e Facções | Social | P1 | TASK-202 | DONE |
-| TASK-204 | World Streaming e Simulação Offline | World | P1 | TASK-203 | DONE |
-
----
-
-# 4. BACKLOG DO MVP (CONCLUÍDO)
+# 3. BACKLOG DO MVP (CONCLUÍDO)
 
 | ID | Tarefa | Tipo | Prioridade | Dependência | Status |
 |---|---|---|---|---|---|
@@ -77,27 +66,29 @@
 
 ---
 
-# 5. BUGS
+# 4. BUGS
 
-*(Nenhum bug registrado no momento)*
+| ID | Bug | Severidade | Prioridade | Sprint | Status |
+|---|---|---|---|---|---|
+| BUG-001 | Erro de atribuição de Array não tipado no `test_relationship_system.gd` | MÉDIA | P1 | 13 | DONE |
 
 ---
 
-# 6. DÍVIDA TÉCNICA
+# 5. DÍVIDA TÉCNICA
 
 *(Nenhuma dívida técnica registrada no momento)*
 
 ---
 
-# 7. POLISH
+# 6. POLISH
 
 | ID | Melhoria | Prioridade | Sistema | Status |
 |---|---|---|---|---|
-| POLISH-001 | Iluminação com ilhas bioluminescentes 2D | P3 | Lighting 2D | TODO |
+| POLISH-001 | Iluminação com ilhas bioluminescentes 2D no Setor Escuro | P3 | Lighting 2D | TODO |
 
 ---
 
-# 8. FUTURO / NICE TO HAVE
+# 7. FUTURO / NICE TO HAVE
 
 | ID | Funcionalidade | Prioridade | Motivo para não implementar agora | Status |
 |---|---|---|---|---|
@@ -107,19 +98,34 @@
 
 ---
 
-# 9. DEFINITION OF DONE
+# 8. DEFINITION OF DONE
 
 Uma tarefa somente pode ser marcada como `DONE` quando:
 
-- [ ] implementação concluída;
-- [ ] integração concluída;
-- [ ] comportamento esperado validado;
-- [ ] edge cases considerados;
-- [ ] bugs relevantes corrigidos;
-- [ ] testes realizados;
-- [ ] critérios de aceitação cumpridos;
-- [ ] documentação atualizada quando necessário;
-- [ ] nenhuma regressão conhecida introduzida.
+- [x] implementação concluída;
+- [x] integração concluída;
+- [x] comportamento esperado validado;
+- [x] edge cases considerados;
+- [x] bugs relevantes corrigidos;
+- [x] testes realizados;
+- [x] critérios de aceitação cumpridos;
+- [x] documentação atualizada quando necessário;
+- [x] nenhuma regressão conhecida introduzida.
+
+---
+
+# 9. REGRAS DO BACKLOG
+
+1. Não criar tarefas duplicadas.
+2. Antes de criar uma tarefa, verificar se ela já existe.
+3. Não marcar tarefas como DONE sem validação.
+4. Dependências devem ser registradas.
+5. Bugs críticos têm prioridade sobre polish.
+6. O backlog deve refletir o estado real do projeto.
+7. Funcionalidades fora do MVP devem ser claramente identificadas.
+8. Quando uma tarefa crescer demais, dividi-la em tarefas menores.
+9. Ao alterar significativamente o escopo, atualizar o backlog.
+10. Manter IDs únicos.
 
 ---
 
@@ -131,34 +137,38 @@ Uma tarefa somente pode ser marcada como `DONE` quando:
 
 ## Sprint 1 a 7 — MVP 1.0 (Vertical Slice 2D)
 **Objetivo:** Construção e integração de todos os sistemas base de movimentação, sobrevivência, iluminação, coleta, forja, combate, quests e Save/Load.  
-**Resultado:** CONCLUÍDAS COM SUCESSO. Todos os testes de integração e persistência aprovados com 100% de sucesso.
+**Resultado:** CONCLUÍDAS COM SUCESSO. Todos os testes de integração e persistência aprovados.
 
 ## Sprint 8 — Engine de Profissões e Maestria (Fase 2)
-**Objetivo:** Implementar o `ProfessionService`, o Resource `ProfessionDefinition` e a classe `ProfessionState` para suportar 17 profissões em 5 Tiers.  
-**Resultado:** CONCLUÍDA COM SUCESSO. TASK-201 validada com a execução de `test_profession_system.gd` e retorno `[TEST PASSED]` no Output!
+**Objetivo:** Implementar o `ProfessionService` e suportar 17 profissões em 5 Tiers.  
+**Resultado:** CONCLUÍDA COM SUCESSO.
 
 ## Sprint 9 — Economia Dinâmica e Cálculo de Preços (Fase 2)
-**Objetivo:** Implementar o `PricingService` e `MarketDefinition` para calcular flutuações de preços baseados em oferta/demanda, reputação e impostos.  
-**Resultado:** CONCLUÍDA COM SUCESSO. TASK-202 validada com a execução de `test_pricing_system.gd` e retorno `[TEST PASSED]` no Output!
+**Objetivo:** Implementar o `PricingService` para calcular flutuações de preços baseados em oferta/demanda.  
+**Resultado:** CONCLUÍDA COM SUCESSO.
 
 ## Sprint 10 — Reputação Multidimensional e Facções (Fase 2)
-**Objetivo:** Implementar o `FactionService` e `FactionDefinition` para gerenciar reputações de 0 a 10.000, posturas e penalidades de rivalidades cruzadas.  
-**Resultado:** CONCLUÍDA COM SUCESSO. TASK-203 validada com a execução de `test_faction_system.gd` e retorno `[TEST PASSED]` no Output!
+**Objetivo:** Implementar o `FactionService` para gerenciar reputações de 0 a 10.000.  
+**Resultado:** CONCLUÍDA COM SUCESSO.
 
 ## Sprint 11 — World Streaming e Simulação Offline (Fase 2)
-**Objetivo:** Implementar o `WorldRegionManager` e `RegionDefinition` para descarregar regiões mantendo simulação temporal e persistência.  
-**Resultado:** CONCLUÍDA COM SUCESSO. TASK-204 validada com a execução de `test_world_streaming.gd` e retorno `[TEST PASSED]` no Output!
+**Objetivo:** Implementar o `WorldRegionManager` e `RegionDefinition`.  
+**Resultado:** CONCLUÍDA COM SUCESSO.
 
-## Sprint 12 — Interface Comercial e Integração com PricingService (Fase 3 / TASK-301)
-**Objetivo:** Implementar a interface `shop_interface.gd`, a cena `ShopInterface.tscn` e integrar atomicamente a compra e venda de itens com `PricingService`, `InventoryService` e `FactionService`.  
-**Resultado:** CONCLUÍDA E VALIDADA. A suíte `test_shop_system.gd` executou com sucesso imprimindo `[TEST PASSED]` no Output sem exceções de runtime!
+## Sprint 12 — Interface Comercial e Precificação Dinâmica (TASK-301)
+**Objetivo:** Implementar `shop_interface.gd` e `ShopInterface.tscn`.  
+**Resultado:** CONCLUÍDA COM SUCESSO.
+
+## Sprint 13 — Sistema de Relacionamentos com NPCs e Afinidade (TASK-302)
+**Objetivo:** Implementar `RelationshipService`, doação de presentes e descontos por afinidade individual.  
+**Resultado:** CONCLUÍDA E VALIDADA com a suíte `test_relationship_system.gd` retornando `[TEST PASSED]` no Output!
 
 ---
 
 # 11. PRÓXIMA TAREFA
 
-**ID:** TASK-302
+**ID:** TASK-303
 
-**Tarefa:** Sistema de Relacionamentos com NPCs e Afinidade.
+**Tarefa:** Múltiplas Receitas e Estações de Trabalho.
 
-**Motivo da prioridade:** Expandir o engajamento social e diálogos com NPCs após a consolidação da infraestrutura comercial.
+**Motivo da prioridade:** Expandir as opções de crafting e encadeamento de produção após consolidar o mercado e as relações sociais.

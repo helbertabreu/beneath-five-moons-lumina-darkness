@@ -1,10 +1,11 @@
-## blacksmith_npc_node.gd
-## Entidade interativa de NPC (Gorn, o Ferreiro) que fornece e valida a Quest 01.
+## Entidade interativa de NPC (Gorn, o Ferreiro) que fornece e valida a Quest 01
+## e gerencia o relacionamento com o jogador via RelationshipService.
 
 extends Area2D
 
 var _visual_rect: ColorRect = null
 var _quest_def: QuestDefinition = null
+var _npc_id: StringName = &"npc.blacksmith.gorn"
 
 
 func _ready() -> void:
@@ -26,6 +27,7 @@ func _ready() -> void:
 	add_child(_visual_rect)
 	
 	_setup_quest_data()
+	_setup_relationship_data()
 	print("[NPC Ferreiro Gorn] Pronto para interação.")
 
 
@@ -42,6 +44,19 @@ func _setup_quest_data() -> void:
 	_quest_def.reward_reputation = 50.0
 
 
+## Configura a definição de relacionamento do NPC com o RelationshipService
+func _setup_relationship_data() -> void:
+	var rel_service = ServiceRegistry.get_service(&"RelationshipService") as RelationshipService
+	if rel_service:
+		var rel_def = RelationshipDefinition.new()
+		rel_def.npc_id = _npc_id
+		rel_def.display_name = "Gorn, o Ferreiro"
+		rel_def.loved_item_ids = [&"item.material.iron_ingot"]
+		rel_def.liked_item_ids = [&"item.material.iron_ore"]
+		rel_def.hated_item_ids = [&"item.junk.trash"]
+		rel_service.register_npc_definition(rel_def)
+
+
 ## Retorna a mensagem de contexto para o detector
 func get_interaction_text() -> String:
 	return "Falar com Gorn, o Ferreiro"
@@ -51,10 +66,11 @@ func can_interact(_interactor: Node2D) -> bool:
 	return true
 
 
-## Trata o fluxo transacional do diálogo e validação da Quest
+## Trata o fluxo transacional do diálogo, afinidade e validação da Quest
 func interact(_interactor: Node2D) -> void:
 	var quest_service = ServiceRegistry.get_service(&"QuestService") as QuestService
 	var inv_service = ServiceRegistry.get_service(&"InventoryService") as InventoryService
+	var rel_service = ServiceRegistry.get_service(&"RelationshipService") as RelationshipService
 	
 	if not quest_service or not inv_service:
 		print("[Gorn] Erro: Serviços não registrados!")
@@ -78,6 +94,10 @@ func interact(_interactor: Node2D) -> void:
 				# Entregar Lingote e Concluir Quest
 				inv_service.remove_item(required_item_id, 1)
 				quest_service.complete_quest(_quest_def.id)
+				
+				# Aumenta a afinidade com o NPC ao entregar a quest
+				if rel_service:
+					rel_service.modify_affinity(_npc_id, 15.0, "quest_completed:" + String(_quest_def.id))
 				
 				print("[Gorn] 'Excelente trabalho! Este lingote servirá perfeitamente. Aqui está sua recompensa!'")
 				print("[Recompensa] +%d Moedas e +%.1f de Reputação Local com o Vilarejo!" % [_quest_def.reward_currency, _quest_def.reward_reputation])

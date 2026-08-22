@@ -1,6 +1,6 @@
 ## boot.gd
 ## Script anexado à cena principal de Boot (Boot.tscn).
-## Instancia serviços, executa validações de infraestrutura, integração, profissões e economia comercial, e instancia as entidades do mundo.
+## Instancia serviços, executa validações de infraestrutura, integração, profissões, economia comercial e relacionamentos com NPCs.
 
 extends Node2D
 
@@ -8,6 +8,7 @@ const TestRunner = preload("res://tests/test_core_infrastructure.gd")
 const IntegrationTestRunner = preload("res://tests/test_vertical_slice_integration.gd")
 const ProfessionTestRunner = preload("res://tests/test_profession_system.gd")
 const ShopTestRunner = preload("res://tests/unit/test_shop_system.gd")
+const RelationshipTestRunner = preload("res://tests/unit/test_relationship_system.gd")
 
 const PlayerScene = preload("res://scenes/player/Player.tscn")
 const TestChestScript = preload("res://entities/interactables/test_chest.gd")
@@ -19,6 +20,7 @@ const HungryWolfScript = preload("res://entities/enemies/hungry_wolf_node.gd")
 const QuestServiceScript = preload("res://quests/runtime/quest_service.gd")
 const BlacksmithNPCScript = preload("res://entities/npc/blacksmith_npc_node.gd")
 const ProfessionServiceScript = preload("res://progression/professions/profession_service.gd")
+const RelationshipServiceScript = preload("res://social/relationships/relationship_service.gd")
 
 var _player_instance: CharacterBody2D = null
 var _inventory_service: Node = null
@@ -26,6 +28,7 @@ var _lighting_service: Node = null
 var _quest_service: Node = null
 var _profession_service: Node = null
 var _faction_service: FactionService = null
+var _relationship_service: Node = null
 
 
 func _ready() -> void:
@@ -36,14 +39,14 @@ func _ready() -> void:
 	
 	_setup_services()
 	
-	var tests_passed = _run_bootstrap_and_profession_tests()
+	var tests_passed = _run_bootstrap_and_relationship_tests()
 	
 	if tests_passed:
 		_setup_environment_lighting()
 		_spawn_test_environment()
 
 
-func _run_bootstrap_and_profession_tests() -> bool:
+func _run_bootstrap_and_relationship_tests() -> bool:
 	# 1. Executa Teste da Infraestrutura Base
 	var infra_runner = TestRunner.new()
 	var infra_ok = infra_runner.run_all_tests()
@@ -60,8 +63,12 @@ func _run_bootstrap_and_profession_tests() -> bool:
 	var shop_runner = ShopTestRunner.new()
 	var shop_ok = shop_runner.run_shop_tests()
 	
-	if infra_ok and integration_ok and profession_ok and shop_ok:
-		print("[Boot] INTEGRALMENTE VALIDADO: Infraestrutura, Persistência, Profissões e Sistema de Comércio 100% Funcionais!")
+	# 5. Executa Teste do Sistema de Relacionamentos e Afinidade (Sprint 13 / TASK-302)
+	var rel_runner = RelationshipTestRunner.new()
+	var rel_ok = rel_runner.run_relationship_tests()
+	
+	if infra_ok and integration_ok and profession_ok and shop_ok and rel_ok:
+		print("[Boot] INTEGRALMENTE VALIDADO: Infraestrutura, Persistência, Profissões, Comércio e Relacionamentos 100% Funcionais!")
 		return true
 	else:
 		push_error("[Boot] ERRO CRÍTICO NOS TESTES DE UNIDADE OU INTEGRAÇÃO!")
@@ -94,6 +101,11 @@ func _setup_services() -> void:
 	if ServiceRegistry:
 		ServiceRegistry.register_service(&"FactionService", _faction_service)
 		print("[Boot] FactionService registrado com sucesso.")
+		
+	# 6. RelationshipService (Sprint 13 / TASK-302)
+	_relationship_service = RelationshipServiceScript.new()
+	_relationship_service.name = "RelationshipService"
+	add_child(_relationship_service)
 
 
 func _setup_environment_lighting() -> void:

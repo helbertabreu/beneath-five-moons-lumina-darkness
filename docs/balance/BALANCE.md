@@ -1,9 +1,9 @@
 # Beneath Five Moons — Balance Database
 ## Planilha de Balanceamento em Markdown
 
-**Versão:** 3.0.0  
-**Status:** Atualizado com Parâmetros de Comércio, Taxas Comerciais e Margens do PricingService (Sprint 12 / TASK-301)  
-**Fonte:** GDD, TDD e especificações do FactionService / PricingService / QuestService / ShopInterface  
+**Versão:** 4.0.0  
+**Status:** Atualizado com a Escala de Afinidade, Modificadores de Preço por Postura e Tabela de Presentes do RelationshipService (Sprint 13 / TASK-302)  
+**Fonte:** GDD, TDD e especificações do FactionService / PricingService / QuestService / ShopInterface / RelationshipService  
 
 ---
 
@@ -20,6 +20,7 @@
 | 2.1.0 | 2026-08-21 | Tech Lead | Parâmetros da Sprint 9 (TASK-202): Limites de Flutuação Econômica e Margens de Venda |
 | 2.2.0 | 2026-08-21 | Tech Lead | Parâmetros da Sprint 10 (TASK-203): Ranks de Reputação Multidimensional e Matriz de Rivalidade |
 | 3.0.0 | 2026-08-21 | Tech Lead | Parâmetros da Sprint 12 (TASK-301): Matriz de Compra/Venda da ShopInterface, Impostos de Mercado e Reembolso |
+| 4.0.0 | 2026-08-21 | Tech Lead | Parâmetros da Sprint 13 (TASK-302): Tiers de Afinidade Individual, Reação a Presentes e Bônus Comerciais |
 
 ---
 
@@ -47,7 +48,35 @@ $$\text{Preço Final} = \text{Preço Base} \times \text{Multiplicador de Reputa�
 
 ---
 
-# 4. Profissões & Tiers de Maestria (Fase 2)
+# 4. Escala de Afinidade Individual de NPCs (Sprint 13 / TASK-302)
+
+$$\text{Afinidade} = \text{Clamp}(\text{Afinidade Atual} + \Delta\text{Afinidade}, -100.0, +100.0)$$
+
+| Intervalo Numérico | Stance Enum | Postura Social | Modificador Comercial na Loja |
+|---:|---|---|---:|
+| -100.0 a -60.1 | `Stance.HATE` | Hostil / Ódio | 1.25x (+25% no custo de compra) |
+| -60.0 a -10.1 | `Stance.DISLIKE` | Frio / Desafeto | 1.10x (+10% no custo de compra) |
+| -10.0 a +10.0 | `Stance.NEUTRAL` | Neutro | 1.00x (Sem alteração) |
+| +10.1 a +35.0 | `Stance.LIKE` | Simpático | 0.95x (5% de desconto) |
+| +35.1 a +65.0 | `Stance.FRIENDSHIP` | Amigo | 0.90x (10% de desconto) |
+| +66.0 a +100.0 | `Stance.LOVE` | Devoto / Aliado Íntimo | 0.85x (15% de desconto) |
+
+---
+
+# 5. Tabela de Variação de Afinidade por Ações e Presentes (Sprint 13 / TASK-302)
+
+| Ação / Presente | Variação de Afinidade ($\Delta$) | Observação |
+|---|---:|---|
+| Doação de Item Amado (`loved_item_ids`) | +20.0 | Definido na `RelationshipDefinition` do NPC |
+| Doação de Item Gostado (`liked_item_ids`) | +10.0 | Item útil ou apreciado pela profissão do NPC |
+| Doação de Item Neutro | +2.0 | Presente genérico |
+| Doação de Item Odiado (`hated_item_ids`) | -15.0 | Lixo ou item ofensivo |
+| Conclusão de Quest Pessoal | +15.0 | Aplicado via `QuestService` ao entregar a missão |
+| Conversa Diária | +2.0 | Limite de 1 vez por dia de jogo |
+
+---
+
+# 6. Profissões & Tiers de Maestria (Fase 2)
 
 | ID da Profissão | Nome Visível | Foco / Categoria | Tiers | XP por Tier | Bônus de Eficiência por Tier |
 |---|---|---|---:|---:|---:|
@@ -71,7 +100,7 @@ $$\text{Preço Final} = \text{Preço Base} \times \text{Multiplicador de Reputa�
 
 ---
 
-# 5. Quests & Recompensas
+# 7. Quests & Recompensas
 
 | ID | Nome da Quest | Tipo | Requisito de Item | Recompensa em Moedas | Recompensa em Reputação Local | XP Recompensa |
 |---|---|---|---|---:|---:|---:|
@@ -79,7 +108,7 @@ $$\text{Preço Final} = \text{Preço Base} \times \text{Multiplicador de Reputa�
 
 ---
 
-# 6. Itens
+# 8. Itens
 
 | ID | Nome | Tipo | Custo Base | Atributo | Multiplicador Resource | Stack Máximo | Status |
 |---|---|---|---:|---|---:|---:|---|
@@ -98,7 +127,7 @@ $$\text{Preço Final} = \text{Preço Base} \times \text{Multiplicador de Reputa�
 
 ---
 
-# 7. Reputação & Ranks de Postura (Stances)
+# 9. Reputação & Ranks de Postura (Stances)
 
 O GDD define a escala de reputação local de 0 a 10.000.
 
@@ -112,7 +141,7 @@ O GDD define a escala de reputação local de 0 a 10.000.
 
 ---
 
-# 8. Combate & Inimigos
+# 10. Combate & Inimigos
 
 | ID | Entidade / Inimigo | HP | Dano Base Melee | Multiplicador em Penumbra | Multiplicador sob Luz Plena (>= 0.70) | XP Recompensa |
 |---|---|---:|---:|---:|---:|---:|
@@ -121,7 +150,7 @@ O GDD define a escala de reputação local de 0 a 10.000.
 
 ---
 
-# 9. Custos de Ações de Gameplay (Energy & Survival)
+# 11. Custos de Ações de Gameplay (Energy & Survival)
 
 | Ação | Custo de Energia | Custo de Fome | Quantidade de Recurso Gerada | XP de Profissão | Cooldown |
 |---|---:|---:|---|---|---:|
@@ -131,7 +160,7 @@ O GDD define a escala de reputação local de 0 a 10.000.
 
 ---
 
-# 10. Sobrevivência (Valores do SurvivalComponent)
+# 12. Sobrevivência (Valores do SurvivalComponent)
 
 | Parâmetro | Valor Máximo | Taxa de Variação (Por Minuto de Jogo) | Efeito ao Esgotar |
 |---|---:|---:|---|

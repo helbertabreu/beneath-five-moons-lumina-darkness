@@ -1,5 +1,5 @@
 ## interface comercial 2D responsável por conectar visualmente a compra e a venda de itens
-## aos serviços centralizados PricingService, InventoryService e FactionService.
+## aos serviços centralizados PricingService, InventoryService, FactionService e RelationshipService.
 ##
 ## A UI é reativa e desacoplada de lógica de negócios, consumindo apenas preços calculados
 ## e delegando as operações econômicas transacionais.
@@ -10,12 +10,14 @@ extends Control
 signal shop_closed
 
 @export var merchant_name: String = "Ferreiro Gorn"
+@export var merchant_npc_id: StringName = &"npc.blacksmith.gorn"
 @export var faction_id: StringName = &"faction.bronze_brotherhood"
 @export var market_definition: MarketDefinition = null
 
 var _pricing_service: PricingService = null
 var _inventory_service: InventoryService = null
 var _faction_service: FactionService = null
+var _relationship_service: RelationshipService = null
 
 # Referências de Nodes de UI
 @onready var title_label: Label = $Panel/MarginContainer/VBoxContainer/Header/TitleLabel
@@ -38,13 +40,16 @@ func _initialize_services() -> void:
 	if ServiceRegistry:
 		_inventory_service = ServiceRegistry.get_service(&"InventoryService") as InventoryService
 		_faction_service = ServiceRegistry.get_service(&"FactionService") as FactionService
+		_relationship_service = ServiceRegistry.get_service(&"RelationshipService") as RelationshipService
 
 
 ## Associa um mercado e nome de comerciante dinamicamente à interface
-func setup_shop(p_merchant_name: String, p_faction_id: StringName, p_market: MarketDefinition) -> void:
+func setup_shop(p_merchant_name: String, p_faction_id: StringName, p_market: MarketDefinition, p_npc_id: StringName = &"") -> void:
 	merchant_name = p_merchant_name
 	faction_id = p_faction_id
 	market_definition = p_market
+	if p_npc_id != &"":
+		merchant_npc_id = p_npc_id
 	refresh_shop_ui()
 
 
@@ -78,6 +83,10 @@ func _populate_item_list() -> void:
 	if _faction_service and faction_id != &"":
 		rep_points = _faction_service.get_reputation(faction_id)
 		
+	var affinity_modifier: float = 1.0
+	if _relationship_service and merchant_npc_id != &"":
+		affinity_modifier = _relationship_service.get_shop_affinity_modifier(merchant_npc_id)
+		
 	# Lista os itens configurados no estoque atual do mercado
 	for item_id in market_definition.current_stock.keys():
 		var item_hbox = HBoxContainer.new()
@@ -91,9 +100,9 @@ func _populate_item_list() -> void:
 		
 		var base_price = 70 # Valor base padrão para calculo
 		
-		# Cálculo dos Preços de Compra e Venda
-		var buy_price = _pricing_service.calculate_buy_price(base_price, market_definition, item_id, rep_points)
-		var sell_price = _pricing_service.calculate_sell_price(base_price, market_definition, item_id, rep_points)
+		# Cálculo dos Preços de Compra e Venda com desconto adicional por afinidade individual do NPC
+		var buy_price = int(_pricing_service.calculate_buy_price(base_price, market_definition, item_id, rep_points) * affinity_modifier)
+		var sell_price = int(_pricing_service.calculate_sell_price(base_price, market_definition, item_id, rep_points) / affinity_modifier)
 		
 		# Cria definição sintética para transação
 		var item_def = ItemDefinition.new()
