@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bw8bp51pbv55x"]
+
+[ext_resource type="Script" uid="uid://3kuxjiw1avuk" path="res://tests/unit/test_crafting_system.gd" id="1_713il"]
+
+[node name="TestCraftingSystem" type="Node" unique_id=915316868]
+script = ExtResource("1_713il")

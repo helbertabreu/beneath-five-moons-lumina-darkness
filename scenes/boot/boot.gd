@@ -1,6 +1,6 @@
 ## boot.gd
 ## Script anexado à cena principal de Boot (Boot.tscn).
-## Instancia serviços, executa validações de infraestrutura, integração, profissões, economia comercial e relacionamentos com NPCs.
+## Instancia serviços, executa validações de infraestrutura, integração, profissões, economia, relacionamentos, loja do jogador e ilhas bioluminescentes.
 
 extends Node2D
 
@@ -9,6 +9,7 @@ const IntegrationTestRunner = preload("res://tests/test_vertical_slice_integrati
 const ProfessionTestRunner = preload("res://tests/test_profession_system.gd")
 const ShopTestRunner = preload("res://tests/unit/test_shop_system.gd")
 const RelationshipTestRunner = preload("res://tests/unit/test_relationship_system.gd")
+const PlayerMarketTestRunner = preload("res://tests/unit/test_player_market_system.gd")
 
 const PlayerScene = preload("res://scenes/player/Player.tscn")
 const TestChestScript = preload("res://entities/interactables/test_chest.gd")
@@ -21,6 +22,8 @@ const QuestServiceScript = preload("res://quests/runtime/quest_service.gd")
 const BlacksmithNPCScript = preload("res://entities/npc/blacksmith_npc_node.gd")
 const ProfessionServiceScript = preload("res://progression/professions/profession_service.gd")
 const RelationshipServiceScript = preload("res://social/relationships/relationship_service.gd")
+const PlayerMarketServiceScript = preload("res://economy/market/player_market_service.gd")
+const BioluminescentFloraScript = preload("res://entities/environment/bioluminescent_flora_node.gd")
 
 var _player_instance: CharacterBody2D = null
 var _inventory_service: Node = null
@@ -29,6 +32,7 @@ var _quest_service: Node = null
 var _profession_service: Node = null
 var _faction_service: FactionService = null
 var _relationship_service: Node = null
+var _player_market_service: Node = null
 
 
 func _ready() -> void:
@@ -67,8 +71,16 @@ func _run_bootstrap_and_relationship_tests() -> bool:
 	var rel_runner = RelationshipTestRunner.new()
 	var rel_ok = rel_runner.run_relationship_tests()
 	
-	if infra_ok and integration_ok and profession_ok and shop_ok and rel_ok:
-		print("[Boot] INTEGRALMENTE VALIDADO: Infraestrutura, Persistência, Profissões, Comércio e Relacionamentos 100% Funcionais!")
+	# 6. Executa Teste da Loja do Jogador e Mercado Local (Sprint 15 / TASK-304)
+	var market_runner = PlayerMarketTestRunner.new()
+	var market_ok = market_runner.run_market_tests()
+	
+	# 7. Executa Teste de Iluminação Bioluminescente 2D (Sprint 16 / POLISH-001)
+	var bio_runner = TestBioluminescentLighting.new()
+	var bio_ok = bio_runner.run_bioluminescent_tests()
+	
+	if infra_ok and integration_ok and profession_ok and shop_ok and rel_ok and market_ok and bio_ok:
+		print("[Boot] INTEGRALMENTE VALIDADO: Infraestrutura, Persistência, Profissões, Comércio, Relacionamentos, Loja e Iluminação Bioluminescente 100% Funcionais!")
 		return true
 	else:
 		push_error("[Boot] ERRO CRÍTICO NOS TESTES DE UNIDADE OU INTEGRAÇÃO!")
@@ -106,6 +118,11 @@ func _setup_services() -> void:
 	_relationship_service = RelationshipServiceScript.new()
 	_relationship_service.name = "RelationshipService"
 	add_child(_relationship_service)
+	
+	# 7. PlayerMarketService (Sprint 15 / TASK-304)
+	_player_market_service = PlayerMarketServiceScript.new()
+	_player_market_service.name = "PlayerMarketService"
+	add_child(_player_market_service)
 
 
 func _setup_environment_lighting() -> void:
@@ -164,3 +181,10 @@ func _spawn_test_environment() -> void:
 	npc_gorn.name = "BlacksmithNPC"
 	npc_gorn.position = center_pos + Vector2(30, 0)
 	add_child(npc_gorn)
+	
+	# 7. Flora Bioluminescente 2D (Sprint 16 / POLISH-001)
+	var bio_plant = Area2D.new()
+	bio_plant.set_script(BioluminescentFloraScript)
+	bio_plant.name = "BioluminescentFlora"
+	bio_plant.position = center_pos + Vector2(-60, -40)
+	add_child(bio_plant)

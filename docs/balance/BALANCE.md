@@ -1,9 +1,9 @@
 # Beneath Five Moons — Balance Database
 ## Planilha de Balanceamento em Markdown
 
-**Versão:** 4.0.0  
-**Status:** Atualizado com a Escala de Afinidade, Modificadores de Preço por Postura e Tabela de Presentes do RelationshipService (Sprint 13 / TASK-302)  
-**Fonte:** GDD, TDD e especificações do FactionService / PricingService / QuestService / ShopInterface / RelationshipService  
+**Versão:** 5.1.0  
+**Status:** Atualizado com a Tabela de Parâmetros da Flora Bioluminescente 2D do Setor Escuro (Sprint 16 / POLISH-001)  
+**Fonte:** GDD, TDD, TIS e especificações do FactionService / PricingService / QuestService / ShopInterface / RelationshipService / PlayerMarketService / LightingService  
 
 ---
 
@@ -21,10 +21,34 @@
 | 2.2.0 | 2026-08-21 | Tech Lead | Parâmetros da Sprint 10 (TASK-203): Ranks de Reputação Multidimensional e Matriz de Rivalidade |
 | 3.0.0 | 2026-08-21 | Tech Lead | Parâmetros da Sprint 12 (TASK-301): Matriz de Compra/Venda da ShopInterface, Impostos de Mercado e Reembolso |
 | 4.0.0 | 2026-08-21 | Tech Lead | Parâmetros da Sprint 13 (TASK-302): Tiers de Afinidade Individual, Reação a Presentes e Bônus Comerciais |
+| 4.1.0 | 2026-08-23 | Tech Lead | Parâmetros da Sprint 14 (TASK-303): Custos, Insumos e XP de Profissão das Receitas de Crafting |
+| 5.0.0 | 2026-08-23 | Tech Lead | Parâmetros da Sprint 15 (TASK-304): Taxa de Anúncio de Mercado (5%) e Regras de Precificação na Loja do Jogador |
+| 5.1.0 | 2026-08-23 | Tech Lead | Parâmetros da Sprint 16 (POLISH-001): Raio de Cobertura, Nível de Luz Elevação e Frequência do Pulso Bioluminescente |
 
 ---
 
-# 2. Facções Principais & Matriz de Rivalidades (Sprint 10)
+# 2. Parâmetros de Iluminação Bioluminescente do Setor Escuro (Sprint 16 / POLISH-001)
+
+| Parâmetro de Iluminação | Valor / Configuração | Efeito Gameplay / Função |
+|---|---:|---|
+| Raio de Alcance da Flora (`light_radius`) | 80.0 pixels | Área de cobertura da ilha de luz emitida pela planta bioluminescente |
+| Elevação de Iluminação (`illumination_value`) | 0.75 (Luz Plena) | Valor de iluminação enviado ao `LightingService` enquanto o jogador permanecer na área |
+| Frequência de Pulsação (`pulse_speed`) | 2.0 rad/s | Velocidade da oscilação orgânica de brilho da planta |
+| Faixa de Energia da Luz (`PointLight2D`) | 0.8x a 1.3x | Variação senoidal suave de iluminação emitida para sensação de flora viva |
+
+---
+
+# 3. Economia da Loja do Jogador & Mercado Local (Sprint 15 / TASK-304)
+
+| Parâmetro Econômico | Valor / Regra | Aplicação / Função |
+|---|---:|---|
+| Taxa de Anúncio (`listing_fee`) | 5% (0.05) | Cobrada em moedas do jogador no ato da publicação do anúncio baseada no valor total do lote |
+| Preço Mínimo por Item | 1 Moeda | Limite inferior para evitar anúncios com valor nulo |
+| Tolerância de Compras por NPCs | $\le 200\%$ do Preço Base | NPCs compram com probabilidade proporcional ao preço. Preços acima de 2.0x o valor base são ignorados |
+
+---
+
+# 4. Facções Principais & Matriz de Rivalidades (Sprint 10)
 
 | ID da Facção | Nome Visível | Reputação Inicial Padrão | Facções Rivais Diretas | Fator de Penalidade Cruzada |
 |---|---|---:|---|---:|
@@ -35,7 +59,7 @@
 
 ---
 
-# 3. Economia Dinâmica & Parâmetros do PricingService (Sprint 12)
+# 5. Economia Dinâmica & Parâmetros do PricingService (Sprint 12)
 
 $$\text{Preço Final} = \text{Preço Base} \times \text{Multiplicador de Reputação} \times \left(1 + \frac{\text{Demanda} - \text{Estoque}}{\text{Estoque Mínimo}}\right) \times (1 + \text{Taxa de Imposto})$$
 
@@ -48,7 +72,7 @@ $$\text{Preço Final} = \text{Preço Base} \times \text{Multiplicador de Reputa�
 
 ---
 
-# 4. Escala de Afinidade Individual de NPCs (Sprint 13 / TASK-302)
+# 6. Escala de Afinidade Individual de NPCs (Sprint 13 / TASK-302)
 
 $$\text{Afinidade} = \text{Clamp}(\text{Afinidade Atual} + \Delta\text{Afinidade}, -100.0, +100.0)$$
 
@@ -63,7 +87,7 @@ $$\text{Afinidade} = \text{Clamp}(\text{Afinidade Atual} + \Delta\text{Afinidade
 
 ---
 
-# 5. Tabela de Variação de Afinidade por Ações e Presentes (Sprint 13 / TASK-302)
+# 7. Tabela de Variação de Afinidade por Ações e Presentes (Sprint 13 / TASK-302)
 
 | Ação / Presente | Variação de Afinidade ($\Delta$) | Observação |
 |---|---:|---|
@@ -76,7 +100,7 @@ $$\text{Afinidade} = \text{Clamp}(\text{Afinidade Atual} + \Delta\text{Afinidade
 
 ---
 
-# 6. Profissões & Tiers de Maestria (Fase 2)
+# 8. Profissões & Tiers de Maestria (Fase 2)
 
 | ID da Profissão | Nome Visível | Foco / Categoria | Tiers | XP por Tier | Bônus de Eficiência por Tier |
 |---|---|---|---:|---:|---:|
@@ -100,7 +124,7 @@ $$\text{Afinidade} = \text{Clamp}(\text{Afinidade Atual} + \Delta\text{Afinidade
 
 ---
 
-# 7. Quests & Recompensas
+# 9. Quests & Recompensas
 
 | ID | Nome da Quest | Tipo | Requisito de Item | Recompensa em Moedas | Recompensa em Reputação Local | XP Recompensa |
 |---|---|---|---|---:|---:|---:|
@@ -108,7 +132,7 @@ $$\text{Afinidade} = \text{Clamp}(\text{Afinidade Atual} + \Delta\text{Afinidade
 
 ---
 
-# 8. Itens
+# 10. Itens
 
 | ID | Nome | Tipo | Custo Base | Atributo | Multiplicador Resource | Stack Máximo | Status |
 |---|---|---|---:|---|---:|---:|---|
@@ -127,7 +151,7 @@ $$\text{Afinidade} = \text{Clamp}(\text{Afinidade Atual} + \Delta\text{Afinidade
 
 ---
 
-# 9. Reputação & Ranks de Postura (Stances)
+# 11. Reputação & Ranks de Postura (Stances)
 
 O GDD define a escala de reputação local de 0 a 10.000.
 
@@ -141,7 +165,7 @@ O GDD define a escala de reputação local de 0 a 10.000.
 
 ---
 
-# 10. Combate & Inimigos
+# 12. Combate & Inimigos
 
 | ID | Entidade / Inimigo | HP | Dano Base Melee | Multiplicador em Penumbra | Multiplicador sob Luz Plena (>= 0.70) | XP Recompensa |
 |---|---|---:|---:|---:|---:|---:|
@@ -150,7 +174,7 @@ O GDD define a escala de reputação local de 0 a 10.000.
 
 ---
 
-# 11. Custos de Ações de Gameplay (Energy & Survival)
+# 13. Custos de Ações de Gameplay (Energy & Survival)
 
 | Ação | Custo de Energia | Custo de Fome | Quantidade de Recurso Gerada | XP de Profissão | Cooldown |
 |---|---:|---:|---|---|---:|
@@ -160,7 +184,7 @@ O GDD define a escala de reputação local de 0 a 10.000.
 
 ---
 
-# 12. Sobrevivência (Valores do SurvivalComponent)
+# 14. Sobrevivência (Valores do SurvivalComponent)
 
 | Parâmetro | Valor Máximo | Taxa de Variação (Por Minuto de Jogo) | Efeito ao Esgotar |
 |---|---:|---:|---|

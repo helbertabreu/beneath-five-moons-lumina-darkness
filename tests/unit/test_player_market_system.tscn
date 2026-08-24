@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bcs102fln7dgd"]
+
+[ext_resource type="Script" uid="uid://86u57nejvavl" path="res://tests/unit/test_player_market_system.gd" id="1_vhfya"]
+
+[node name="TestPlayerMarketSystem" type="Node" unique_id=483325281]
+script = ExtResource("1_vhfya")

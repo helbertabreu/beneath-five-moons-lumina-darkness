@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://blsi64nowoyyu"]
+
+[ext_resource type="Script" uid="uid://ccmb4hx0uwvva" path="res://entities/interactables/crafting_station_node.gd" id="1_m6ble"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_u0ya7"]
+size = Vector2(32, 32)
+
+[node name="CraftingStationNode" type="Area2D" unique_id=1546246320]
+script = ExtResource("1_m6ble")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1339676979]
+shape = SubResource("RectangleShape2D_u0ya7")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=858442622]

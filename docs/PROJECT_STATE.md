@@ -1,4 +1,4 @@
-# PROJECT_STATE.md
+																																																																					# PROJECT_STATE.md
 
 > Documento de estado atual do projeto Godot 4.
 > Este arquivo deve refletir o estado REAL do projeto e ser atualizado ao final de Sprints, mudanças arquiteturais relevantes e correções importantes.

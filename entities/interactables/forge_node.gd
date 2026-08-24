@@ -1,6 +1,5 @@
 ## forge_node.gd
 ## Estação de crafting interativa que representa uma Forja de Ferreiro.
-##
 ## Consome matérias-primas e energia para produzir lingotes e conceder XP de profissão.
 
 extends Area2D
@@ -43,15 +42,19 @@ func _setup_default_recipe() -> void:
 	
 	_recipe = RecipeDefinition.new()
 	_recipe.id = &"recipe.blacksmith.iron_ingot"
-	_recipe.name = "Fundir Lingote de Ferro"
-	_recipe.required_profession = &"Blacksmith"
+	_recipe.display_name = "Fundir Lingote de Ferro"
+	_recipe.profession_id = &"profession.blacksmith"
+	_recipe.required_profession_level = 1
+	_recipe.required_station_type = &"station.forge"
+	_recipe.required_station_tier = 1
 	_recipe.energy_cost = 15.0
-	_recipe.xp_reward = 25.0
-	_recipe.required_ingredients = {
-		&"item.material.iron_ore": 2
-	}
-	_recipe.result_item = iron_ingot
-	_recipe.result_quantity = 1
+	_recipe.granted_profession_xp = 25.0
+	_recipe.inputs = [
+		{"item_id": &"item.material.iron_ore", "quantity": 2}
+	]
+	_recipe.outputs = [
+		{"item_definition": iron_ingot, "quantity": 1}
+	]
 
 
 ## Mensagem de contexto para a UI
@@ -72,8 +75,9 @@ func interact(interactor: Node2D) -> void:
 		return
 		
 	# 1. Valida se o jogador possui os ingredientes no inventário
-	for ingredient_id in _recipe.required_ingredients:
-		var required_qty = _recipe.required_ingredients[ingredient_id]
+	for input_data in _recipe.inputs:
+		var ingredient_id: StringName = input_data.get("item_id", &"")
+		var required_qty: int = input_data.get("quantity", 1)
 		var current_qty = inv_service.get_total_quantity(ingredient_id)
 		
 		if current_qty < required_qty:
@@ -89,12 +93,13 @@ func interact(interactor: Node2D) -> void:
 				break
 				
 	if survival_comp and survival_comp.energy < _recipe.energy_cost:
-		print("[Forja] AVISO: Energia insuficiente para forjar! (Atual: %.1f, Necessária: %.1f)" % [survival_comp.energy, _recipe.energy_cost])
+		print("[Forja] AVISO: Energia insuficiente para forjar! (Atual: %.1f, Necessária: %.1f)" % [survival_comp.energy, survival_comp.max_energy])
 		return
 		
 	# 3. Execução Transacional: Consome Ingredientes e Energia
-	for ingredient_id in _recipe.required_ingredients:
-		var required_qty = _recipe.required_ingredients[ingredient_id]
+	for input_data in _recipe.inputs:
+		var ingredient_id: StringName = input_data.get("item_id", &"")
+		var required_qty: int = input_data.get("quantity", 1)
 		inv_service.remove_item(ingredient_id, required_qty)
 		
 	if survival_comp:
@@ -105,21 +110,22 @@ func interact(interactor: Node2D) -> void:
 		_emit_event_safe(&"EnergyChanged", {"current": survival_comp.energy, "max": survival_comp.max_energy})
 			
 	# 4. Entrega o Produto Final
-	inv_service.add_item(_recipe.result_item, _recipe.result_quantity)
-	print("[Forja] SUCESSO! 1x Lingote de Ferro forjado e adicionado ao inventário.")
+	for output_data in _recipe.outputs:
+		var item_def: ItemDefinition = output_data.get("item_definition", null)
+		var output_qty: int = output_data.get("quantity", 1)
+		if item_def:
+			inv_service.add_item(item_def, output_qty)
+			print("[Forja] SUCESSO! %dx %s forjado e adicionado ao inventário." % [output_qty, item_def.name])
 	
 	# 5. Notifica XP na Profissão e registra no Output
-	print("[Forja] +%.1f XP concedido na profissão: %s" % [_recipe.xp_reward, _recipe.required_profession])
+	var prof_service = ServiceRegistry.get_service(&"ProfessionService") as ProfessionService
+	if prof_service:
+		prof_service.add_profession_xp(_recipe.profession_id, _recipe.granted_profession_xp)
 	
 	# Emite eventos no Barramento
 	_emit_event_safe(&"ItemCrafted", {
 		"recipe_id": _recipe.id,
-		"result_item": _recipe.result_item.id,
-		"quantity": _recipe.result_quantity
-	})
-	_emit_event_safe(&"ProfessionXPChanged", {
-		"profession": _recipe.required_profession,
-		"xp_gained": _recipe.xp_reward
+		"profession_id": _recipe.profession_id
 	})
 
 
@@ -132,3 +138,4 @@ func _emit_event_safe(event_name: StringName, data: Dictionary) -> void:
 		EventBus.emit_signal("event_emitted", event_name, data)
 	elif EventBus.has_method("emit_event"):
 		EventBus.call("emit_event", event_name, data)
+		

@@ -26,13 +26,13 @@
 
 # 1. SPRINT ATUAL
 
-**Sprint:** Sprint 13 — Sistema de Relacionamentos com NPCs e Afinidade
+**Sprint:** Sprint 16 — Polimento da Iluminação 2D no Setor Escuro
 
-**Objetivo:** Conclusão, integração e validação atômica da TASK-302 (RelationshipService, Afinidade e Modificadores Comerciais por Afinidade).
+**Objetivo:** Implementação do nó `BioluminescentFloraNode`, pulsação senoidal orgânica de iluminação 2D e suíte de testes de integração com o `LightingService` no `boot.gd`.
 
 | ID | Tarefa | Tipo | Prioridade | Sprint | Dependência | Status | Critério de aceitação |
 |---|---|---|---|---|---|---|---|
-| TASK-302 | Sistema de Relacionamentos com NPCs e Afinidade | Social | P1 | 13 | TASK-301 | DONE | Criar `RelationshipService`, escala de -100 a +100, doação de presentes e validação via `test_relationship_system.gd` com `[TEST PASSED]`. |
+| POLISH-001 | Iluminação com ilhas bioluminescentes 2D no Setor Escuro | Polish | P3 | 16 | TASK-109 | DONE | Criar `BioluminescentFloraNode`, configurar efeito de luz pulsante 2D, elevar iluminação do jogador para 0.75 na área e validar no `test_bioluminescent_lighting.gd` com status 100% aprovado no `boot.gd`. |
 
 ---
 
@@ -42,8 +42,8 @@
 |---|---|---|---|---|---|
 | TASK-301 | Interface Comercial e Integração com PricingService | UI/Systems | P1 | TASK-204 | DONE |
 | TASK-302 | Sistema de Relacionamentos com NPCs e Afinidade | Social | P1 | TASK-301 | DONE |
-| TASK-303 | Múltiplas Receitas e Estações de Trabalho | Crafting | P1 | TASK-302 | TODO |
-| TASK-304 | Loja do Jogador e Mercado Local | Economy | P1 | TASK-303 | TODO |
+| TASK-303 | Múltiplas Receitas e Estações de Trabalho | Crafting | P1 | TASK-302 | DONE |
+| TASK-304 | Loja do Jogador e Mercado Local | Economy | P1 | TASK-303 | DONE |
 
 ---
 
@@ -71,6 +71,7 @@
 | ID | Bug | Severidade | Prioridade | Sprint | Status |
 |---|---|---|---|---|---|
 | BUG-001 | Erro de atribuição de Array não tipado no `test_relationship_system.gd` | MÉDIA | P1 | 13 | DONE |
+| BUG-002 | `Invalid assignment of property 'name'` no `forge_node.gd` | ALTA | P1 | 14 | DONE |
 
 ---
 
@@ -84,7 +85,7 @@
 
 | ID | Melhoria | Prioridade | Sistema | Status |
 |---|---|---|---|---|
-| POLISH-001 | Iluminação com ilhas bioluminescentes 2D no Setor Escuro | P3 | Lighting 2D | TODO |
+| POLISH-001 | Iluminação com ilhas bioluminescentes 2D no Setor Escuro | P3 | Lighting 2D | DONE |
 
 ---
 
@@ -131,44 +132,24 @@ Uma tarefa somente pode ser marcada como `DONE` quando:
 
 # 10. HISTÓRICO DE SPRINTS
 
-## Sprint 0 — Auditoria
-**Objetivo:** compreender o estado atual do projeto e alinhar o escopo da Vertical Slice 2D.  
-**Resultado:** Aprovado. Decidido transição para perspectiva 2D Top-Down e remoção do parâmetro de Sede do MVP.
+## Sprint 14 — Múltiplas Receitas e Estações de Trabalho (TASK-303)
+**Objetivo:** Refatoração de contrato das receitas da estação da forja (`forge_node.gd`) e validação da suíte integrada de boot.  
+**Resultado:** CONCLUÍDA COM SUCESSO (BUG-002 Resolvido).
 
-## Sprint 1 a 7 — MVP 1.0 (Vertical Slice 2D)
-**Objetivo:** Construção e integração de todos os sistemas base de movimentação, sobrevivência, iluminação, coleta, forja, combate, quests e Save/Load.  
-**Resultado:** CONCLUÍDAS COM SUCESSO. Todos os testes de integração e persistência aprovados.
-
-## Sprint 8 — Engine de Profissões e Maestria (Fase 2)
-**Objetivo:** Implementar o `ProfessionService` e suportar 17 profissões em 5 Tiers.  
+## Sprint 15 — Loja do Jogador e Mercado Local (TASK-304)
+**Objetivo:** Implementar o `PlayerMarketService`, publicação de anúncios e testes unitários de simulação econômica.  
 **Resultado:** CONCLUÍDA COM SUCESSO.
 
-## Sprint 9 — Economia Dinâmica e Cálculo de Preços (Fase 2)
-**Objetivo:** Implementar o `PricingService` para calcular flutuações de preços baseados em oferta/demanda.  
+## Sprint 16 — Polimento da Iluminação 2D no Setor Escuro (POLISH-001)
+**Objetivo:** Implementar `BioluminescentFloraNode`, pulsação senoidal de luz 2D e integração com `LightingService`.  
 **Resultado:** CONCLUÍDA COM SUCESSO.
-
-## Sprint 10 — Reputação Multidimensional e Facções (Fase 2)
-**Objetivo:** Implementar o `FactionService` para gerenciar reputações de 0 a 10.000.  
-**Resultado:** CONCLUÍDA COM SUCESSO.
-
-## Sprint 11 — World Streaming e Simulação Offline (Fase 2)
-**Objetivo:** Implementar o `WorldRegionManager` e `RegionDefinition`.  
-**Resultado:** CONCLUÍDA COM SUCESSO.
-
-## Sprint 12 — Interface Comercial e Precificação Dinâmica (TASK-301)
-**Objetivo:** Implementar `shop_interface.gd` e `ShopInterface.tscn`.  
-**Resultado:** CONCLUÍDA COM SUCESSO.
-
-## Sprint 13 — Sistema de Relacionamentos com NPCs e Afinidade (TASK-302)
-**Objetivo:** Implementar `RelationshipService`, doação de presentes e descontos por afinidade individual.  
-**Resultado:** CONCLUÍDA E VALIDADA com a suíte `test_relationship_system.gd` retornando `[TEST PASSED]` no Output!
 
 ---
 
 # 11. PRÓXIMA TAREFA
 
-**ID:** TASK-303
+**ID:** TASK-401
 
-**Tarefa:** Múltiplas Receitas e Estações de Trabalho.
+**Tarefa:** Fundação da Camada de Rede (Multiplayer-Ready Architecture).
 
-**Motivo da prioridade:** Expandir as opções de crafting e encadeamento de produção após consolidar o mercado e as relações sociais.
+**Motivo da prioridade:** Garantir a serialização segura de mensagens e estados para o modo cooperativo futuro.
