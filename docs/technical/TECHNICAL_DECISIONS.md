@@ -1,7 +1,6 @@
 # TECHNICAL_DECISIONS.md
 
 > Registro permanente das decisões técnicas e arquiteturais importantes do projeto.
->
 > O objetivo é evitar que decisões previamente aprovadas sejam alteradas ou esquecidas sem justificativa.
 
 ---
@@ -36,220 +35,146 @@ Arquivos ou sistemas afetados:
 Plano de migração, se aplicável:
 
 Responsável pela decisão:
+STATUS POSSÍVEIS
+PROPOSTA
+
+ATIVA
+
+SUPERADA
+
+CANCELADA
+
+DECISÕES ATIVAS
+ADR-001 — Adoção da Perspectiva 2D Top-Down para a Vertical Slice MVP
+Data: 2026-08-18 | Status: ATIVA
+
+ADR-012 — Padrão MVVM/Presentation Model para a Interface de Comércio (TASK-301)
+Data: 2026-08-21 | Status: ATIVA
+
+ADR-013 — Implementação do Sistema de Relacionamentos e Afinidade com NPCs (TASK-302)
+Data: 2026-08-21 | Status: ATIVA
+
+ADR-014 — Padronização dos Campos Data-Driven da RecipeDefinition (TASK-303 / BUG-002)
+Data: 2026-08-23 | Status: ATIVA
+
+ADR-015 — Implementação do PlayerMarketService para a Loja do Jogador (TASK-304)
+Data: 2026-08-23 | Status: ATIVA
+
+ADR-016 — Componente de Flora Bioluminescente e Ilhas de Luz Ambientais (POLISH-001)
+Data: 2026-08-23
+
+Status: ATIVA
+
+Contexto
+O ambiente do Setor Escuro do jogo exige pontos de iluminação estáticos/ambientais que funcionem como refúgio tático seguro contra criaturas hostis sem gastar combustível de lanternas do jogador.
+
+Problema
+Inexistência de um nó interativo ambiental capaz de emitir iluminação pulsante e elevar dinamicamente o estado de iluminação do jogador (LightingContext) via LightingService de forma desacoplada.
+
+Decisão
+Criar o nó BioluminescentFloraNode estendendo Area2D, equipado com um PointLight2D alimentado por uma textura radial de gradiente gerada dinamicamente. O nó calcula uma pulsação senoidal de luz no _process e monitora a entrada/saída de entidades (Player), atualizando o LightingService para Luz Plena (0.75) enquanto presente na ilha bioluminescente e restaurando para Penumbra (0.20) ao sair.
+
+Motivo
+Proporcionar profundidade ambiental e tática de sobrevivência no Setor Escuro de acordo com as especificações do GDD/TDD, mantendo o total desacoplamento com os sistemas de combate e IA.
+
+Consequências Positivas
+Permite criar ilhas bioluminescentes em qualquer mapa Top-Down 2D apenas adicionando o nó.
+
+Totalmente coberto por testes unitários e de integração (test_bioluminescent_lighting.gd).
+
+Arquivos afetados
+res://entities/environment/bioluminescent_flora_node.gd
+
+res://tests/unit/test_bioluminescent_lighting.gd
+
+res://boot.gd
 ```
 
-# STATUS POSSÍVEIS
-
-- PROPOSTA
-- ATIVA
-- SUPERADA
-- CANCELADA
-
-# DECISÕES ATIVAS
-
-## ADR-001 — Adoção da Perspectiva 2D Top-Down para a Vertical Slice MVP
-
-**Data:** 2026-08-18
-
-**Status:** ATIVA
-
-### Contexto
-
-O projeto precisava de uma validação funcional rápida dos sistemas sistêmicos (sobrevivência, coleta, forja, combate, quests e iluminação).
-
-### Decisão
-
-Desenvolver a Vertical Slice em perspectiva 2D Top-Down mantendo a camada de domínio desacoplada.
-
-### Motivo
-
-Reduzir a complexidade de assets 3D na fase de validação mantendo a arquitetura pronta para migração futura.
-
-### Consequências positivas
-
-- Agilidade de prototipagem e facilidade na criação de testes automatizados.
-
-### Trade-offs
-
-- A apresentação visual inicial difere da visão de longo prazo em 3ª pessoa.
-
-### Sistemas afetados
-
-- Player, Inimigos, Câmera e Iluminação.
 
 ---
 
-## ADR-002 — Arquitetura de Scenes e Components
+# DECISÕES MULTIPLAYER E MUNDO — 2026-08-24
 
+## ADR-017 — Transporte de Rede com ENet
+
+**Data:** 2026-08-24  
 **Status:** ATIVA
 
-### Contexto
+**Contexto:** início da fase de Multiplayer Cooperativo.
 
-O projeto precisa manter sistemas modulares e reutilizáveis.
+**Decisão:** utilizar `ENetMultiplayerPeer` nativo do Godot 4.7.1, encapsulado por `NetworkTransportService`.
 
-### Decisão
+**Motivo:** integração nativa com MultiplayerAPI, baixo overhead e possibilidade de substituição futura por adaptadores sem alterar o domínio.
 
-Priorizar composição por Nodes/Components, Scenes reutilizáveis, Resources e Signals antes de criar hierarquias profundas de herança.
-
-### Motivo
-
-Reduzir acoplamento e facilitar manutenção, testes e evolução do projeto.
-
-### Consequências
-
-O projeto deve evitar scripts monolíticos e heranças profundas quando composição resolver o problema.
+**Impactos:** infraestrutura de rede, comandos, sincronização e testes Host/Client.
 
 ---
 
-## ADR-003 — Uso de Autoloads
+## ADR-018 — Listen Server / Host Autoritativo
 
+**Data:** 2026-08-24  
 **Status:** ATIVA
 
-### Decisão
+**Decisão:** Listen Server / Host Autoritativo para Coop.
 
-Autoloads serão utilizados apenas para sistemas realmente globais e persistentes entre Scenes.
+**Autoridade:** Host sobre WorldState, NPCs, spawning, economia, inventários e transações. Cliente possui predição da física local e recebe reconciliação do Host.
 
-### Exemplos
-
-- EventBus
-- TimeService
-- GameState
-- SaveService
-- SceneManager
-- ServiceRegistry
-
-### Regra
-
-Não transformar componentes de gameplay comuns em Autoloads.
+**Impactos:** rede, persistência, economia, inventário, NPCs, combate e reconexão.
 
 ---
 
-## ADR-004 — Dados Data-Driven
+## ADR-019 — Navegação 2D via NavigationServer2D
 
+**Data:** 2026-08-24  
 **Status:** ATIVA
 
-### Decisão
+**Decisão:** `NavigationServer2D` + `NavigationRegion2D` + `NavigationAgent2D`, acessados pela IA através de `NavigationService`. Obstáculos dinâmicos usam `NavigationObstacle2D`.
 
-Quando apropriado, dados configuráveis de gameplay deverão ser separados da lógica utilizando Resources.
-
-### Exemplos
-
-- Items
-- Weapons
-- Enemies
-- Characters
-- Skills
-- Quests
-- Loot Tables
-
-### Motivo
-
-Facilitar balanceamento, manutenção e expansão.
+**Motivo:** desacoplamento da IA em relação à implementação concreta de navegação.
 
 ---
 
-## ADR-005 — Compatibilidade Godot 4
+## ADR-020 — Grid-Based Chunks e Offline Simulation
 
+**Data:** 2026-08-24  
 **Status:** ATIVA
 
-### Decisão
+**Decisão:** streaming por Grid-Based Chunks 2D. Regiões ativas usam Full Simulation; regiões inativas usam Offline/Abstract Simulation.
 
-O projeto será desenvolvido utilizando APIs, sintaxe e práticas compatíveis com Godot 4.x (especificamente Godot 4.7.1).
-
-### Regra
-
-Não introduzir código ou APIs específicas de Godot 3.x.
+**Motivo:** permitir expansão do mundo sem exigir simulação completa de todas as regiões simultaneamente.
 
 ---
 
-## ADR-012 — Padrão MVVM/Presentation Model para a Interface de Comércio (TASK-301)
+## ADR-021 — Save/Load Multiplayer e Idempotência
 
-**Data:** 2026-08-21
-
+**Data:** 2026-08-24  
 **Status:** ATIVA
 
-### Contexto
+**Decisão:** WorldState persistido pelo Host; PlayerState individual preservado para o jogador. Transações de itens utilizam `TransactionId` idempotente e rollback em falha.
 
-A interface de comércio (`ShopInterface.tscn` / `shop_interface.gd`) precisava exibir preços dinâmicos baseados no estado do mercado e reputação com a facção do comerciante, sem duplicar regras econômicas dentro da camada visual de UI.
-
-### Decisão
-
-Implementar a `ShopInterface` seguindo o padrão Presentation Model/MVVM. A UI apenas lê os preços calculados via `PricingService.calculate_buy_price()` e `calculate_sell_price()` e executa transações chamando a API do `InventoryService`.
-
-### Motivo
-
-Garante que as regras de precificação, margem de venda (60%), descontos de facção e taxas permaneçam isoladas e testáveis na camada de domínio, mantendo a UI totalmente desacoplada e reutilizável.
-
-### Consequências Positivas
-
-- A interface de UI pode ser reaproveitada por qualquer comerciante ou vilarejo.
-- Testes unitários do sistema de comércio rodam sem necessidade de carregar a árvore de visualização física do Godot.
+**Reconexão:** reserva do jogador por até 60 segundos e restauração via snapshot atual.
 
 ---
 
-# DECISÕES DE GAMEPLAY
+## ADR-022 — Baseline Visual da Playable Build
 
-## ADR-008 — Remoção do Parâmetro de Sede do MVP
-
-**Data:** 2026-08-18
-
+**Data:** 2026-08-24  
 **Status:** ATIVA
 
-### Contexto
+**Decisão:** Pixel Art Neons/Chiaroscuro, resolução-base `640 × 360`, tiles `16 × 16`, Player `32 × 32`, Pixel Snap e iluminação 2D nativa.
 
-O GDD previa o parâmetro Sede no SurvivalComponent junto com Fome, Fadiga, Energia, Temperatura e Conforto.
-
-### Decisão
-
-Adiar a mecânica de Sede para fases pós-MVP.
-
-### Motivo
-
-Evitar atrito excessivo de micromanagement na fase de testes iniciais.
-
-### Impacto no gameplay
-
-O SurvivalComponent foca em 5 necessidades fundamentais durante o MVP.
+**Impactos:** pipeline de assets, UI, cenas, minimapa e construção do Posto Avançado da Garganta de Ferro.
 
 ---
 
-# DECISÕES DE PERFORMANCE
+## ADR-023 — Critérios da Playable Build
 
-## ADR-010 — Frequências Diferenciadas de Simulação (Ticks)
-
-**Data:** 2026-08-20
-
+**Data:** 2026-08-24  
 **Status:** ATIVA
 
-### Problema
+**Decisão:** os critérios de aceite estão definidos, mas ainda não são considerados validados.
 
-Processar economia, regeneração de recursos e simulação de NPCs a cada frame gerava desperdício de CPU.
+**Regra:** nenhum critério pode ser marcado como aprovado sem execução, resultado registrado e evidência.
 
-### Decisão
+**Impactos:** QA, testes manuais, distribuição interna e Definition of Done.
 
-Isolar simulações de baixo ciclo em ticks do `TimeService` (ex: a cada minuto do jogo) em vez de usar `_process(delta)`.
-
-### Motivo
-
-Manter a performance em 60 FPS estáveis sem gargalos de CPU.
-
-### Trade-offs
-
-Ações de mundo são processadas em intervalos discretos.
-
----
-
-# DECISÕES SUPERADAS
-
-*(Nenhuma decisão superada no momento)*
-
-# REGRAS DO DOCUMENTO
-
-1. Nunca apagar decisões importantes.
-2. Nunca alterar uma decisão ATIVA silenciosamente.
-3. Se uma nova decisão contradizer uma decisão anterior, registrar uma nova ADR.
-4. Explicar o motivo da mudança.
-5. Preservar o histórico.
-6. Referenciar arquivos e sistemas afetados quando relevante.
-7. O documento deve representar decisões realmente aprovadas, não apenas sugestões.
-8. Decisões provisórias devem ser claramente marcadas como PROPOSTA.

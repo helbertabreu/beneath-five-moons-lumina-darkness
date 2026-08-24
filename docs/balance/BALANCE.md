@@ -194,3 +194,67 @@ O GDD define a escala de reputação local de 0 a 10.000.
 | Energia (Energy) | 100.0 | Consumo por Ação (-10.0 / -15.0) | Impede ações pesadas/coleta/crafting |
 | Temperatura | 0.0 (Neutro) | Dependente do Clima/Região | Penalidades térmicas |
 | Conforto | 100.0 | Recuperado ao descansar | Modificador de fadiga |
+
+---
+
+# 12. Progressão Geral — Decisões Aprovadas (Sprint 17)
+
+## 12.1 XP de Nível Geral
+
+**Modelo:** Híbrido baseado em Ações e Milestones.
+
+**Fontes:**
+- combate;
+- coleta;
+- crafting;
+- descobertas de mapa;
+- conclusão de quests.
+
+**Curva de XP requerida:**
+
+```text
+XP_req = 100 × Nível^1.5
+```
+
+**Efeito por nível:**
+- aumento fixo de HP máximo;
+- Talent Points utilitários gerais.
+
+**Integração com Progressão por Uso:**
+A XP geral recebe um subproduto percentual da XP obtida em proficiências/profissões.
+
+### Parâmetros ainda não numericamente definidos
+
+- aumento de HP por nível;
+- quantidade de Talent Points por nível;
+- percentual de conversão de XP de proficiências/profissões em XP geral;
+- nível máximo do personagem.
+
+Esses valores devem ser definidos antes da implementação definitiva das fórmulas correspondentes.
+
+---
+
+# 13. Atributos — Funções Oficiais
+
+| Atributo | Aplicação |
+|---|---|
+| Força | Carga e dano físico |
+| Agilidade | Estamina e mobilidade/execução física |
+| Vigor | Defesa e resistência física |
+| Inteligência | Potencial mágico, aprendizado de receitas e refinamento |
+| Sabedoria | Percepção, sanidade/pânico no Setor Escuro e eficiência de luz |
+| Carisma | Preços, afinidade, facções e contratação |
+
+Todos os atributos utilizam o sistema genérico de `Modifier`.
+
+---
+
+# 14. Direção Visual — Parâmetros de Produção
+
+- Resolução-base: `640 × 360`.
+- Tile: `16 × 16`.
+- Player: `32 × 32`.
+- Pixel Snap: ativo.
+- Pixel Art: Filter `Nearest`.
+- Mipmaps: desativados para pixel art.
+- Iluminação: 2D nativa da Godot.

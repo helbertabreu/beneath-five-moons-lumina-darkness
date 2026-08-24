@@ -1,4 +1,4 @@
-																																																																					# PROJECT_STATE.md
+# PROJECT_STATE.md
 
 > Documento de estado atual do projeto Godot 4.
 > Este arquivo deve refletir o estado REAL do projeto e ser atualizado ao final de Sprints, mudanças arquiteturais relevantes e correções importantes.
@@ -8,13 +8,13 @@
 ## 1. IDENTIFICAÇÃO DO PROJETO
 
 - **Nome do projeto:** Beneath Five Moons / Lumina Darkness
-- **Versão atual:** 0.1.0-ALPHA.0
+- **Versão atual:** 0.2.1-ALPHA.1
 - **Versão da Godot:** Godot 4.7.1
 - **Plataformas alvo:** PC (Windows / Linux / macOS)
 - **Gênero:** RPG de Ação Sandbox 2D / Survival Leve / Simulação Social / Progressão por Uso
 - **Perspectiva:** Top-Down 2D
-- **Status geral:** DESENVOLVIMENTO (SPRINT 1 EM ANDAMENTO)
-- **Última atualização:** 2026-08-20
+- **Status geral:** PÓS-MVP / PREPARAÇÃO DA PLAYABLE BUILD / FUNDAÇÃO MULTIPLAYER
+- **Última atualização:** 2026-08-24
 
 ---
 
@@ -27,164 +27,149 @@ RPG de ação sandbox 2D em mundo aberto focado em identidade emergente, sobrevi
 ### Core Loop
 
 ```text
-VIVER → EXPLORAR → COLETAR → PRODUZIR → NEGOCIAR → DESENVOLVER → RELACIONAR-SE → INFLUENCIAR O MUNDOENVOLVER → RELACIONAR-SE → INFLUENCIAR O MUNDO
+VIVER → EXPLORAR → COLETAR → PRODUZIR → NEGOCIAR → DESENVOLVER → RELACIONAR-SE → INFLUENCIAR O MUNDO
 ```
 
 ### Objetivo atual do projeto
 
-[PREENCHER]
+Transformar a base pós-MVP em uma primeira Playable Build multiplayer cooperativa, visualmente jogável e testável, tendo como primeira região o **Posto Avançado da Garganta de Ferro**.
 
 ---
 
 ## 3. ESTADO DA SPRINT
 
-- **Sprint atual:** [PREENCHER]
-- **Objetivo:** [PREENCHER]
-- **Início:** [PREENCHER]
-- **Previsão de conclusão:** [PREENCHER]
-- **Status:** PLANEJAMENTO / EM ANDAMENTO / BLOQUEADA / QA / CONCLUÍDA
+**Sprint anterior:** Sprint 16 — Polimento da Iluminação 2D no Setor Escuro  
+**Status:** CONCLUÍDA E VALIDADA.
 
-### Progresso
+**Nova fase:** Sprint 17 — Fundação Multiplayer + Preparação da Playable Build  
+**Status:** PLANEJAMENTO / IMPLEMENTAÇÃO A INICIAR.
 
-- [ ] Tarefa 1
-- [ ] Tarefa 2
-- [ ] Tarefa 3
+**Objetivo:** estabelecer o baseline multiplayer oficial, iniciar a apresentação visual e preparar o Posto Avançado da Garganta de Ferro para testes manuais cooperativos.
 
 ---
 
 ## 4. SISTEMAS DO JOGO
 
-| Sistema | Estado | Qualidade | Localização | Observações |
-|---|---|---|---|---|
-| Player | AUSENTE | — | — | |
-| Movimento | AUSENTE | — | — | |
-| Combate | AUSENTE | — | — | |
-| Inimigos / IA | AUSENTE | — | — | |
-| Inventário | AUSENTE | — | — | |
-| Progressão | AUSENTE | — | — | |
-| UI | AUSENTE | — | — | |
-| Áudio | AUSENTE | — | — | |
-| Save/Load | AUSENTE | — | — | |
-| Settings | AUSENTE | — | — | |
-
-### Estados possíveis
-
-- AUSENTE
-- PROTÓTIPO
-- PARCIAL
-- FUNCIONAL
-- COMPLETO
-- COM BUG
-- PRECISA REFACTOR
-- BLOQUEADO
+| Sistema | Estado | Qualidade | Observações |
+|---|---|---|---|
+| Player | FUNCIONAL | ALTA | `CharacterBody2D` com composição de componentes |
+| Movimento | FUNCIONAL | ALTA | `MovementComponent2D` baseado em Input Map semântico |
+| Combate | FUNCIONAL | ALTA | Ação tática desacoplada via `IDamageable` |
+| Inimigos / IA | FUNCIONAL | ALTA | Lobo Esfomeado reativo à luz |
+| Inventário | FUNCIONAL | ALTA | `InventoryService` transacional com stacks e instâncias |
+| Progressão | FUNCIONAL | ALTA | `ProfessionService` com 17 profissões e 5 tiers |
+| Relacionamentos | FUNCIONAL | ALTA | `RelationshipService`, afinidade de -100 a +100 |
+| Economia / Pricing | FUNCIONAL | ALTA | Oferta, demanda e impostos |
+| Loja do Jogador | FUNCIONAL | ALTA | `PlayerMarketService` |
+| Iluminação / Flora | FUNCIONAL | ALTA | `BioluminescentFloraNode` com pulso suave |
+| Save/Load | FUNCIONAL | ALTA | Persistência atômica e versionada |
+| Multiplayer | ARQUITETURA DEFINIDA | — | `ENetMultiplayerPeer` + Listen Server / Host Autoritativo |
+| Navegação 2D | ARQUITETURA DEFINIDA | — | `NavigationServer2D` + regiões/agentes + `NavigationService` |
+| World Streaming | ARQUITETURA DEFINIDA | — | Grid-Based Chunks + Offline/Abstract Simulation |
+| UI / HUD | ARQUITETURA DEFINIDA | — | MVVM-like / Presentation Model |
+| Inventário Visual | ESPECIFICADO | — | Implementação visual pendente |
+| Minimap | ESPECIFICADO | — | Implementação visual pendente |
+| Primeiro Local | ESPECIFICADO | — | Posto Avançado da Garganta de Ferro |
+| Testes Manuais | ESPECIFICADOS | — | Execução pendente |
+| Playable Build | EM PREPARAÇÃO | — | Critérios definidos, ainda não validados |
 
 ---
 
 ## 5. ARQUITETURA ATUAL
 
-### Estrutura principal
-
-```text
-res://
-├── scenes/
-├── scripts/
-├── resources/
-├── assets/
-└── tests/
-```
-
-> Substitua pela estrutura real do projeto após a auditoria.
-
 ### Autoloads
 
 | Autoload | Função | Status |
 |---|---|---|
-| [PREENCHER] | [PREENCHER] | [PREENCHER] |
+| EventBus | Barramento de eventos desacoplados da engine | FUNCIONAL |
+| TimeService | Relógio lógico e agendador de ticks do mundo | FUNCIONAL |
+| GameState | Estado global persistente serializável | FUNCIONAL |
+| SaveService | Persistência atômica, backup e migração | FUNCIONAL |
+| SceneManager | Carregamento e transição de cenas/regiões | FUNCIONAL |
+| ServiceRegistry | Injeção de dependência e localização de serviços | FUNCIONAL |
 
-### Principais componentes
+### Baseline Multiplayer
 
-| Componente | Responsabilidade | Utilizado por |
+- Transporte: `ENetMultiplayerPeer`.
+- Topologia: Listen Server / Host Autoritativo.
+- WorldState: autoridade do Host.
+- Movimento local: preditivo no cliente com reconciliação.
+- Transações: `TransactionId` idempotente.
+- Reconexão: janela de 60 segundos.
+- Save do mundo: Host.
+- Save do personagem: PlayerState individual com HMAC.
+
+### Baseline de Mundo
+
+- Navegação: `NavigationServer2D` → `NavigationRegion2D` → `NavigationAgent2D` → `NavigationService`.
+- Obstáculos dinâmicos: `NavigationObstacle2D`.
+- Streaming: Grid-Based Chunks.
+- Regiões ativas: Full Simulation.
+- Regiões inativas: Offline/Abstract Simulation.
+
+### Baseline Visual
+
+- Pixel Art Neons/Chiaroscuro.
+- Resolução-base: `640 × 360`.
+- Tiles: `16 × 16`.
+- Player: `32 × 32`.
+- Pixel Snap.
+- Iluminação 2D nativa.
+
+---
+
+## 6. DECISÕES IMPORTANTES RECENTES
+
+- XP geral: modelo híbrido baseado em Ações e Milestones.
+- Curva: `XP_req = 100 × Nível^1.5`.
+- Atributos: Força, Agilidade, Vigor, Inteligência, Sabedoria e Carisma com responsabilidades separadas.
+- `ProficiencyDecayPolicy = NONE`.
+- Primeiro local: Posto Avançado da Garganta de Ferro.
+- HUD: Contextual Minimalista.
+- Direção visual: Pixel Art Neons/Chiaroscuro.
+- Multiplayer: ENet + Listen Server / Host Autoritativo.
+- Navegação: NavigationServer2D + NavigationService.
+- Streaming: Grid-Based Chunks + Offline/Abstract Simulation.
+- Critérios da Playable Build: DEFINIDOS, mas ainda NÃO EXECUTADOS.
+
+---
+
+## 7. RISCOS ATUAIS
+
+| Risco | Severidade | Mitigação |
 |---|---|---|
-| [PREENCHER] | [PREENCHER] | [PREENCHER] |
+| Complexidade multiplayer | ALTA | Implementação incremental e testes Host/Client desde o início |
+| Desync de estado | ALTA | Autoridade central, classificação de estado e reconciliação |
+| Duplicação de itens | ALTA | `TransactionId` idempotente + rollback |
+| Escopo visual excessivo | ALTA | Foco no Posto Avançado da Garganta de Ferro |
+| UI acoplada ao domínio | MÉDIA | MVVM-like + ViewModels + EventBus |
+| Performance | MÉDIA | Metas de 60 FPS e profiling contínuo |
+| World Streaming prematuro | MÉDIA | Validar primeiro uma região pequena antes de expandir |
 
 ---
 
-## 6. GDD × IMPLEMENTAÇÃO
+## 8. PRÓXIMOS MARCOS
 
-| Requisito do GDD | Implementado? | Estado | Localização | Ação |
-|---|---|---|---|---|
-| [PREENCHER] | [SIM/NÃO/PARCIAL] | [PREENCHER] | [PREENCHER] | [PREENCHER] |
-
----
-
-## 7. BUGS CONHECIDOS
-
-| ID | Bug | Severidade | Reprodução | Status |
-|---|---|---|---|---|
-| BUG-001 | [PREENCHER] | [CRÍTICA/ALTA/MÉDIA/BAIXA] | [PREENCHER] | TODO |
-
----
-
-## 8. DÍVIDA TÉCNICA
-
-| ID | Problema | Severidade | Impacto | Recomendação | Status |
-|---|---|---|---|---|---|
-| TECH-001 | [PREENCHER] | [PREENCHER] | [PREENCHER] | [PREENCHER] | TODO |
+1. Fundação da camada de rede.
+2. Validação Host/Client.
+3. Implementação da reconexão.
+4. Estruturação das cenas 2D oficiais.
+5. Construção visual do Posto Avançado da Garganta de Ferro.
+6. UI/HUD.
+7. Inventário visual.
+8. Minimap.
+9. NPCs, recursos e inimigos visualmente integrados.
+10. Execução dos testes manuais.
+11. Correção de bugs e regressão.
+12. Validação dos critérios da Playable Build.
 
 ---
 
-## 9. RISCOS TÉCNICOS
+## 9. REGRAS DE GOVERNANÇA
 
-| ID | Risco | Probabilidade | Impacto | Mitigação | Status |
-|---|---|---|---|---|---|
-| RISK-001 | [PREENCHER] | [BAIXA/MÉDIA/ALTA] | [BAIXO/MÉDIO/ALTO] | [PREENCHER] | ABERTO |
+- Este arquivo deve refletir o estado real.
+- Nenhuma funcionalidade deve ser marcada como concluída apenas porque foi especificada.
+- Critérios de aceite definidos permanecem pendentes até execução e evidência.
+- Mudanças arquiteturais relevantes exigem atualização deste arquivo.
+- O histórico de decisões deve permanecer rastreável em `TECHNICAL_DECISIONS.md`.
 
----
-
-## 10. DECISÕES IMPORTANTES
-
-Consulte `TECHNICAL_DECISIONS.md`.
-
-| ID | Decisão | Data | Status |
-|---|---|---|---|
-| ADR-001 | [PREENCHER] | [DATA] | ATIVA |
-
----
-
-## 11. PRÓXIMAS TAREFAS
-
-1. [PREENCHER]
-2. [PREENCHER]
-3. [PREENCHER]
-
----
-
-## 12. ÚLTIMA SINCRONIZAÇÃO
-
-### O que foi concluído
-
-- [PREENCHER]
-
-### O que está em andamento
-
-- [PREENCHER]
-
-### O que está bloqueado
-
-- [PREENCHER]
-
-### Próximo passo recomendado
-
-[PREENCHER]
-
----
-
-## REGRA PARA O GEMINI
-
-Ao trabalhar neste projeto:
-
-1. Leia este arquivo antes de assumir o estado do projeto.
-2. Não invente informações ausentes.
-3. Não considere uma tarefa concluída sem validação.
-4. Atualize este arquivo quando uma alteração importante modificar o estado do projeto.
-5. Preserve o histórico das decisões importantes em `TECHNICAL_DECISIONS.md`.
