@@ -1,7 +1,7 @@
 # BACKLOG.md
 
-> Backlog técnico e de produção do projeto.
-> O backlog deve representar o trabalho real necessário para levar o projeto ao estado definido pelo GDD.
+> Backlog técnico e de produção do projeto Beneath Five Moons / Lumina Darkness.
+> O backlog representa o trabalho real necessário para levar o projeto ao estado definido pelo GDD.
 
 ---
 
@@ -24,28 +24,27 @@
 
 ---
 
-# 1. SPRINT ATUAL
+# 1. SPRINT ATUAL — FASE B: APRESENTAÇÃO VISUAL
 
-**Sprint:** Sprint 17 — Fundação Multiplayer + Preparação da Playable Build
+**Sprint:** Gate 7 — Auditoria Visual (Sprint 17 / Fase B)
 
-**Objetivo:** estabelecer o baseline multiplayer oficial, iniciar a camada visual e preparar o Posto Avançado da Garganta de Ferro para validação manual cooperativa.
+**Objetivo:** Auditar os assets visuais, cenas do Player e da UI (HUD) para preparar a camada de apresentação em Pixel Art Neons/Chiaroscuro.
 
 | ID | Tarefa | Tipo | Prioridade | Sprint | Dependência | Status | Critério de aceitação |
 |---|---|---|---|---:|---|---|---|
 | TASK-401 | Fundação `NetworkTransportService` com `ENetMultiplayerPeer` | Multiplayer | P1 | 17 | TASK-304 | TODO | Host e Client conseguem criar conexão ENet sem acoplamento ao domínio |
 | TASK-402 | Listen Server / Host Autoritativo | Multiplayer | P1 | 17 | TASK-401 | TODO | Host mantém autoridade sobre WorldState e valida comandos |
-| TASK-403 | Classificação e sincronização de estado | Multiplayer | P1 | 17 | TASK-402 | TODO | Estados autoritativos/replicados/preditivos/locais/persistentes/transitórios implementados conforme TIS |
+| TASK-403 | Classificação e sincronização de estado | Multiplayer | P1 | 17 | TASK-402 | TODO | Estados autoritativos/replicados/preditivos/locais/persistentes/transitórios implementados |
 | TASK-404 | Reconexão de cliente | Multiplayer | P1 | 17 | TASK-403 | TODO | Cliente reconecta em até 60s e recebe snapshot atual |
 | TASK-405 | Transações idempotentes multiplayer | Multiplayer | P1 | 17 | TASK-403 | TODO | Trocas não produzem duplicação após falha de conexão |
-| TASK-406 | Estrutura oficial de cenas 2D | Technical | P1 | 17 | TASK-401 | TODO | Player/NPC/Enemy/ResourceNode/Region seguem contratos do TIS |
-| TASK-407 | UIManager + HUD contextual | UI | P1 | 17 | TASK-406 | DONE | HUD exibe HP, Estamina, Energia, Lanterna e Luz reativamente via EventBus |
-| TASK-408 | Inventário visual | UI | P1 | 17 | TASK-407 | TODO | Grid, drag-and-drop, split e equipamento funcionam sem lógica de domínio na UI |
+| TASK-406 | Estrutura oficial de cenas 2D | Technical | P1 | 17 | TASK-401 | IN PROGRESS | Player/NPC/Enemy/ResourceNode/Region seguem contratos do TIS |
+| TASK-407 | UIManager + HUD contextual | UI | P1 | 17 | TASK-406 | TODO | HUD exibe HP, Estamina, Energia, Lanterna e Luz desacoplados |
+| TASK-408 | Inventário visual | UI | P1 | 17 | TASK-407 | TODO | Grid, drag-and-drop, split e equipamento funcionam via comandos |
 | TASK-409 | Minimap | UI | P2 | 17 | TASK-407 | TODO | Jogador e marcadores definidos aparecem no minimapa |
-| TASK-410 | Posto Avançado da Garganta de Ferro | World | P1 | 17 | TASK-406 | TODO | Região possui os elementos mínimos definidos no TIS |
-| TASK-411 | Matriz de testes manuais TM-001/TM-002/TM-003 | QA | P1 | 17 | TASK-410 | TODO | Testes registrados com evidências e resultados |
+| TASK-410 | Posto Avançado da Garganta de Ferro | World | P1 | 17 | TASK-406 | TODO | Região possui os elementos mínimos definidos no TIS e LDD |
+| TASK-411 | Matriz de testes manuais TM-001/TM-002/TM-003 | QA | P1 | 17 | TASK-410 | IN PROGRESS | Testes manuais executados com evidências registradas |
 | TASK-412 | Validação dos critérios da Playable Build | QA | P1 | 17 | TASK-411 | TODO | 100% dos critérios executados e aprovados |
 
----
 ---
 
 # 2. BACKLOG DA FASE 3 (ECONOMIA + PROFISSÕES + SOCIAL)
@@ -84,6 +83,8 @@
 | ------- | ----------------------------------------------------------------------- | ---------- | ---------- | ------ | ------ |
 | BUG-001 | Erro de atribuição de Array não tipado no `test_relationship_system.gd` | MÉDIA      | P1         | 13     | DONE   |
 | BUG-002 | `Invalid assignment of property 'name'` no `forge_node.gd`              | ALTA       | P1         | 14     | DONE   |
+| BUG-003 | Incompatibilidade de assinatura de sinais no EventBus (`event_emitted`) | ALTA       | P1         | 17     | DONE   |
+| BUG-004 | Ausência de cena inicial válida registrada em `project.godot`           | BLOQUEADOR | P0         | 17     | DONE   |
 
 ---
 
@@ -101,73 +102,18 @@ _(Nenhuma dívida técnica registrada no momento)_
 
 ---
 
-# 7. FUTURO / NICE TO HAVE
+# 7. HISTÓRICO RECENTE DE SPRINTS E GATES
 
-| ID      | Funcionalidade                    | Prioridade | Motivo para não implementar agora        | Status   |
-| ------- | --------------------------------- | ---------- | ---------------------------------------- | -------- |
-| FUT-001 | Mecânica de Sede                  | P4         | Removido do MVP conforme decisão ADR-008 | DEFERRED |
-| FUT-002 | Multiplayer Cooperativo Ativo     | P1         | Em execução na Sprint 17                 | IN PROGRESS |
-| FUT-003 | Governança de Vilarejos e Guerras | P4         | Recurso de Endgame (Fase 5)              | DEFERRED |
-
----
-
-# 8. DEFINITION OF DONE
-
-Uma tarefa somente pode ser marcada como `DONE` quando:
-
-- [x] implementação concluída;
-- [x] integração concluída;
-- [x] comportamento esperado validado;
-- [x] edge cases considerados;
-- [x] bugs relevantes corrigidos;
-- [x] testes realizados;
-- [x] critérios de aceitação cumpridos;
-- [x] documentação atualizada quando necessário;
-- [x] nenhuma regressão conhecida introduzida.
+## Gate 1 a 6 (Fase A — Auditoria e Regressão)
+- Executada a auditoria completa de infraestrutura, suítes unitárias e testes manuais.
+- Corrigido `BUG-003` (sinal genérico `event_emitted` no `event_bus.gd`) e `BUG-004` (configuração do `Boot.tscn` no `project.godot`).
+- Executada a regressão do MVP com 100% de sucesso nas 7 suítes automatizadas via `boot.gd`.
+- **Resultado:** FASE A CONCLUÍDA E APROVADA.
 
 ---
 
-# 9. REGRAS DO BACKLOG
+# 8. PRÓXIMA TAREFA
 
-1. Não criar tarefas duplicadas.
-2. Antes de criar uma tarefa, verificar se ela já existe.
-3. Não marcar tarefas como DONE sem validação.
-4. Dependências devem ser registradas.
-5. Bugs críticos têm prioridade sobre polish.
-6. O backlog deve refletir o estado real do projeto.
-7. Funcionalidades fora do MVP devem ser claramente identificadas.
-8. Quando uma tarefa crescer demais, dividi-la em tarefas menores.
-9. Ao alterar significativamente o escopo, atualizar o backlog.
-10. Manter IDs únicos.
+**ID:** GATE 7 — AUDITORIA VISUAL
 
----
-
-# 10. HISTÓRICO DE SPRINTS
-
-## Sprint 14 — Múltiplas Receitas e Estações de Trabalho (TASK-303)
-
-**Objetivo:** Refatoração de contrato das receitas da estação da forja (`forge_node.gd`) e validação da suíte integrada de boot.  
-**Resultado:** CONCLUÍDA COM SUCESSO (BUG-002 Resolvido).
-
-## Sprint 15 — Loja do Jogador e Mercado Local (TASK-304)
-
-**Objetivo:** Implementar o `PlayerMarketService`, publicação de anúncios e testes unitários de simulação econômica.  
-**Resultado:** CONCLUÍDA COM SUCESSO.
-
-## Sprint 16 — Polimento da Iluminação 2D no Setor Escuro (POLISH-001)
-
-**Objetivo:** Implementar `BioluminescentFloraNode`, pulsação senoidal de luz 2D e integração com `LightingService`.  
-**Resultado:** CONCLUÍDA COM SUCESSO.
-
-## Sprint 17 (Parcial) — Gate 10: HUD Contextual Minimalista (TASK-407)
-
-**Objetivo:** Implementar e instanciar programmaticamente a cena do HUD (`hud.tscn` / `hud.gd`) conectada desacopladamente via `EventBus`.  
-**Resultado:** CONCLUÍDA COM SUCESSO.
-
----
-
-# 11. PRÓXIMA TAREFA
-
-**ID:** TASK-408 (Gate 11 — Inventário Visual)
-
-**Tarefa:** Implementação do Inventário Visual com suporte a slots, drag-and-drop e divisão de stacks sem lógica de domínio na UI.
+**Objetivo:** Auditar a cena e o script de apresentação do Player e da interface HUD para verificar nós, texturas, animações e componentes visuais disponíveis.

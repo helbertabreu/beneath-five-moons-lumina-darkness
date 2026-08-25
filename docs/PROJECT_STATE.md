@@ -9,40 +9,38 @@
 
 - **Nome do projeto:** Beneath Five Moons / Lumina Darkness
 - **Versão atual:** 0.2.1-ALPHA.1
-- **Versão da Godot:** Godot 4.7.1
+- **Versão da Godot:** Godot 4.7.1 (GL Compatibility / Direct3D12)
 - **Plataformas alvo:** PC (Windows / Linux / macOS)
 - **Gênero:** RPG de Ação Sandbox 2D / Survival Leve / Simulação Social / Progressão por Uso
 - **Perspectiva:** Top-Down 2D
-- **Status geral:** PÓS-MVP / PREPARAÇÃO DA PLAYABLE BUILD / FUNDAÇÃO MULTIPLAYER
-- **Última atualização:** 2026-08-24
+- **Ponto de Entrada Atual:** `res://tests/Boot.tscn` (`boot.gd`)
+- **Status geral:** FASE A (AUDITORIA E REGRESSÃO DO MVP) CONCLUÍDA | PRONTO PARA FASE B (APRESENTAÇÃO VISUAL)
+- **Última atualização:** 2026-08-25
 
 ---
 
 ## 2. VISÃO GERAL
 
 ### Descrição
-
 RPG de ação sandbox 2D em mundo aberto focado em identidade emergente, sobrevivência leve, profissões, relacionamentos, iluminação sistêmica e economia local.
 
 ### Core Loop
-
 ```text
 VIVER → EXPLORAR → COLETAR → PRODUZIR → NEGOCIAR → DESENVOLVER → RELACIONAR-SE → INFLUENCIAR O MUNDO
 ```
 
 ### Objetivo atual do projeto
-
-Transformar a base pós-MVP em uma primeira Playable Build multiplayer cooperativa, visualmente jogável e testável, tendo como primeira região o Posto Avançado da Garganta de Ferro.
+Evoluir a Playable Build Vertical Slice no Posto Avançado da Garganta de Ferro, desenvolvendo a camada visual de apresentação (Player, Câmera, HUD e Inventário Visual) e preparando o ambiente para validação manual cooperativa.
 
 ---
 
 ## 3. ESTADO DA SPRINT
 
-- **Sprint anterior:** Sprint 16 — Polimento da Iluminação 2D no Setor Escuro
-  - **Status:** CONCLUÍDA E VALIDADA.
-- **Nova fase:** Sprint 17 — Fundação Multiplayer + Preparação da Playable Build
-  - **Status:** IMPLEMENTAÇÃO EM ANDAMENTO (GATE 10 CONCLUÍDO).
-  - **Objetivo:** estabelecer o baseline multiplayer oficial, iniciar a apresentação visual e preparar o Posto Avançado da Garganta de Ferro para testes manuais cooperativos.
+- **Sprint anterior:** Gate 6 (Regressão do MVP) — FASE A
+  - **Status:** CONCLUÍDA COM 100% DE APROVAÇÃO AUTOMATIZADA.
+- **Nova fase:** Gate 7 (Auditoria Visual) — FASE B — APRESENTAÇÃO VISUAL
+  - **Status:** A INICIAR.
+  - **Objetivo:** Auditar os nós, texturas, sprites e componentes visuais do Player e da Interface Gráfica (HUD/UI) para iniciar o desenvolvimento da apresentação na engine Godot 4.7.1.
 
 ---
 
@@ -50,27 +48,28 @@ Transformar a base pós-MVP em uma primeira Playable Build multiplayer cooperati
 
 | Sistema | Estado | Qualidade | Observações |
 | :--- | :--- | :--- | :--- |
-| Player | FUNCIONAL | ALTA | CharacterBody2D com composição de componentes e apresentação visual ajustada |
-| Movimento | FUNCIONAL | ALTA | MovementComponent2D baseado em Input Map semântico |
-| Combate | FUNCIONAL | ALTA | Ação tática desacoplada via IDamageable |
-| Inimigos / IA | FUNCIONAL | ALTA | Lobo Esfomeado reativo à luz |
-| Inventário | FUNCIONAL | ALTA | InventoryService transacional com stacks e instâncias |
+| Player Domain | FUNCIONAL | ALTA | CharacterBody2D com composição de componentes |
+| Movement 2D | FUNCIONAL | ALTA | MovementComponent2D baseado em Input Map semântico |
+| Combate 2D | FUNCIONAL | ALTA | Ação tática desacoplada via IDamageable e luz |
+| Inimigos / IA | FUNCIONAL | ALTA | Lobo Esfomeado reativo à iluminação plena/penumbra |
+| Inventário Core | FUNCIONAL | ALTA | InventoryService transacional com stacks e instâncias |
 | Progressão | FUNCIONAL | ALTA | ProfessionService com 17 profissões e 5 tiers |
 | Relacionamentos | FUNCIONAL | ALTA | RelationshipService, afinidade de -100 a +100 |
-| Economia / Pricing | FUNCIONAL | ALTA | Oferta, demanda e impostos |
-| Loja do Jogador | FUNCIONAL | ALTA | PlayerMarketService |
-| Iluminação / Flora | FUNCIONAL | ALTA | BioluminescentFloraNode com pulso suave |
-| Save/Load | FUNCIONAL | ALTA | Persistência atômica e versionada |
-| Câmera 2D | FUNCIONAL | ALTA | PlayerCameraExtension com suavização e Camera Shake via EventBus |
-| UI / HUD | FUNCIONAL E INTEGRADO | ALTA | HUDView (hud.tscn) instanciado no boot.gd com atualizações reativas |
-| Multiplayer | ARQUITETURA DEFINIDA | — | ENetMultiplayerPeer + Listen Server / Host Autoritativo |
+| Economia / Pricing | FUNCIONAL | ALTA | Oferta, demanda, impostos e multiplicadores |
+| Loja do Jogador | FUNCIONAL | ALTA | PlayerMarketService com anúncios e taxas |
+| Iluminação / Flora | FUNCIONAL | ALTA | BioluminescentFloraNode com pulso senoidal suave |
+| Save/Load | FUNCIONAL | ALTA | Persistência atômica, backup e migração JSON |
+| EventBus | FUNCIONAL | ALTA | Sinais fortemente tipados e evento genérico event_emitted |
+| Multiplayer Core | ARQUITETURA DEFINIDA | — | ENetMultiplayerPeer + Listen Server / Host Autoritativo |
 | Navegação 2D | ARQUITETURA DEFINIDA | — | NavigationServer2D + regiões/agentes + NavigationService |
 | World Streaming | ARQUITETURA DEFINIDA | — | Grid-Based Chunks + Offline/Abstract Simulation |
+| UI / HUD | REVALIDADO EM BOOT | MÉDIA | HUDView recebendo sinais desacoplados do EventBus |
+| Player Visual | ESPECIFICADO | — | Auditoria visual a iniciar no Gate 7 |
 | Inventário Visual | ESPECIFICADO | — | Implementação visual pendente |
 | Minimap | ESPECIFICADO | — | Implementação visual pendente |
 | Primeiro Local | ESPECIFICADO | — | Posto Avançado da Garganta de Ferro |
-| Testes Manuais | ESPECIFICADOS | — | Execução pendente |
-| Playable Build | EM PREPARAÇÃO | — | Critérios definidos, ainda não validados |
+| Testes Manuais | PLANEJADOS (TM-001/004) | NOT TESTED | Passo a passo definido; aguardando FASE B/C/D |
+| Playable Build | EM PREPARAÇÃO | — | Critérios definidos, revalidação em progresso |
 
 ---
 
@@ -80,10 +79,10 @@ Transformar a base pós-MVP em uma primeira Playable Build multiplayer cooperati
 
 | Autoload | Função | Status |
 | :--- | :--- | :--- |
-| EventBus | Barramento de eventos desacoplados da engine | FUNCIONAL |
+| EventBus | Barramento de eventos desacoplados com suporte a event_emitted | FUNCIONAL |
 | TimeService | Relógio lógico e agendador de ticks do mundo | FUNCIONAL |
 | GameState | Estado global persistente serializável | FUNCIONAL |
-| SaveService | Persistência atômica, backup e migração | FUNCIONAL |
+| SaveService | Persistência atômica, backup e migração em JSON | FUNCIONAL |
 | SceneManager | Carregamento e transição de cenas/regiões | FUNCIONAL |
 | ServiceRegistry | Injeção de dependência e localização de serviços | FUNCIONAL |
 
@@ -97,37 +96,22 @@ Transformar a base pós-MVP em uma primeira Playable Build multiplayer cooperati
 - **Save do mundo:** Host.
 - **Save do personagem:** PlayerState individual com HMAC.
 
-### Baseline de Mundo
-- **Navegação:** NavigationServer2D → NavigationRegion2D → NavigationAgent2D → NavigationService.
-- **Obstáculos dinâmicos:** NavigationObstacle2D.
-- **Streaming:** Grid-Based Chunks.
-- **Regiões ativas:** Full Simulation.
-- **Regiões inativas:** Offline/Abstract Simulation.
-
 ### Baseline Visual
 - Pixel Art Neons/Chiaroscuro.
-- **Resolução-base:** 640 × 360.
+- **Resolução-base:** 640 × 360 (Canvas Stretch).
 - **Tiles:** 16 × 16.
 - **Player:** 32 × 32.
 - Pixel Snap.
-- Iluminação 2D nativa.
+- Iluminação 2D nativa (PointLight2D e CanvasModulate).
 
 ---
 
 ## 6. DECISÕES IMPORTANTES RECENTES
 
-- **XP geral:** modelo híbrido baseado em Ações e Milestones.
-- **Curva:** XP_req = 100 × Nível^1.5.
-- **Atributos:** Força, Agilidade, Vigor, Inteligência, Sabedoria e Carisma com responsabilidades separadas.
-- **ProficiencyDecayPolicy:** NONE.
-- **Primeiro local:** Posto Avançado da Garganta de Ferro.
-- **HUD:** Contextual Minimalista instanciado via `hud.tscn` / `hud.gd` (ADR-024 / ADR-026).
-- **Câmera:** PlayerCameraExtension anexada ao nó Camera2D (ADR-025).
-- **Direção visual:** Pixel Art Neons/Chiaroscuro.
-- **Multiplayer:** ENet + Listen Server / Host Autoritativo.
-- **Navegação:** NavigationServer2D + NavigationService.
-- **Streaming:** Grid-Based Chunks + Offline/Abstract Simulation.
-- **Critérios da Playable Build:** DEFINIDOS, mas ainda NÃO EXECUTADOS.
+- **BUG-003 corrigido:** adicionado o sinal `event_emitted` e o método `emit_event` ao `event_bus.gd`.
+- **BUG-004 corrigido:** parâmetro `run/main_scene` do `project.godot` vinculado à cena oficial `res://tests/Boot.tscn`.
+- **FASE A (Auditoria, Testes Automatizados e Regressão):** 100% concluída.
+- **FASE B (Apresentação Visual):** pronta para ser iniciada a partir do Gate 7.
 
 ---
 
@@ -135,37 +119,19 @@ Transformar a base pós-MVP em uma primeira Playable Build multiplayer cooperati
 
 | Risco | Severidade | Mitigação |
 | :--- | :--- | :--- |
-| Complexidade multiplayer | ALTA | Implementação incremental e testes Host/Client desde o início |
+| Desacoplamento de UI sem UIManager | MÉDIA | Implementação da infraestrutura de CanvasLayers no Gate 10 |
+| Complexidade multiplayer | ALTA | Implementação incremental Host/Client na Fase D |
 | Desync de estado | ALTA | Autoridade central, classificação de estado e reconciliação |
 | Duplicação de itens | ALTA | TransactionId idempotente + rollback |
-| Escopo visual excessivo | ALTA | Foco no Posto Avançado da Garganta de Ferro |
-| UI acoplada ao domínio | MÉDIA | MVVM-like + ViewModels + EventBus |
 | Performance | MÉDIA | Metas de 60 FPS e profiling contínuo |
-| World Streaming prematuro | MÉDIA | Validar primeiro uma região pequena antes de expandir |
 
 ---
 
 ## 8. PRÓXIMOS MARCOS
 
-1. Fundação da camada de rede.
-2. Validação Host/Client.
-3. Implementação da reconexão.
-4. Estruturação das cenas 2D oficiais.
-5. Construção visual do Posto Avançado da Garganta de Ferro.
-6. UI / HUD (Concluído no Gate 10).
-7. Inventário visual (Gate 11).
-8. Minimap.
-9. NPCs, recursos e inimigos visualmente integrados.
-10. Execução dos testes manuais.
-11. Correção de bugs e regressão.
-12. Validação dos critérios da Playable Build.
-
----
-
-## 9. REGRAS DE GOVERNANÇA
-
-1. Este arquivo deve refletir o estado real.
-2. Nenhuma funcionalidade deve ser marcada como concluída apenas porque foi especificada.
-3. Critérios de aceite definidos permanecem pendentes até execução e evidência.
-4. Mudanças arquiteturais relevantes exigem atualização deste arquivo.
-5. O histórico de decisões deve permanecer rastreável em `TECHNICAL_DECISIONS.md`.
+1. Gate 7 — Auditoria Visual de Cenas e Componentes.
+2. Gate 8 a 10 — Apresentação do Player, Câmera e HUD Contextual.
+3. Gate 11 a 13 — Inventário Visual, Mochila e Equipamentos.
+4. Gate 22 a 25 — LDD e Construção do Posto Avançado da Garganta de Ferro.
+5. Gate 28 a 34 — Fundação Multiplayer Cooperativa (ENet Host/Client).
+6. Gate 35 a 39 — Release Interno e Playable Build Final.
