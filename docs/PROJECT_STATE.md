@@ -32,41 +32,40 @@ VIVER → EXPLORAR → COLETAR → PRODUZIR → NEGOCIAR → DESENVOLVER → REL
 
 ### Objetivo atual do projeto
 
-Transformar a base pós-MVP em uma primeira Playable Build multiplayer cooperativa, visualmente jogável e testável, tendo como primeira região o **Posto Avançado da Garganta de Ferro**.
+Transformar a base pós-MVP em uma primeira Playable Build multiplayer cooperativa, visualmente jogável e testável, tendo como primeira região o Posto Avançado da Garganta de Ferro.
 
 ---
 
 ## 3. ESTADO DA SPRINT
 
-**Sprint anterior:** Sprint 16 — Polimento da Iluminação 2D no Setor Escuro  
-**Status:** CONCLUÍDA E VALIDADA.
-
-**Nova fase:** Sprint 17 — Fundação Multiplayer + Preparação da Playable Build  
-**Status:** PLANEJAMENTO / IMPLEMENTAÇÃO A INICIAR.
-
-**Objetivo:** estabelecer o baseline multiplayer oficial, iniciar a apresentação visual e preparar o Posto Avançado da Garganta de Ferro para testes manuais cooperativos.
+- **Sprint anterior:** Sprint 16 — Polimento da Iluminação 2D no Setor Escuro
+  - **Status:** CONCLUÍDA E VALIDADA.
+- **Nova fase:** Sprint 17 — Fundação Multiplayer + Preparação da Playable Build
+  - **Status:** IMPLEMENTAÇÃO EM ANDAMENTO (GATE 10 CONCLUÍDO).
+  - **Objetivo:** estabelecer o baseline multiplayer oficial, iniciar a apresentação visual e preparar o Posto Avançado da Garganta de Ferro para testes manuais cooperativos.
 
 ---
 
 ## 4. SISTEMAS DO JOGO
 
 | Sistema | Estado | Qualidade | Observações |
-|---|---|---|---|
-| Player | FUNCIONAL | ALTA | `CharacterBody2D` com composição de componentes |
-| Movimento | FUNCIONAL | ALTA | `MovementComponent2D` baseado em Input Map semântico |
-| Combate | FUNCIONAL | ALTA | Ação tática desacoplada via `IDamageable` |
+| :--- | :--- | :--- | :--- |
+| Player | FUNCIONAL | ALTA | CharacterBody2D com composição de componentes e apresentação visual ajustada |
+| Movimento | FUNCIONAL | ALTA | MovementComponent2D baseado em Input Map semântico |
+| Combate | FUNCIONAL | ALTA | Ação tática desacoplada via IDamageable |
 | Inimigos / IA | FUNCIONAL | ALTA | Lobo Esfomeado reativo à luz |
-| Inventário | FUNCIONAL | ALTA | `InventoryService` transacional com stacks e instâncias |
-| Progressão | FUNCIONAL | ALTA | `ProfessionService` com 17 profissões e 5 tiers |
-| Relacionamentos | FUNCIONAL | ALTA | `RelationshipService`, afinidade de -100 a +100 |
+| Inventário | FUNCIONAL | ALTA | InventoryService transacional com stacks e instâncias |
+| Progressão | FUNCIONAL | ALTA | ProfessionService com 17 profissões e 5 tiers |
+| Relacionamentos | FUNCIONAL | ALTA | RelationshipService, afinidade de -100 a +100 |
 | Economia / Pricing | FUNCIONAL | ALTA | Oferta, demanda e impostos |
-| Loja do Jogador | FUNCIONAL | ALTA | `PlayerMarketService` |
-| Iluminação / Flora | FUNCIONAL | ALTA | `BioluminescentFloraNode` com pulso suave |
+| Loja do Jogador | FUNCIONAL | ALTA | PlayerMarketService |
+| Iluminação / Flora | FUNCIONAL | ALTA | BioluminescentFloraNode com pulso suave |
 | Save/Load | FUNCIONAL | ALTA | Persistência atômica e versionada |
-| Multiplayer | ARQUITETURA DEFINIDA | — | `ENetMultiplayerPeer` + Listen Server / Host Autoritativo |
-| Navegação 2D | ARQUITETURA DEFINIDA | — | `NavigationServer2D` + regiões/agentes + `NavigationService` |
+| Câmera 2D | FUNCIONAL | ALTA | PlayerCameraExtension com suavização e Camera Shake via EventBus |
+| UI / HUD | FUNCIONAL E INTEGRADO | ALTA | HUDView (hud.tscn) instanciado no boot.gd com atualizações reativas |
+| Multiplayer | ARQUITETURA DEFINIDA | — | ENetMultiplayerPeer + Listen Server / Host Autoritativo |
+| Navegação 2D | ARQUITETURA DEFINIDA | — | NavigationServer2D + regiões/agentes + NavigationService |
 | World Streaming | ARQUITETURA DEFINIDA | — | Grid-Based Chunks + Offline/Abstract Simulation |
-| UI / HUD | ARQUITETURA DEFINIDA | — | MVVM-like / Presentation Model |
 | Inventário Visual | ESPECIFICADO | — | Implementação visual pendente |
 | Minimap | ESPECIFICADO | — | Implementação visual pendente |
 | Primeiro Local | ESPECIFICADO | — | Posto Avançado da Garganta de Ferro |
@@ -80,7 +79,7 @@ Transformar a base pós-MVP em uma primeira Playable Build multiplayer cooperati
 ### Autoloads
 
 | Autoload | Função | Status |
-|---|---|---|
+| :--- | :--- | :--- |
 | EventBus | Barramento de eventos desacoplados da engine | FUNCIONAL |
 | TimeService | Relógio lógico e agendador de ticks do mundo | FUNCIONAL |
 | GameState | Estado global persistente serializável | FUNCIONAL |
@@ -89,30 +88,27 @@ Transformar a base pós-MVP em uma primeira Playable Build multiplayer cooperati
 | ServiceRegistry | Injeção de dependência e localização de serviços | FUNCIONAL |
 
 ### Baseline Multiplayer
-
-- Transporte: `ENetMultiplayerPeer`.
-- Topologia: Listen Server / Host Autoritativo.
-- WorldState: autoridade do Host.
-- Movimento local: preditivo no cliente com reconciliação.
-- Transações: `TransactionId` idempotente.
-- Reconexão: janela de 60 segundos.
-- Save do mundo: Host.
-- Save do personagem: PlayerState individual com HMAC.
+- **Transporte:** ENetMultiplayerPeer.
+- **Topologia:** Listen Server / Host Autoritativo.
+- **WorldState:** autoridade do Host.
+- **Movimento local:** preditivo no cliente com reconciliação.
+- **Transações:** TransactionId idempotente.
+- **Reconexão:** janela de 60 segundos.
+- **Save do mundo:** Host.
+- **Save do personagem:** PlayerState individual com HMAC.
 
 ### Baseline de Mundo
-
-- Navegação: `NavigationServer2D` → `NavigationRegion2D` → `NavigationAgent2D` → `NavigationService`.
-- Obstáculos dinâmicos: `NavigationObstacle2D`.
-- Streaming: Grid-Based Chunks.
-- Regiões ativas: Full Simulation.
-- Regiões inativas: Offline/Abstract Simulation.
+- **Navegação:** NavigationServer2D → NavigationRegion2D → NavigationAgent2D → NavigationService.
+- **Obstáculos dinâmicos:** NavigationObstacle2D.
+- **Streaming:** Grid-Based Chunks.
+- **Regiões ativas:** Full Simulation.
+- **Regiões inativas:** Offline/Abstract Simulation.
 
 ### Baseline Visual
-
 - Pixel Art Neons/Chiaroscuro.
-- Resolução-base: `640 × 360`.
-- Tiles: `16 × 16`.
-- Player: `32 × 32`.
+- **Resolução-base:** 640 × 360.
+- **Tiles:** 16 × 16.
+- **Player:** 32 × 32.
 - Pixel Snap.
 - Iluminação 2D nativa.
 
@@ -120,27 +116,28 @@ Transformar a base pós-MVP em uma primeira Playable Build multiplayer cooperati
 
 ## 6. DECISÕES IMPORTANTES RECENTES
 
-- XP geral: modelo híbrido baseado em Ações e Milestones.
-- Curva: `XP_req = 100 × Nível^1.5`.
-- Atributos: Força, Agilidade, Vigor, Inteligência, Sabedoria e Carisma com responsabilidades separadas.
-- `ProficiencyDecayPolicy = NONE`.
-- Primeiro local: Posto Avançado da Garganta de Ferro.
-- HUD: Contextual Minimalista.
-- Direção visual: Pixel Art Neons/Chiaroscuro.
-- Multiplayer: ENet + Listen Server / Host Autoritativo.
-- Navegação: NavigationServer2D + NavigationService.
-- Streaming: Grid-Based Chunks + Offline/Abstract Simulation.
-- Critérios da Playable Build: DEFINIDOS, mas ainda NÃO EXECUTADOS.
+- **XP geral:** modelo híbrido baseado em Ações e Milestones.
+- **Curva:** XP_req = 100 × Nível^1.5.
+- **Atributos:** Força, Agilidade, Vigor, Inteligência, Sabedoria e Carisma com responsabilidades separadas.
+- **ProficiencyDecayPolicy:** NONE.
+- **Primeiro local:** Posto Avançado da Garganta de Ferro.
+- **HUD:** Contextual Minimalista instanciado via `hud.tscn` / `hud.gd` (ADR-024 / ADR-026).
+- **Câmera:** PlayerCameraExtension anexada ao nó Camera2D (ADR-025).
+- **Direção visual:** Pixel Art Neons/Chiaroscuro.
+- **Multiplayer:** ENet + Listen Server / Host Autoritativo.
+- **Navegação:** NavigationServer2D + NavigationService.
+- **Streaming:** Grid-Based Chunks + Offline/Abstract Simulation.
+- **Critérios da Playable Build:** DEFINIDOS, mas ainda NÃO EXECUTADOS.
 
 ---
 
 ## 7. RISCOS ATUAIS
 
 | Risco | Severidade | Mitigação |
-|---|---|---|
+| :--- | :--- | :--- |
 | Complexidade multiplayer | ALTA | Implementação incremental e testes Host/Client desde o início |
 | Desync de estado | ALTA | Autoridade central, classificação de estado e reconciliação |
-| Duplicação de itens | ALTA | `TransactionId` idempotente + rollback |
+| Duplicação de itens | ALTA | TransactionId idempotente + rollback |
 | Escopo visual excessivo | ALTA | Foco no Posto Avançado da Garganta de Ferro |
 | UI acoplada ao domínio | MÉDIA | MVVM-like + ViewModels + EventBus |
 | Performance | MÉDIA | Metas de 60 FPS e profiling contínuo |
@@ -155,8 +152,8 @@ Transformar a base pós-MVP em uma primeira Playable Build multiplayer cooperati
 3. Implementação da reconexão.
 4. Estruturação das cenas 2D oficiais.
 5. Construção visual do Posto Avançado da Garganta de Ferro.
-6. UI/HUD.
-7. Inventário visual.
+6. UI / HUD (Concluído no Gate 10).
+7. Inventário visual (Gate 11).
 8. Minimap.
 9. NPCs, recursos e inimigos visualmente integrados.
 10. Execução dos testes manuais.
@@ -167,9 +164,8 @@ Transformar a base pós-MVP em uma primeira Playable Build multiplayer cooperati
 
 ## 9. REGRAS DE GOVERNANÇA
 
-- Este arquivo deve refletir o estado real.
-- Nenhuma funcionalidade deve ser marcada como concluída apenas porque foi especificada.
-- Critérios de aceite definidos permanecem pendentes até execução e evidência.
-- Mudanças arquiteturais relevantes exigem atualização deste arquivo.
-- O histórico de decisões deve permanecer rastreável em `TECHNICAL_DECISIONS.md`.
-
+1. Este arquivo deve refletir o estado real.
+2. Nenhuma funcionalidade deve ser marcada como concluída apenas porque foi especificada.
+3. Critérios de aceite definidos permanecem pendentes até execução e evidência.
+4. Mudanças arquiteturais relevantes exigem atualização deste arquivo.
+5. O histórico de decisões deve permanecer rastreável em `TECHNICAL_DECISIONS.md`.

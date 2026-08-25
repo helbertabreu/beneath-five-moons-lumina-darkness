@@ -42,19 +42,16 @@ func _setup_default_recipe() -> void:
 	
 	_recipe = RecipeDefinition.new()
 	_recipe.id = &"recipe.blacksmith.iron_ingot"
-	_recipe.display_name = "Fundir Lingote de Ferro"
-	_recipe.profession_id = &"profession.blacksmith"
+	_recipe.name = "Fundir Lingote de Ferro"
+	_recipe.required_profession = &"profession.blacksmith"
 	_recipe.required_profession_level = 1
-	_recipe.required_station_type = &"station.forge"
-	_recipe.required_station_tier = 1
 	_recipe.energy_cost = 15.0
-	_recipe.granted_profession_xp = 25.0
-	_recipe.inputs = [
-		{"item_id": &"item.material.iron_ore", "quantity": 2}
-	]
-	_recipe.outputs = [
-		{"item_definition": iron_ingot, "quantity": 1}
-	]
+	_recipe.xp_reward = 25.0
+	_recipe.required_ingredients = {
+		&"item.material.iron_ore": 2
+	}
+	_recipe.result_item = iron_ingot
+	_recipe.result_quantity = 1
 
 
 ## Mensagem de contexto para a UI
@@ -75,9 +72,8 @@ func interact(interactor: Node2D) -> void:
 		return
 		
 	# 1. Valida se o jogador possui os ingredientes no inventário
-	for input_data in _recipe.inputs:
-		var ingredient_id: StringName = input_data.get("item_id", &"")
-		var required_qty: int = input_data.get("quantity", 1)
+	for ingredient_id in _recipe.required_ingredients:
+		var required_qty: int = _recipe.required_ingredients[ingredient_id]
 		var current_qty = inv_service.get_total_quantity(ingredient_id)
 		
 		if current_qty < required_qty:
@@ -97,9 +93,8 @@ func interact(interactor: Node2D) -> void:
 		return
 		
 	# 3. Execução Transacional: Consome Ingredientes e Energia
-	for input_data in _recipe.inputs:
-		var ingredient_id: StringName = input_data.get("item_id", &"")
-		var required_qty: int = input_data.get("quantity", 1)
+	for ingredient_id in _recipe.required_ingredients:
+		var required_qty: int = _recipe.required_ingredients[ingredient_id]
 		inv_service.remove_item(ingredient_id, required_qty)
 		
 	if survival_comp:
@@ -110,22 +105,19 @@ func interact(interactor: Node2D) -> void:
 		_emit_event_safe(&"EnergyChanged", {"current": survival_comp.energy, "max": survival_comp.max_energy})
 			
 	# 4. Entrega o Produto Final
-	for output_data in _recipe.outputs:
-		var item_def: ItemDefinition = output_data.get("item_definition", null)
-		var output_qty: int = output_data.get("quantity", 1)
-		if item_def:
-			inv_service.add_item(item_def, output_qty)
-			print("[Forja] SUCESSO! %dx %s forjado e adicionado ao inventário." % [output_qty, item_def.name])
+	if _recipe.result_item:
+		inv_service.add_item(_recipe.result_item, _recipe.result_quantity)
+		print("[Forja] SUCESSO! %dx %s forjado e adicionado ao inventário." % [_recipe.result_quantity, _recipe.result_item.name])
 	
 	# 5. Notifica XP na Profissão e registra no Output
 	var prof_service = ServiceRegistry.get_service(&"ProfessionService") as ProfessionService
 	if prof_service:
-		prof_service.add_profession_xp(_recipe.profession_id, _recipe.granted_profession_xp)
+		prof_service.add_profession_xp(_recipe.required_profession, _recipe.xp_reward)
 	
 	# Emite eventos no Barramento
 	_emit_event_safe(&"ItemCrafted", {
 		"recipe_id": _recipe.id,
-		"profession_id": _recipe.profession_id
+		"profession_id": _recipe.required_profession
 	})
 
 
@@ -138,4 +130,3 @@ func _emit_event_safe(event_name: StringName, data: Dictionary) -> void:
 		EventBus.emit_signal("event_emitted", event_name, data)
 	elif EventBus.has_method("emit_event"):
 		EventBus.call("emit_event", event_name, data)
-		

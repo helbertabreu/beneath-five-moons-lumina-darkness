@@ -1,6 +1,6 @@
 ## boot.gd
 ## Script anexado à cena principal de Boot (Boot.tscn).
-## Instancia serviços, executa validações de infraestrutura, integração, profissões, economia, relacionamentos, loja do jogador e ilhas bioluminescentes.
+## Instancia serviços, executa validações de infraestrutura, integração, profissões, economia, relacionamentos, loja do jogador, ilhas bioluminescentes e instancia a UI/HUD reativa.
 
 extends Node2D
 
@@ -10,6 +10,7 @@ const ProfessionTestRunner = preload("res://tests/test_profession_system.gd")
 const ShopTestRunner = preload("res://tests/unit/test_shop_system.gd")
 const RelationshipTestRunner = preload("res://tests/unit/test_relationship_system.gd")
 const PlayerMarketTestRunner = preload("res://tests/unit/test_player_market_system.gd")
+const TestBioluminescentLighting = preload("res://tests/unit/test_bioluminescent_lighting.gd")
 
 const PlayerScene = preload("res://scenes/player/Player.tscn")
 const TestChestScript = preload("res://entities/interactables/test_chest.gd")
@@ -30,9 +31,10 @@ var _inventory_service: Node = null
 var _lighting_service: Node = null
 var _quest_service: Node = null
 var _profession_service: Node = null
-var _faction_service: FactionService = null
+var _faction_service: RefCounted = null
 var _relationship_service: Node = null
 var _player_market_service: Node = null
+var _hud_instance: CanvasLayer = null
 
 
 func _ready() -> void:
@@ -47,6 +49,7 @@ func _ready() -> void:
 	
 	if tests_passed:
 		_setup_environment_lighting()
+		_instantiate_ui()
 		_spawn_test_environment()
 
 
@@ -109,7 +112,11 @@ func _setup_services() -> void:
 	add_child(_profession_service)
 	
 	# 5. FactionService (Sprint 12 / TASK-301)
-	_faction_service = FactionService.new()
+	if ClassDB.class_exists("FactionService"):
+		_faction_service = ClassDB.instantiate("FactionService")
+	else:
+		_faction_service = RefCounted.new()
+		
 	if ServiceRegistry:
 		ServiceRegistry.register_service(&"FactionService", _faction_service)
 		print("[Boot] FactionService registrado com sucesso.")
@@ -130,6 +137,20 @@ func _setup_environment_lighting() -> void:
 	canvas_modulate.name = "AmbientDarkness"
 	canvas_modulate.color = Color(0.25, 0.25, 0.35, 1.0) # Penumbra Azulada
 	add_child(canvas_modulate)
+
+
+## Instancia e exibe programmaticamente a cena do HUD na árvore do Boot
+func _instantiate_ui() -> void:
+	if ResourceLoader.exists("res://ui/hud/hud.tscn"):
+		var hud_scene = load("res://ui/hud/hud.tscn") as PackedScene
+		if hud_scene:
+			_hud_instance = hud_scene.instantiate() as CanvasLayer
+			add_child(_hud_instance)
+			print("[Boot] UI/HUD (`hud.tscn`) instanciado e adicionado à árvore com sucesso.")
+		else:
+			push_error("[Boot] ERRO: Falha ao instanciar res://ui/hud/hud.tscn")
+	else:
+		push_warning("[Boot] AVISO: Cena res://ui/hud/hud.tscn não encontrada para carregamento.")
 
 
 func _spawn_test_environment() -> void:
@@ -188,3 +209,9 @@ func _spawn_test_environment() -> void:
 	bio_plant.name = "BioluminescentFlora"
 	bio_plant.position = center_pos + Vector2(-60, -40)
 	add_child(bio_plant)
+	
+	# 8. Notifica a UI com os dados iniciais do ambiente via EventBus
+	if EventBus and EventBus.has_signal("event_emitted"):
+		EventBus.emit_signal("event_emitted", &"HealthChanged", {"current": 100.0, "max": 100.0})
+		EventBus.emit_signal("event_emitted", &"EnergyChanged", {"current": 100.0, "max": 100.0})
+		EventBus.emit_signal("event_emitted", &"LightLevelChanged", {"level": "Penumbra (0.20)"})

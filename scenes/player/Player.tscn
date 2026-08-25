@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://2ky5ybig80kr" path="res://gameplay/movement/movement_component_2d.gd" id="2_movement"]
 [ext_resource type="Script" uid="uid://crnssittler7v" path="res://gameplay/survival/survival_component.gd" id="3_survival"]
 [ext_resource type="Script" uid="uid://cmnii4ir04ho4" path="res://gameplay/interaction/interaction_detector_2d.gd" id="4_interaction"]
+[ext_resource type="Script" uid="uid://c8corfggo522d" path="res://gameplay/player/player_camera_extension.gd" id="5_tpg5x"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_player"]
 height = 26.0
@@ -45,3 +46,4 @@ color = Color(0.2, 0.6, 1, 1)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1003900977]
 position_smoothing_enabled = true
+script = ExtResource("5_tpg5x")

@@ -38,7 +38,7 @@
 | TASK-404 | Reconexão de cliente | Multiplayer | P1 | 17 | TASK-403 | TODO | Cliente reconecta em até 60s e recebe snapshot atual |
 | TASK-405 | Transações idempotentes multiplayer | Multiplayer | P1 | 17 | TASK-403 | TODO | Trocas não produzem duplicação após falha de conexão |
 | TASK-406 | Estrutura oficial de cenas 2D | Technical | P1 | 17 | TASK-401 | TODO | Player/NPC/Enemy/ResourceNode/Region seguem contratos do TIS |
-| TASK-407 | UIManager + HUD contextual | UI | P1 | 17 | TASK-406 | TODO | HUD exibe HP, Estamina, Energia, Lanterna e Luz |
+| TASK-407 | UIManager + HUD contextual | UI | P1 | 17 | TASK-406 | DONE | HUD exibe HP, Estamina, Energia, Lanterna e Luz reativamente via EventBus |
 | TASK-408 | Inventário visual | UI | P1 | 17 | TASK-407 | TODO | Grid, drag-and-drop, split e equipamento funcionam sem lógica de domínio na UI |
 | TASK-409 | Minimap | UI | P2 | 17 | TASK-407 | TODO | Jogador e marcadores definidos aparecem no minimapa |
 | TASK-410 | Posto Avançado da Garganta de Ferro | World | P1 | 17 | TASK-406 | TODO | Região possui os elementos mínimos definidos no TIS |
@@ -159,12 +159,15 @@ Uma tarefa somente pode ser marcada como `DONE` quando:
 **Objetivo:** Implementar `BioluminescentFloraNode`, pulsação senoidal de luz 2D e integração com `LightingService`.  
 **Resultado:** CONCLUÍDA COM SUCESSO.
 
+## Sprint 17 (Parcial) — Gate 10: HUD Contextual Minimalista (TASK-407)
+
+**Objetivo:** Implementar e instanciar programmaticamente a cena do HUD (`hud.tscn` / `hud.gd`) conectada desacopladamente via `EventBus`.  
+**Resultado:** CONCLUÍDA COM SUCESSO.
+
 ---
 
 # 11. PRÓXIMA TAREFA
 
-**ID:** TASK-401
+**ID:** TASK-408 (Gate 11 — Inventário Visual)
 
-**Tarefa:** Fundação da Camada de Rede (Multiplayer-Ready Architecture).
-
-**Motivo da prioridade:** Garantir a serialização segura de mensagens e estados para o modo cooperativo futuro.
+**Tarefa:** Implementação do Inventário Visual com suporte a slots, drag-and-drop e divisão de stacks sem lógica de domínio na UI.

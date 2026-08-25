@@ -11,10 +11,18 @@ const BioluminescentFloraScript = preload("res://entities/environment/biolumines
 func run_bioluminescent_tests() -> bool:
 	print("\n=== INICIANDO TESTE DE ILUMINAÇÃO BIOLUMINESCENTE 2D (POLISH-001) ===")
 	
-	# 1. Instancia o serviço de iluminação e o nó da flora via Preload explícito
-	var lighting_service = LightingService.new()
-	lighting_service._ready()
+	# 1. Recupera o LightingService registrado globalmente no ServiceRegistry ou instancia um fallback
+	var lighting_service: LightingService = null
+	var owns_service: bool = false
 	
+	if ServiceRegistry and ServiceRegistry.has_service(&"LightingService"):
+		lighting_service = ServiceRegistry.get_service(&"LightingService") as LightingService
+	else:
+		lighting_service = LightingService.new()
+		lighting_service._ready()
+		owns_service = true
+	
+	# Instancia o nó da flora bioluminescente
 	var flora_node = BioluminescentFloraScript.new() as Area2D
 	flora_node._ready()
 	
@@ -22,7 +30,8 @@ func run_bioluminescent_tests() -> bool:
 	if lighting_service.current_context == null or lighting_service.current_context.value != 0.20:
 		push_error("[TEST FAIL] O estado inicial de iluminação não é Penumbra (0.20)!")
 		flora_node.queue_free()
-		lighting_service.queue_free()
+		if owns_service:
+			lighting_service.queue_free()
 		return false
 	print("[TEST PASSED] Estado inicial de Penumbra (0.20) verificado com sucesso.")
 	
@@ -37,8 +46,9 @@ func run_bioluminescent_tests() -> bool:
 	if lighting_service.current_context.value != 0.75:
 		push_error("[TEST FAIL] O nível de iluminação não foi elevado para 0.75 na área bioluminescente!")
 		flora_node.queue_free()
-		lighting_service.queue_free()
 		dummy_player.queue_free()
+		if owns_service:
+			lighting_service.queue_free()
 		return false
 	print("[TEST PASSED] Elevação de luz para 0.75 ao entrar na ilha bioluminescente validada com sucesso.")
 	
@@ -49,15 +59,17 @@ func run_bioluminescent_tests() -> bool:
 	if lighting_service.current_context.value != 0.20:
 		push_error("[TEST FAIL] A iluminação não retornou para Penumbra (0.20) ao sair da área!")
 		flora_node.queue_free()
-		lighting_service.queue_free()
 		dummy_player.queue_free()
+		if owns_service:
+			lighting_service.queue_free()
 		return false
 	print("[TEST PASSED] Retorno para a Penumbra do ambiente (0.20) ao sair da ilha bioluminescente verificado.")
 	
-	# Limpeza dos nós de teste
+	# Limpeza dos nós temporários do teste
 	flora_node.queue_free()
-	lighting_service.queue_free()
 	dummy_player.queue_free()
+	if owns_service:
+		lighting_service.queue_free()
 	
 	print("=== TODOS OS TESTES DE ILUMINAÇÃO BIOLUMINESCENTE (POLISH-001) PASSARAM COM SUCESSO! ===\n")
 	return true
