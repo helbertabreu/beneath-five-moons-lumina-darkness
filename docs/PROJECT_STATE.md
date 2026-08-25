@@ -13,8 +13,8 @@
 - **Plataformas alvo:** PC (Windows / Linux / macOS)
 - **Gênero:** RPG de Ação Sandbox 2D / Survival Leve / Simulação Social / Progressão por Uso
 - **Perspectiva:** Top-Down 2D
-- **Ponto de Entrada Atual:** `res://tests/Boot.tscn` (`boot.gd`)
-- **Status geral:** FASE A (AUDITORIA E REGRESSÃO DO MVP) CONCLUÍDA | PRONTO PARA FASE B (APRESENTAÇÃO VISUAL)
+- **Ponto de Entrada Atual:** `res://boot.gd` (Cena de Boot / Testes Integrados) [cite: 18, 27]
+- **Status geral:** FASE B — APRESENTAÇÃO VISUAL | INVENTÁRIO VISUAL E ATALHO 'I' FUNCIONAIS (GATE 11) [cite: 21, 23, 24, 27]
 - **Última atualização:** 2026-08-25
 
 ---
@@ -30,17 +30,17 @@ VIVER → EXPLORAR → COLETAR → PRODUZIR → NEGOCIAR → DESENVOLVER → REL
 ```
 
 ### Objetivo atual do projeto
-Evoluir a Playable Build Vertical Slice no Posto Avançado da Garganta de Ferro, desenvolvendo a camada visual de apresentação (Player, Câmera, HUD e Inventário Visual) e preparando o ambiente para validação manual cooperativa.
+Evoluir a Playable Build Vertical Slice no Posto Avançado da Garganta de Ferro, integrando o Inventário Visual e HUD à árvore de nós do bootstrap e preparando o ambiente para validação manual cooperativa.
 
 ---
 
 ## 3. ESTADO DA SPRINT
 
-- **Sprint anterior:** Gate 6 (Regressão do MVP) — FASE A
-  - **Status:** CONCLUÍDA COM 100% DE APROVAÇÃO AUTOMATIZADA.
-- **Nova fase:** Gate 7 (Auditoria Visual) — FASE B — APRESENTAÇÃO VISUAL
+- **Sprint anterior:** Gate 11 — Inventário Visual (Sprint 17 / Fase B)
+  - **Status:** CONCLUÍDA COM SUCESSO (Janela InventoryUI.tscn instanciada e operando via atalho "I").
+- **Nova fase:** Gate 12 — Mochila e Expansão Visual / Gate 13 — Equipamentos (FASE B)
   - **Status:** A INICIAR.
-  - **Objetivo:** Auditar os nós, texturas, sprites e componentes visuais do Player e da Interface Gráfica (HUD/UI) para iniciar o desenvolvimento da apresentação na engine Godot 4.7.1.
+  - **Objetivo:** Dar sequência ao polimento visual e à apresentação dos slots de equipamento e itens visuais no ambiente 2D.
 
 ---
 
@@ -59,16 +59,17 @@ Evoluir a Playable Build Vertical Slice no Posto Avançado da Garganta de Ferro,
 | Loja do Jogador | FUNCIONAL | ALTA | PlayerMarketService com anúncios e taxas |
 | Iluminação / Flora | FUNCIONAL | ALTA | BioluminescentFloraNode com pulso senoidal suave |
 | Save/Load | FUNCIONAL | ALTA | Persistência atômica, backup e migração JSON |
-| EventBus | FUNCIONAL | ALTA | Sinais fortemente tipados e evento genérico event_emitted |
+| EventBus | FUNCIONAL | ALTA | Suporte a event_emitted e sinais de janela (inventory_toggle_requested) |
+| Bootstrap / Time | FUNCIONAL | ALTA | Sequência de boot validada com chamada corrigida a resume_time() |
+| Inventário Visual | FUNCIONAL | ALTA | Grid de slots, drag-and-drop, atalho 'I' e divisão de stacks (GATE 11 / TASK-408) [cite: 21, 23, 24, 28] |
 | Multiplayer Core | ARQUITETURA DEFINIDA | — | ENetMultiplayerPeer + Listen Server / Host Autoritativo |
 | Navegação 2D | ARQUITETURA DEFINIDA | — | NavigationServer2D + regiões/agentes + NavigationService |
 | World Streaming | ARQUITETURA DEFINIDA | — | Grid-Based Chunks + Offline/Abstract Simulation |
-| UI / HUD | REVALIDADO EM BOOT | MÉDIA | HUDView recebendo sinais desacoplados do EventBus |
-| Player Visual | ESPECIFICADO | — | Auditoria visual a iniciar no Gate 7 |
-| Inventário Visual | ESPECIFICADO | — | Implementação visual pendente |
+| UI / HUD | FUNCIONAL EM BOOT | MÉDIA | HUDView e InventoryUI instanciados no boot.gd |
+| Player Visual | ESPECIFICADO | — | Auditoria visual realizada |
 | Minimap | ESPECIFICADO | — | Implementação visual pendente |
 | Primeiro Local | ESPECIFICADO | — | Posto Avançado da Garganta de Ferro |
-| Testes Manuais | PLANEJADOS (TM-001/004) | NOT TESTED | Passo a passo definido; aguardando FASE B/C/D |
+| Testes Manuais | PLANEJADOS (TM-001/004) | NOT TESTED | Passo a passo definido; aguardando FASE B/C/D [cite: 27] |
 | Playable Build | EM PREPARAÇÃO | — | Critérios definidos, revalidação em progresso |
 
 ---
@@ -79,8 +80,8 @@ Evoluir a Playable Build Vertical Slice no Posto Avançado da Garganta de Ferro,
 
 | Autoload | Função | Status |
 | :--- | :--- | :--- |
-| EventBus | Barramento de eventos desacoplados com suporte a event_emitted | FUNCIONAL |
-| TimeService | Relógio lógico e agendador de ticks do mundo | FUNCIONAL |
+| EventBus | Barramento de eventos desacoplados com suporte a event_emitted e atalhos de janela | FUNCIONAL |
+| TimeService | Relógio lógico e agendador de ticks do mundo via resume_time() | FUNCIONAL |
 | GameState | Estado global persistente serializável | FUNCIONAL |
 | SaveService | Persistência atômica, backup e migração em JSON | FUNCIONAL |
 | SceneManager | Carregamento e transição de cenas/regiões | FUNCIONAL |
@@ -108,10 +109,10 @@ Evoluir a Playable Build Vertical Slice no Posto Avançado da Garganta de Ferro,
 
 ## 6. DECISÕES IMPORTANTES RECENTES
 
-- **BUG-003 corrigido:** adicionado o sinal `event_emitted` e o método `emit_event` ao `event_bus.gd`.
-- **BUG-004 corrigido:** parâmetro `run/main_scene` do `project.godot` vinculado à cena oficial `res://tests/Boot.tscn`.
-- **FASE A (Auditoria, Testes Automatizados e Regressão):** 100% concluída.
-- **FASE B (Apresentação Visual):** pronta para ser iniciada a partir do Gate 7.
+- **GATE 11 Concluído:** InventoryUI.tscn instanciado e adicionado à SceneTree pelo boot.gd no CanvasLayer 15.
+- **Atalho Semântico 'I':** Conectado via EventBus (inventory_toggle_requested) para exibição/ocultação reativa do inventário visual [cite: 21, 23].
+- **Boot TimeService Fix:** Corrigida a chamada no boot.gd para utilizar a API pública oficial TimeService.resume_time().
+- **BUG-003 e BUG-004:** Resolvidos com sucesso em fases anteriores.
 
 ---
 
@@ -119,19 +120,18 @@ Evoluir a Playable Build Vertical Slice no Posto Avançado da Garganta de Ferro,
 
 | Risco | Severidade | Mitigação |
 | :--- | :--- | :--- |
-| Desacoplamento de UI sem UIManager | MÉDIA | Implementação da infraestrutura de CanvasLayers no Gate 10 |
-| Complexidade multiplayer | ALTA | Implementação incremental Host/Client na Fase D |
-| Desync de estado | ALTA | Autoridade central, classificação de estado e reconciliação |
-| Duplicação de itens | ALTA | TransactionId idempotente + rollback |
-| Performance | MÉDIA | Metas de 60 FPS e profiling contínuo |
+| Desacoplamento de UI sem UIManager | MÉDIA | Organização explícita de CanvasLayer (HUD layer 10, Janelas layer 15) |
+| Complexidade multiplayer | ALTA | Implementação incremental Host/Client na Fase D [cite: 27, 33] |
+| Desync de estado | ALTA | Autoridade central, classificação de estado e reconciliação [cite: 27, 33] |
+| Duplicação de itens | ALTA | TransactionId idempotente + rollback [cite: 27, 33] |
+| Performance | MÉDIA | Metas de 60 FPS e profiling contínuo [cite: 27, 33] |
 
 ---
 
 ## 8. PRÓXIMOS MARCOS
 
-1. Gate 7 — Auditoria Visual de Cenas e Componentes.
-2. Gate 8 a 10 — Apresentação do Player, Câmera e HUD Contextual.
-3. Gate 11 a 13 — Inventário Visual, Mochila e Equipamentos.
-4. Gate 22 a 25 — LDD e Construção do Posto Avançado da Garganta de Ferro.
-5. Gate 28 a 34 — Fundação Multiplayer Cooperativa (ENet Host/Client).
-6. Gate 35 a 39 — Release Interno e Playable Build Final.
+1. Gate 12 / 13 — Visualização da Mochila, Slots de Equipamento e Dicas Contextuais.
+2. Gate 21 — Minimapa.
+3. Gate 22 a 25 — LDD e Construção do Posto Avançado da Garganta de Ferro [cite: 27, 33].
+4. Gate 28 a 34 — Fundação Multiplayer Cooperativa (ENet Host/Client) [cite: 27, 33].
+5. Gate 35 a 39 — Release Interno e Playable Build Final [cite: 27, 33].

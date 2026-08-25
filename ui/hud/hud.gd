@@ -2,8 +2,8 @@ class_name HUDView
 extends CanvasLayer
 
 ## HUD Contextual Minimalista do projeto Beneath Five Moons / Lumina Darkness.
-## Constroi a interface via codigo no _ready e reage desacopladamente
-## aos eventos do EventBus (HealthChanged, EnergyChanged, HungerChanged, FatigueChanged, LightLevelChanged).
+## Constroi a interface via codigo no _ready, instancia a subjanela do inventario visual
+## e reage desacopladamente aos eventos do EventBus.
 
 # --- CONTAINERES DE UI ---
 var main_control: Control
@@ -20,14 +20,27 @@ var light_indicator: Label
 var hunger_bar: ProgressBar
 var fatigue_bar: ProgressBar
 
+# --- INSTÂNCIA DE JANELAS ---
+var inventory_ui_instance: InventoryUI = null
+
 # --- CONTROLE DE ANIMAÇÃO ---
 var _contextual_tween: Tween = null
 
 
 func _ready() -> void:
 	_build_ui_hierarchy()
+	_instantiate_inventory_ui()
 	_subscribe_to_events()
 	_reset_ui_state()
+
+
+## Instancia programmaticamente o Inventário Visual se não estiver na árvore
+func _instantiate_inventory_ui() -> void:
+	var inv_scene = load("res://ui/inventory/inventory_ui.tscn") as PackedScene
+	if inv_scene:
+		inventory_ui_instance = inv_scene.instantiate() as InventoryUI
+		if inventory_ui_instance:
+			add_child(inventory_ui_instance)
 
 
 ## Constrói programmaticamente a hierarquia de nós do HUD

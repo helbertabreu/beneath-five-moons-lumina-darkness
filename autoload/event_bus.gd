@@ -21,6 +21,11 @@ signal item_added(item_id: StringName, quantity: int)
 signal item_removed(item_id: StringName, quantity: int)
 signal resource_gathered(resource_id: StringName, amount: int)
 
+## --- SINAIS DE EVENTOS DA INTERFACE (UI / WINDOWS) ---
+signal inventory_toggle_requested()
+signal inventory_opened()
+signal inventory_closed()
+
 ## --- SINAIS DE EVENTOS DO MUNDO E PERSISTÊNCIA ---
 signal save_started(slot_name: String)
 signal save_completed(slot_name: String)
@@ -40,3 +45,8 @@ func emit_custom_event(event_name: StringName, payload: Dictionary = {}) -> void
 		emit_signal(event_name, payload)
 	else:
 		emit_event(event_name, payload)
+
+
+## Solicita globalmente a alternância de visibilidade do inventário.
+func request_inventory_toggle() -> void:
+	emit_signal(&"inventory_toggle_requested")

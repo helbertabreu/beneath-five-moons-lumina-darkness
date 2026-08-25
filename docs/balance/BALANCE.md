@@ -1,9 +1,10 @@
 # Beneath Five Moons — Balance Database
+
 ## Planilha de Balanceamento em Markdown
 
-**Versão:** 5.1.0  
-**Status:** Atualizado com a Tabela de Parâmetros da Flora Bioluminescente 2D do Setor Escuro (Sprint 16 / POLISH-001)  
-**Fonte:** GDD, TDD, TIS e especificações do FactionService / PricingService / QuestService / ShopInterface / RelationshipService / PlayerMarketService / LightingService  
+**Versão:** 5.2.0  
+**Status:** Atualizado com os Parâmetros da Janela de Inventário Visual e Equipamentos (GATE 11 / TASK-408)  
+**Fonte:** GDD, TDD, TIS e especificações do FactionService / PricingService / QuestService / ShopInterface / RelationshipService / PlayerMarketService / LightingService / InventoryService  
 
 ---
 
@@ -24,10 +25,23 @@
 | 4.1.0 | 2026-08-23 | Tech Lead | Parâmetros da Sprint 14 (TASK-303): Custos, Insumos e XP de Profissão das Receitas de Crafting |
 | 5.0.0 | 2026-08-23 | Tech Lead | Parâmetros da Sprint 15 (TASK-304): Taxa de Anúncio de Mercado (5%) e Regras de Precificação na Loja do Jogador |
 | 5.1.0 | 2026-08-23 | Tech Lead | Parâmetros da Sprint 16 (POLISH-001): Raio de Cobertura, Nível de Luz Elevação e Frequência do Pulso Bioluminescente |
+| 5.2.0 | 2026-08-25 | Lead de Playable Build | Parâmetros da Sprint 17 (TASK-408 / GATE 11): Grade de Slots (5 colunas), Atalho Semântico 'I' e CanvasLayer 15 do Inventário Visual |
 
 ---
 
-# 2. Parâmetros de Iluminação Bioluminescente do Setor Escuro (Sprint 16 / POLISH-001)
+# 2. Configurações Visuais e da Interface do Inventário (Sprint 17 / TASK-408 / GATE 11)
+
+| Parâmetro de UI / Layout | Valor / Configuração | Aplicação / Função |
+|---|---:|---|
+| Camada de Renderização (`layer`) | CanvasLayer 15 | Prioridade de sobreposição das janelas de UI em relação ao HUD (Layer 10) |
+| Colunas do Grid Container (`columns`) | 5 Colunas | Organização espacial dos slots da mochila |
+| Resolução do Slot Visual | 44 × 44 pixels | Dimensão base com suporte a Drag-and-Drop nativo do Godot |
+| Atalho Mapeado (`InputMap`) | Action `inventory` / Key `I` | Disparo do sinal `inventory_toggle_requested` via `EventBus` |
+| Slots de Equipamento Ativos | 4 (`head`, `chest`, `main_hand`, `off_hand`) | Apresentação e atalho visual dos equipamentos do personagem |
+
+---
+
+# 3. Parâmetros de Iluminação Bioluminescente do Setor Escuro (Sprint 16 / POLISH-001)
 
 | Parâmetro de Iluminação | Valor / Configuração | Efeito Gameplay / Função |
 |---|---:|---|
@@ -38,7 +52,7 @@
 
 ---
 
-# 3. Economia da Loja do Jogador & Mercado Local (Sprint 15 / TASK-304)
+# 4. Economia da Loja do Jogador & Mercado Local (Sprint 15 / TASK-304)
 
 | Parâmetro Econômico | Valor / Regra | Aplicação / Função |
 |---|---:|---|
@@ -48,7 +62,7 @@
 
 ---
 
-# 4. Facções Principais & Matriz de Rivalidades (Sprint 10)
+# 5. Facções Principais & Matriz de Rivalidades (Sprint 10)
 
 | ID da Facção | Nome Visível | Reputação Inicial Padrão | Facções Rivais Diretas | Fator de Penalidade Cruzada |
 |---|---|---:|---|---:|
@@ -59,9 +73,10 @@
 
 ---
 
-# 5. Economia Dinâmica & Parâmetros do PricingService (Sprint 12)
+# 6. Economia Dinâmica & Parâmetros do PricingService (Sprint 12)
 
-$$\text{Preço Final} = \text{Preço Base} \times \text{Multiplicador de Reputação} \times \left(1 + \frac{\text{Demanda} - \text{Estoque}}{\text{Estoque Mínimo}}\right) \times (1 + \text{Taxa de Imposto})$$
+$$	ext{Preço Final} = 	ext{Preço Base} 	imes 	ext{Multiplicador de Reputação} 	imes \left(1 + rac{	ext{Demanda} - 	ext{Estoque}}{	ext{Estoque Mínimo}}
+ight) 	imes (1 + 	ext{Taxa de Imposto})$$
 
 | Parâmetro Econômico | Valor Inicial / Regra | Limite Mínimo (Clamp) | Limite Máximo (Clamp) | Descrição / Função |
 |---|---:|---:|---:|---|
@@ -72,9 +87,9 @@ $$\text{Preço Final} = \text{Preço Base} \times \text{Multiplicador de Reputa�
 
 ---
 
-# 6. Escala de Afinidade Individual de NPCs (Sprint 13 / TASK-302)
+# 7. Escala de Afinidade Individual de NPCs (Sprint 13 / TASK-302)
 
-$$\text{Afinidade} = \text{Clamp}(\text{Afinidade Atual} + \Delta\text{Afinidade}, -100.0, +100.0)$$
+$$	ext{Afinidade} = 	ext{Clamp}(	ext{Afinidade Atual} + \Delta	ext{Afinidade}, -100.0, +100.0)$$
 
 | Intervalo Numérico | Stance Enum | Postura Social | Modificador Comercial na Loja |
 |---:|---|---|---:|
@@ -87,7 +102,7 @@ $$\text{Afinidade} = \text{Clamp}(\text{Afinidade Atual} + \Delta\text{Afinidade
 
 ---
 
-# 7. Tabela de Variação de Afinidade por Ações e Presentes (Sprint 13 / TASK-302)
+# 8. Tabela de Variação de Afinidade por Ações e Presentes (Sprint 13 / TASK-302)
 
 | Ação / Presente | Variação de Afinidade ($\Delta$) | Observação |
 |---|---:|---|
@@ -100,7 +115,7 @@ $$\text{Afinidade} = \text{Clamp}(\text{Afinidade Atual} + \Delta\text{Afinidade
 
 ---
 
-# 8. Profissões & Tiers de Maestria (Fase 2)
+# 9. Profissões & Tiers de Maestria (Fase 2)
 
 | ID da Profissão | Nome Visível | Foco / Categoria | Tiers | XP por Tier | Bônus de Eficiência por Tier |
 |---|---|---|---:|---:|---:|
@@ -124,7 +139,7 @@ $$\text{Afinidade} = \text{Clamp}(\text{Afinidade Atual} + \Delta\text{Afinidade
 
 ---
 
-# 9. Quests & Recompensas
+# 10. Quests & Recompensas
 
 | ID | Nome da Quest | Tipo | Requisito de Item | Recompensa em Moedas | Recompensa em Reputação Local | XP Recompensa |
 |---|---|---|---|---:|---:|---:|
@@ -132,7 +147,7 @@ $$\text{Afinidade} = \text{Clamp}(\text{Afinidade Atual} + \Delta\text{Afinidade
 
 ---
 
-# 10. Itens
+# 11. Itens
 
 | ID | Nome | Tipo | Custo Base | Atributo | Multiplicador Resource | Stack Máximo | Status |
 |---|---|---|---:|---|---:|---:|---|
@@ -151,7 +166,7 @@ $$\text{Afinidade} = \text{Clamp}(\text{Afinidade Atual} + \Delta\text{Afinidade
 
 ---
 
-# 11. Reputação & Ranks de Postura (Stances)
+# 12. Reputação & Ranks de Postura (Stances)
 
 O GDD define a escala de reputação local de 0 a 10.000.
 
@@ -165,7 +180,7 @@ O GDD define a escala de reputação local de 0 a 10.000.
 
 ---
 
-# 12. Combate & Inimigos
+# 13. Combate & Inimigos
 
 | ID | Entidade / Inimigo | HP | Dano Base Melee | Multiplicador em Penumbra | Multiplicador sob Luz Plena (>= 0.70) | XP Recompensa |
 |---|---|---:|---:|---:|---:|---:|
@@ -174,7 +189,7 @@ O GDD define a escala de reputação local de 0 a 10.000.
 
 ---
 
-# 13. Custos de Ações de Gameplay (Energy & Survival)
+# 14. Custos de Ações de Gameplay (Energy & Survival)
 
 | Ação | Custo de Energia | Custo de Fome | Quantidade de Recurso Gerada | XP de Profissão | Cooldown |
 |---|---:|---:|---|---|---:|
@@ -184,7 +199,7 @@ O GDD define a escala de reputação local de 0 a 10.000.
 
 ---
 
-# 14. Sobrevivência (Valores do SurvivalComponent)
+# 15. Sobrevivência (Valores do SurvivalComponent)
 
 | Parâmetro | Valor Máximo | Taxa de Variação (Por Minuto de Jogo) | Efeito ao Esgotar |
 |---|---:|---:|---|
@@ -197,9 +212,9 @@ O GDD define a escala de reputação local de 0 a 10.000.
 
 ---
 
-# 12. Progressão Geral — Decisões Aprovadas (Sprint 17)
+# 16. Progressão Geral — Decisões Aprovadas (Sprint 17)
 
-## 12.1 XP de Nível Geral
+## 16.1 XP de Nível Geral
 
 **Modelo:** Híbrido baseado em Ações e Milestones.
 
@@ -220,21 +235,12 @@ XP_req = 100 × Nível^1.5
 - aumento fixo de HP máximo;
 - Talent Points utilitários gerais.
 
-**Integração com Progressão por Uso:**
+**Integração com Progressão por Uso:**  
 A XP geral recebe um subproduto percentual da XP obtida em proficiências/profissões.
-
-### Parâmetros ainda não numericamente definidos
-
-- aumento de HP por nível;
-- quantidade de Talent Points por nível;
-- percentual de conversão de XP de proficiências/profissões em XP geral;
-- nível máximo do personagem.
-
-Esses valores devem ser definidos antes da implementação definitiva das fórmulas correspondentes.
 
 ---
 
-# 13. Atributos — Funções Oficiais
+# 17. Atributos — Funções Oficiais
 
 | Atributo | Aplicação |
 |---|---|
@@ -245,16 +251,15 @@ Esses valores devem ser definidos antes da implementação definitiva das fórmu
 | Sabedoria | Percepção, sanidade/pânico no Setor Escuro e eficiência de luz |
 | Carisma | Preços, afinidade, facções e contratação |
 
-Todos os atributos utilizam o sistema genérico de `Modifier`.
+*Todos os atributos utilizam o sistema genérico de Modifier.*
 
 ---
 
-# 14. Direção Visual — Parâmetros de Produção
+# 18. Direção Visual — Parâmetros de Produção
 
-- Resolução-base: `640 × 360`.
-- Tile: `16 × 16`.
-- Player: `32 × 32`.
-- Pixel Snap: ativo.
-- Pixel Art: Filter `Nearest`.
-- Mipmaps: desativados para pixel art.
-- Iluminação: 2D nativa da Godot.
+- **Resolução-base:** 640 × 360  
+- **Tile:** 16 × 16  
+- **Player:** 32 × 32  
+- **Pixel Snap:** ativo  
+- **Pixel Art:** Filter Nearest  
+- **Mipmaps:** desativados para pixel art  

@@ -1,5 +1,5 @@
 ## inventory_service.gd
-## Serviço transactional responsável por gerenciar adição, remoção e consulta de itens
+## Serviço transacional responsável por gerenciar adição, remoção, troca e consulta de itens
 ## de um inventário desacoplado de UI.
 
 class_name InventoryService
@@ -55,11 +55,7 @@ func add_item(definition: ItemDefinition, amount: int = 1) -> bool:
 	
 	if added_quantity > 0:
 		print("[InventoryService] Adicionado %d x %s ao inventário." % [added_quantity, definition.name])
-		if EventBus and EventBus.has_signal("event_emitted"):
-			EventBus.emit_signal("event_emitted", &"ItemAdded", {
-				"item_id": definition.id,
-				"amount": added_quantity
-			})
+		_notify_inventory_changed(&"ItemAdded", definition.id, added_quantity)
 			
 	return remaining_to_add == 0
 
@@ -84,13 +80,61 @@ func remove_item(item_id: StringName, amount: int = 1) -> bool:
 				break
 				
 	print("[InventoryService] Removido %d x %s do inventário." % [amount, item_id])
-	if EventBus and EventBus.has_signal("event_emitted"):
-		EventBus.emit_signal("event_emitted", &"ItemRemoved", {
-			"item_id": item_id,
-			"amount": amount
-		})
+	_notify_inventory_changed(&"ItemRemoved", item_id, amount)
 		
 	return true
+
+
+## Troca a posição de dois slots (Operação de Drag-and-Drop da UI)
+func swap_slots(from_index: int, to_index: int) -> bool:
+	if not _is_valid_slot_index(from_index) or not _is_valid_slot_index(to_index):
+		return false
+		
+	if from_index == to_index:
+		return true
+		
+	var temp_slot = _slots[from_index]
+	_slots[from_index] = _slots[to_index]
+	_slots[to_index] = temp_slot
+	
+	_notify_inventory_changed(&"SlotsSwapped", &"", 0)
+	return true
+
+
+## Divide uma pilha de itens transferindo uma quantidade específica para outro slot
+func split_stack(from_index: int, to_index: int, amount: int) -> bool:
+	if not _is_valid_slot_index(from_index) or not _is_valid_slot_index(to_index):
+		return false
+		
+	var source_slot = _slots[from_index]
+	var target_slot = _slots[to_index]
+	
+	if not source_slot.item_definition or amount <= 0 or source_slot.quantity < amount:
+		return false
+		
+	# Caso o slot destino esteja vazio
+	if not target_slot.item_definition:
+		target_slot.item_definition = source_slot.item_definition
+		source_slot.quantity -= amount
+		target_slot.quantity = amount
+		if source_slot.quantity <= 0:
+			source_slot.item_definition = null
+		_notify_inventory_changed(&"StackSplit", source_slot.item_definition.id, amount)
+		return true
+		
+	# Caso o slot destino possua o mesmo item empilhável
+	if target_slot.item_definition.id == source_slot.item_definition.id and target_slot.item_definition.is_stackable:
+		var space_in_target = target_slot.item_definition.max_stack_size - target_slot.quantity
+		var transfer_amount = mini(amount, space_in_target)
+		if transfer_amount > 0:
+			source_slot.quantity -= transfer_amount
+			target_slot.quantity += transfer_amount
+			if source_slot.quantity <= 0:
+				source_slot.item_definition = null
+			_notify_inventory_changed(&"StackMerged", source_slot.item_definition.id, transfer_amount)
+			return true
+			
+	return false
 
 
 ## Retorna a quantidade total acumulada de um item no inventário
@@ -105,3 +149,16 @@ func get_total_quantity(item_id: StringName) -> int:
 ## Retorna a lista de slots para inspeção/UI
 func get_slots() -> Array[ItemStack]:
 	return _slots
+
+
+func _is_valid_slot_index(index: int) -> bool:
+	return index >= 0 and index < _slots.size()
+
+
+func _notify_inventory_changed(event_name: StringName, item_id: StringName, amount: int) -> void:
+	if EventBus and EventBus.has_signal("event_emitted"):
+		EventBus.emit_signal("event_emitted", event_name, {
+			"item_id": item_id,
+			"amount": amount
+		})
+		EventBus.emit_signal("event_emitted", &"InventoryUpdated", {})

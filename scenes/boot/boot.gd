@@ -1,6 +1,6 @@
 ## boot.gd
 ## Script anexado à cena principal de Boot (Boot.tscn).
-## Instancia serviços, executa validações de infraestrutura, integração, profissões, economia, relacionamentos, loja do jogador, ilhas bioluminescentes e instancia a UI/HUD reativa.
+## Instancia serviços, executa validações de infraestrutura, integração, profissões, economia, relacionamentos, loja do jogador, ilhas bioluminescentes e instancia a UI/HUD reativa e o Inventário Visual.
 
 extends Node2D
 
@@ -26,6 +26,9 @@ const RelationshipServiceScript = preload("res://social/relationships/relationsh
 const PlayerMarketServiceScript = preload("res://economy/market/player_market_service.gd")
 const BioluminescentFloraScript = preload("res://entities/environment/bioluminescent_flora_node.gd")
 
+const HUDScene: PackedScene = preload("res://ui/hud/hud.tscn")
+const InventoryUIScene: PackedScene = preload("res://ui/inventory/inventory_ui.tscn")
+
 var _player_instance: CharacterBody2D = null
 var _inventory_service: Node = null
 var _lighting_service: Node = null
@@ -35,6 +38,7 @@ var _faction_service: RefCounted = null
 var _relationship_service: Node = null
 var _player_market_service: Node = null
 var _hud_instance: CanvasLayer = null
+var _inventory_ui_instance: CanvasLayer = null
 
 
 func _ready() -> void:
@@ -50,6 +54,7 @@ func _ready() -> void:
 	if tests_passed:
 		_setup_environment_lighting()
 		_instantiate_ui()
+		_start_world_simulation()
 		_spawn_test_environment()
 
 
@@ -95,11 +100,15 @@ func _setup_services() -> void:
 	_inventory_service = InventoryServiceScript.new()
 	_inventory_service.name = "InventoryService"
 	add_child(_inventory_service)
+	if ServiceRegistry and not ServiceRegistry.has_service(&"InventoryService"):
+		ServiceRegistry.register_service(&"InventoryService", _inventory_service)
 	
 	# 2. LightingService
 	_lighting_service = LightingServiceScript.new()
 	_lighting_service.name = "LightingService"
 	add_child(_lighting_service)
+	if ServiceRegistry and not ServiceRegistry.has_service(&"LightingService"):
+		ServiceRegistry.register_service(&"LightingService", _lighting_service)
 	
 	# 3. QuestService
 	_quest_service = QuestServiceScript.new()
@@ -139,18 +148,43 @@ func _setup_environment_lighting() -> void:
 	add_child(canvas_modulate)
 
 
-## Instancia e exibe programmaticamente a cena do HUD na árvore do Boot
+## Instancia e exibe programmaticamente as cenas do HUD e do Inventário Visual na árvore do Boot
 func _instantiate_ui() -> void:
-	if ResourceLoader.exists("res://ui/hud/hud.tscn"):
-		var hud_scene = load("res://ui/hud/hud.tscn") as PackedScene
-		if hud_scene:
-			_hud_instance = hud_scene.instantiate() as CanvasLayer
+	# 1. HUD Contextual
+	if HUDScene:
+		_hud_instance = HUDScene.instantiate() as CanvasLayer
+		if _hud_instance:
 			add_child(_hud_instance)
 			print("[Boot] UI/HUD (`hud.tscn`) instanciado e adicionado à árvore com sucesso.")
 		else:
 			push_error("[Boot] ERRO: Falha ao instanciar res://ui/hud/hud.tscn")
 	else:
 		push_warning("[Boot] AVISO: Cena res://ui/hud/hud.tscn não encontrada para carregamento.")
+
+	# 2. Inventário Visual (TASK-408 / GATE 11)
+	if InventoryUIScene:
+		_inventory_ui_instance = InventoryUIScene.instantiate() as CanvasLayer
+		if _inventory_ui_instance:
+			add_child(_inventory_ui_instance)
+			print("[Boot] Inventário Visual (`inventory_ui.tscn`) instanciado e adicionado à árvore com sucesso.")
+		else:
+			push_error("[Boot] ERRO: Falha ao instanciar res://ui/inventory/inventory_ui.tscn")
+	else:
+		push_warning("[Boot] AVISO: Cena res://ui/inventory/inventory_ui.tscn não encontrada para carregamento.")
+
+
+## Inicia a simulação temporal utilizando os métodos oficiais do TimeService
+func _start_world_simulation() -> void:
+	if TimeService:
+		if TimeService.has_method("resume_time"):
+			TimeService.resume_time()
+			print("[Boot] TimeService iniciado via resume_time().")
+		elif TimeService.has_method("start"):
+			TimeService.start()
+			print("[Boot] TimeService iniciado via start().")
+			
+	if EventBus:
+		EventBus.emit_event(&"GameStarted", {"timestamp": Time.get_unix_time_from_system()})
 
 
 func _spawn_test_environment() -> void:
