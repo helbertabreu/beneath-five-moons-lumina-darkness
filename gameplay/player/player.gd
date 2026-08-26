@@ -152,21 +152,31 @@ func _setup_attack_area() -> void:
 
 ## Atualiza os estados visuais, espelhamento do sprite e rotação da lanterna
 func _update_presentation() -> void:
-	# Ajusta o ponto focal da lanterna com base na direção do movimento
 	if _lantern_anchor and _last_facing_direction != Vector2.ZERO:
 		_lantern_anchor.position = _last_facing_direction * 12.0
 	
-	# Espelhamento horizontal do Sprite (Flip X) ao se mover para a esquerda/direita
+	# Espelhamento horizontal do Sprite para a esquerda
 	if _sprite_node and _last_facing_direction.x != 0:
 		_sprite_node.flip_h = (_last_facing_direction.x < 0)
 		
-	# Toca a animação correspondente caso o AnimationPlayer possua a biblioteca registrada
+	# Toca a animação correspondente
 	if _animation_player and not _is_attacking:
-		var anim_name = "walk" if velocity.length() > 5.0 else "idle"
+		var state_prefix = "sprint_" if Input.is_action_pressed(&"sprint") else "walk_"
+		var dir_suffix = _get_direction_suffix(_last_facing_direction)
+		var anim_name = state_prefix + dir_suffix if velocity.length() > 5.0 else "idle"
+		
 		if _animation_player.has_animation(anim_name) and _animation_player.current_animation != anim_name:
 			_animation_player.play(anim_name)
 			
 	visual_state_changed.emit(&"walk" if velocity.length() > 5.0 else &"idle", _last_facing_direction)
+
+
+## Retorna o sufixo direcional correspondente ao vetor de orientação do personagem
+func _get_direction_suffix(dir: Vector2) -> String:
+	if abs(dir.x) > abs(dir.y):
+		return "right" if dir.x > 0 else "left"
+	else:
+		return "down" if dir.y > 0 else "up"
 
 
 ## Alterna o estado da lanterna (Ligar/Desligar) com a tecla F (use_light)

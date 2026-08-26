@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://2ky5ybig80kr" path="res://gameplay/movement/movement_component_2d.gd" id="2_movement"]
 [ext_resource type="Script" uid="uid://crnssittler7v" path="res://gameplay/survival/survival_component.gd" id="3_survival"]
 [ext_resource type="Script" uid="uid://cmnii4ir04ho4" path="res://gameplay/interaction/interaction_detector_2d.gd" id="4_interaction"]
+[ext_resource type="Texture2D" uid="uid://tfok05ct3uwg" path="res://assets/textures/SpriteSheetPlayer.png" id="5_c3xxp"]
 [ext_resource type="Script" uid="uid://c8corfggo522d" path="res://gameplay/player/player_camera_extension.gd" id="5_tpg5x"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_player"]
@@ -35,6 +36,33 @@ fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(1, 0.5)
 
+[sub_resource type="Animation" id="Animation_npwbq"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:flip_h")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
 [sub_resource type="Animation" id="Animation_idle"]
 resource_name = "idle"
 length = 0.8
@@ -52,9 +80,91 @@ tracks/0/keys = {
 "values": [Vector2(1, 1), Vector2(1.03, 0.97), Vector2(1, 1)]
 }
 
+[sub_resource type="Animation" id="Animation_v42im"]
+resource_name = "walk_down"
+length = 0.39999999999999997
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [12, 13, 14, 15]
+}
+
+[sub_resource type="Animation" id="Animation_7oing"]
+resource_name = "walk_left"
+length = 0.39999999999999997
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:flip_h")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_pn6s4"]
+resource_name = "walk_right"
+length = 0.39999999999999997
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [4, 5, 6, 7]
+}
+
+[sub_resource type="Animation" id="Animation_c3xxp"]
+resource_name = "walk_up"
+length = 0.39999999999999997
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [8, 9, 10, 11]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_player"]
 _data = {
-&"idle": SubResource("Animation_idle")
+&"RESET": SubResource("Animation_npwbq"),
+&"idle": SubResource("Animation_idle"),
+&"walk_down": SubResource("Animation_v42im"),
+&"walk_left": SubResource("Animation_7oing"),
+&"walk_right": SubResource("Animation_pn6s4"),
+&"walk_up": SubResource("Animation_c3xxp")
 }
 
 [node name="Player" type="CharacterBody2D" unique_id=104479462]
@@ -82,6 +192,9 @@ texture = SubResource("GradientTexture2D_shadow")
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1892014720]
 texture_filter = 1
 position = Vector2(0, -2)
+texture = ExtResource("5_c3xxp")
+hframes = 4
+vframes = 4
 
 [node name="LanternPointLight2D" type="PointLight2D" parent="." unique_id=1587420911]
 enabled = false
