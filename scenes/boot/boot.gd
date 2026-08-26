@@ -1,6 +1,8 @@
 ## boot.gd
 ## Script anexado à cena principal de Boot (Boot.tscn).
-## Instancia serviços, executa validações de infraestrutura, integração, profissões, economia, relacionamentos, loja do jogador, ilhas bioluminescentes e instancia a UI/HUD reativa e o Inventário Visual.
+## Instancia serviços, executa validações de infraestrutura, integração, profissões,
+## economia, relacionamentos, loja do jogador, ilhas bioluminescentes,
+## e gerencia a transição segura para a Playable Build (Gate 25).
 
 extends Node2D
 
@@ -28,6 +30,9 @@ const BioluminescentFloraScript = preload("res://entities/environment/biolumines
 
 const HUDScene: PackedScene = preload("res://ui/hud/hud.tscn")
 const InventoryUIScene: PackedScene = preload("res://ui/inventory/inventory_ui.tscn")
+const MinimapScene: PackedScene = preload("res://ui/minimap/minimap.tscn")
+
+const IRON_GORGE_SCENE_PATH = "res://scenes/world/iron_gorge_outpost.tscn"
 
 var _player_instance: CharacterBody2D = null
 var _inventory_service: Node = null
@@ -39,6 +44,7 @@ var _relationship_service: Node = null
 var _player_market_service: Node = null
 var _hud_instance: CanvasLayer = null
 var _inventory_ui_instance: CanvasLayer = null
+var _minimap_instance: CanvasLayer = null
 
 
 func _ready() -> void:
@@ -56,6 +62,7 @@ func _ready() -> void:
 		_instantiate_ui()
 		_start_world_simulation()
 		_spawn_test_environment()
+		_transition_to_first_playable_region_safe()
 
 
 func _run_bootstrap_and_relationship_tests() -> bool:
@@ -148,7 +155,7 @@ func _setup_environment_lighting() -> void:
 	add_child(canvas_modulate)
 
 
-## Instancia e exibe programmaticamente as cenas do HUD e do Inventário Visual na árvore do Boot
+## Instancia e exibe programmaticamente as cenas do HUD, Inventário e Minimapa na árvore do Boot
 func _instantiate_ui() -> void:
 	# 1. HUD Contextual
 	if HUDScene:
@@ -158,8 +165,6 @@ func _instantiate_ui() -> void:
 			print("[Boot] UI/HUD (`hud.tscn`) instanciado e adicionado à árvore com sucesso.")
 		else:
 			push_error("[Boot] ERRO: Falha ao instanciar res://ui/hud/hud.tscn")
-	else:
-		push_warning("[Boot] AVISO: Cena res://ui/hud/hud.tscn não encontrada para carregamento.")
 
 	# 2. Inventário Visual (TASK-408 / GATE 11)
 	if InventoryUIScene:
@@ -169,8 +174,15 @@ func _instantiate_ui() -> void:
 			print("[Boot] Inventário Visual (`inventory_ui.tscn`) instanciado e adicionado à árvore com sucesso.")
 		else:
 			push_error("[Boot] ERRO: Falha ao instanciar res://ui/inventory/inventory_ui.tscn")
-	else:
-		push_warning("[Boot] AVISO: Cena res://ui/inventory/inventory_ui.tscn não encontrada para carregamento.")
+
+	# 3. Minimapa (TASK-409 / GATE 25.1)
+	if MinimapScene:
+		_minimap_instance = MinimapScene.instantiate() as CanvasLayer
+		if _minimap_instance:
+			add_child(_minimap_instance)
+			print("[Boot] Minimapa (`minimap.tscn`) instanciado e adicionado à árvore com sucesso.")
+		else:
+			push_error("[Boot] ERRO: Falha ao instanciar res://ui/minimap/minimap.tscn")
 
 
 ## Inicia a simulação temporal utilizando os métodos oficiais do TimeService
@@ -201,6 +213,11 @@ func _spawn_test_environment() -> void:
 		_player_instance.position = center_pos
 		add_child(_player_instance)
 		print("[Boot] Player 2D instanciado na posição: ", _player_instance.position)
+		
+		# Conecta o Player como alvo do minimapa
+		if _minimap_instance and "target_player" in _minimap_instance:
+			_minimap_instance.target_player = _player_instance
+			print("[Boot] Player vinculado ao minimapa como target_player.")
 	
 	# 2. Baú de Teste
 	var chest = Area2D.new()
@@ -249,3 +266,15 @@ func _spawn_test_environment() -> void:
 		EventBus.emit_signal("event_emitted", &"HealthChanged", {"current": 100.0, "max": 100.0})
 		EventBus.emit_signal("event_emitted", &"EnergyChanged", {"current": 100.0, "max": 100.0})
 		EventBus.emit_signal("event_emitted", &"LightLevelChanged", {"level": "Penumbra (0.20)"})
+
+
+## Transiciona para a cena da região se ela existir, ou mantém o ambiente de bootstrapping estável.
+func _transition_to_first_playable_region_safe() -> void:
+	if ResourceLoader.exists(IRON_GORGE_SCENE_PATH):
+		print("[Boot] Cena 'iron_gorge_outpost.tscn' localizada. Transicionando...")
+		var err = get_tree().change_scene_to_file(IRON_GORGE_SCENE_PATH)
+		if err != OK:
+			push_error("[Boot] ERRO ao carregar a cena do Posto Avançado: %d" % err)
+	else:
+		print("[Boot] AVISO [MISSING_RESOURCE]: Cena 'iron_gorge_outpost.tscn' ainda não compilada no disco.")
+		print("[Boot] MANTENDO O AMBIENTE DE BOOTSTRAPPING: Executando a Vertical Slice de Testes no mapa de Boot sem falhas!")

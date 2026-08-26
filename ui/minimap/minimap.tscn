@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://c8m2k5v83px1a"]
+
+[ext_resource type="Script" uid="uid://de2gy83nv52g2" path="res://ui/minimap/minimap.gd" id="1_minimap_script"]
+
+[node name="Minimap" type="CanvasLayer" unique_id=1442300467]
+layer = 12
+script = ExtResource("1_minimap_script")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1794335669]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -140.0
+offset_bottom = 140.0
+grow_horizontal = 0
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer" unique_id=164395787]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="MarginContainer/PanelContainer" unique_id=181109558]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+
+[node name="SubViewport" type="SubViewport" parent="MarginContainer/PanelContainer/SubViewportContainer" unique_id=1793830618]
+handle_input_locally = false
+size = Vector2i(120, 120)
+render_target_update_mode = 4
+
+[node name="MinimapCamera2D" type="Camera2D" parent="MarginContainer/PanelContainer/SubViewportContainer/SubViewport" unique_id=2037156455]
+zoom = Vector2(2, 2)
+
+[node name="IconsLayer" type="Control" parent="MarginContainer/PanelContainer/SubViewportContainer/SubViewport" unique_id=499409405]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0

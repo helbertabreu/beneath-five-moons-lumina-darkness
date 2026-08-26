@@ -5,73 +5,126 @@
 
 ---
 
-# DECISÕES ATIVAS
+## 1. COMO REGISTRAR UMA DECISÃO
 
-## ADR-001 — Adoção da Perspectiva 2D Top-Down para a Vertical Slice MVP
-**Data:** 2026-08-18 | **Status:** ATIVA
+Para cada decisão importante, utilize:
 
-## ADR-012 — Padrão MVVM/Presentation Model para a Interface de Comércio (TASK-301)
-**Data:** 2026-08-21 | **Status:** ATIVA
+```text
+ID:
+Data:
+Título:
+Status:
 
-## ADR-013 — Implementação do Sistema de Relacionamentos e Afinidade com NPCs (TASK-302)
-**Data:** 2026-08-21 | **Status:** ATIVA
+Contexto:
+Problema:
 
-## ADR-014 — Padronização dos Campos Data-Driven da RecipeDefinition (TASK-303 / BUG-002)
-**Data:** 2026-08-23 | **Status:** ATIVA
+Alternativas consideradas:
 
-## ADR-015 — Implementação do PlayerMarketService para a Loja do Jogador (TASK-304)
-**Data:** 2026-08-23 | **Status:** ATIVA
+Decisão:
 
-## ADR-016 — Componente de Flora Bioluminescente e Ilhas de Luz Ambientais (POLISH-001)
-**Data:** 2026-08-23 | **Status:** ATIVA
+Motivo:
 
-## ADR-017 — Transporte de Rede com ENet
-**Data:** 2026-08-24 | **Status:** ATIVA
+Consequências positivas:
 
-## ADR-018 — Listen Server / Host Autoritativo
-**Data:** 2026-08-24 | **Status:** ATIVA
+Trade-offs / consequências negativas:
 
-## ADR-019 — Navegação 2D via NavigationServer2D
-**Data:** 2026-08-24 | **Status:** ATIVA
+Impactos no projeto:
 
-## ADR-020 — Grid-Based Chunks e Offline Simulation
-**Data:** 2026-08-24 | **Status:** ATIVA
+Arquivos ou sistemas afetados:
 
-## ADR-021 — Save/Load Multiplayer e Idempotência
-**Data:** 2026-08-24 | **Status:** ATIVA
+Plano de migração, se aplicável:
 
-## ADR-022 — Baseline Visual da Playable Build
-**Data:** 2026-08-24 | **Status:** ATIVA
+Responsável pela decisão:
+```
 
-## ADR-023 — Critérios da Playable Build
-**Data:** 2026-08-24 | **Status:** ATIVA
+### Status Possíveis
+- PROPOSTA
+- ATIVA
+- SUPERADA
+- CANCELADA
 
-## ADR-024 — Alinhamento de Contrato do EventBus, Ponto de Boot e Inventário Visual (GATE 11 / TASK-408)
-**Data:** 2026-08-25 | **Status:** ATIVA  
-**Contexto:** Necessidade de instanciar e conectar a janela de inventário visual (`InventoryUI.tscn`) e corrigir o ciclo de bootstrap do `TimeService` no `boot.gd`.  
-**Decisão:** 
-1. Adicionar os sinais `inventory_toggle_requested`, `inventory_opened` e `inventory_closed` no `event_bus.gd`.
-2. Instanciar programmaticamente a cena `res://ui/inventory/InventoryUI.tscn` no script `boot.gd` na camada `CanvasLayer 15` para habilitar a escuta permanente de inputs.
-3. Ajustar a inicialização do relógio no `boot.gd` para utilizar o método oficial `TimeService.resume_time()`.  
-**Motivo:** Garantir que o acionamento da tecla **"I"** ative e desative a interface do inventário sem acoplamento direto nem dependência de foco prévio.  
-**Impactos:** `res://autoload/event_bus.gd`, `res://boot.gd`, `res://ui/inventory/inventory_ui.gd`, `res://autoload/time_service.gd`.
+---
 
-## ADR-025 — Suporte a Animações Direcionais e Estado Visual no Player (GATE 8 / TASK-406)
-**Data:** 2026-08-25 | **Status:** ATIVA  
-**Contexto:** Implementação da camada visual de apresentação do personagem 2D no script `player.gd`.  
-**Decisão:** 
-1. Adicionar a função privada `_get_direction_suffix(dir: Vector2) -> String` para mapear os vetores de entrada nos sufixos `right`, `left`, `down` e `up`.
-2. Atualizar a lógica de execução do `AnimationPlayer` em `_update_presentation()` para selecionar dinamicamente entre o prefixo `walk_` ou `sprint_` combinado ao sufixo direcional.
-3. Preservar o espelhamento do `Sprite2D` via `flip_h` para direções à esquerda e manter desacoplada a posição da lanterna no `LanternAnchor`.  
-**Motivo:** Garantir alinhamento com o asset `SpriteSheetPlayer.png` (`AST-002`) e responder com precisão visual às ações de caminhada e corrida sem violar o `MovementComponent2D`.  
-**Impactos:** `res://entities/player/player.gd`, `res://assets/textures/entities/SpriteSheetPlayer.png`.
+## 2. DECISÕES ATIVAS
 
-## ADR-026 — Compatibilização de Tipagem em Controladores de UI para Subjanelas CanvasLayer (GATE 10 / BUG-006)
-**Data:** 2026-08-25 | **Status:** ATIVA  
-**Contexto:** Ao carregar a subjanela `inventory_ui.tscn` dentro de `hud.gd`, a engine emitia um erro fatal C++ (`rp_child is null`) devido ao cast estrito `as Control` aplicado sobre uma cena com nó raiz do tipo `CanvasLayer`.  
-**Decisão:** 
-1. Ajustar a declaração da variável `_inventory_ui_instance` em `hud.gd` para o tipo `CanvasLayer` (ou nó base compatível).
-2. Adicionar o teste de validação de instância `is_instance_valid()` antes de invocar `add_child()`.
-3. Implementar um fallback de instanciação por código via `InventoryUI.new()` em caso de falha de carregamento da cena.  
-**Motivo:** Assegurar que janelas flutuantes e sobreposições baseadas em `CanvasLayer` possam ser acopladas na hierarquia de UI sem quebras de cast de tipo em tempo de execução.  
-**Impactos:** `res://ui/hud/hud.gd`, `res://ui/inventory/inventory_ui.gd`, `res://ui/inventory/inventory_ui.tscn`.
+### ADR-001 — Adoção da Perspectiva 2D Top-Down para a Vertical Slice MVP
+- **Data:** 2026-08-18 | **Status:** ATIVA
+
+### ADR-012 — Padrão MVVM/Presentation Model para a Interface de Comércio (TASK-301)
+- **Data:** 2026-08-21 | **Status:** ATIVA
+
+### ADR-013 — Implementação do Sistema de Relacionamentos e Afinidade com NPCs (TASK-302)
+- **Data:** 2026-08-21 | **Status:** ATIVA
+
+### ADR-014 — Padronização dos Campos Data-Driven da RecipeDefinition (TASK-303 / BUG-002)
+- **Data:** 2026-08-23 | **Status:** ATIVA
+
+### ADR-015 — Implementação do PlayerMarketService para a Loja do Jogador (TASK-304)
+- **Data:** 2026-08-23 | **Status:** ATIVA
+
+### ADR-016 — Componente de Flora Bioluminescente e Ilhas de Luz Ambientais (POLISH-001)
+- **Data:** 2026-08-23 | **Status:** ATIVA
+- **Contexto:** O ambiente do Setor Escuro do jogo exige pontos de iluminação estáticos/ambientais que funcionem como refúgio tático seguro contra criaturas hostis sem gastar combustível de lanternas do jogador.
+- **Problema:** Inexistência de um nó interativo ambiental capaz de emitir iluminação pulsante e elevar dinamicamente o estado de iluminação do jogador (`LightingContext`) via `LightingService` de forma desacoplada.
+- **Decisão:** Criar o nó `BioluminescentFloraNode` estendendo `Area2D`, equipado com um `PointLight2D` alimentado por uma textura radial de gradiente gerada dinamicamente. O nó calcula uma pulsação senoidal de luz no `_process` e monitora a entrada/saída de entidades (`Player`), atualizando o `LightingService` para Luz Plena (0.75) enquanto presente na ilha bioluminescente e restaurando para Penumbra (0.20) ao sair.
+- **Motivo:** Proporcionar profundidade ambiental e tática de sobrevivência no Setor Escuro de acordo com as especificações do GDD/TDD, mantendo o total desacoplamento com os sistemas de combate e IA.
+- **Consequências Positivas:** Permite criar ilhas bioluminescentes em qualquer mapa Top-Down 2D apenas adicionando o nó. Coberto por testes unitários e de integração (`test_bioluminescent_lighting.gd`).
+- **Arquivos afetados:**
+  - `res://entities/environment/bioluminescent_flora_node.gd`
+  - `res://tests/unit/test_bioluminescent_lighting.gd`
+  - `res://boot.gd`
+
+---
+
+## 3. DECISÕES MULTIPLAYER E MUNDO — 2026-08-24
+
+### ADR-017 — Transporte de Rede com ENet
+- **Data:** 2026-08-24 | **Status:** ATIVA
+- **Contexto:** início da fase de Multiplayer Cooperativo.
+- **Decisão:** utilizar `ENetMultiplayerPeer` nativo do Godot 4.7.1, encapsulado por `NetworkTransportService`.
+- **Motivo:** integração nativa com MultiplayerAPI, baixo overhead e possibilidade de substituição futura por adaptadores sem alterar o domínio.
+- **Impactos:** infraestrutura de rede, comandos, sincronização e testes Host/Client.
+
+### ADR-018 — Listen Server / Host Autoritativo
+- **Data:** 2026-08-24 | **Status:** ATIVA
+- **Decisão:** Listen Server / Host Autoritativo para Coop.
+- **Autoridade:** Host sobre `WorldState`, NPCs, spawning, economia, inventários e transações. Cliente possui predição da física local e recebe reconciliação do Host.
+- **Impactos:** rede, persistência, economia, inventário, NPCs, combate e reconexão.
+
+### ADR-019 — Navegação 2D via NavigationServer2D
+- **Data:** 2026-08-24 | **Status:** ATIVA
+- **Decisão:** `NavigationServer2D` + `NavigationRegion2D` + `NavigationAgent2D`, acessados pela IA através de `NavigationService`. Obstáculos dinâmicos usam `NavigationObstacle2D`.
+- **Motivo:** desacoplamento da IA em relação à implementação concreta de navegação.
+
+### ADR-020 — Grid-Based Chunks e Offline Simulation
+- **Data:** 2026-08-24 | **Status:** ATIVA
+- **Decisão:** streaming por Grid-Based Chunks 2D. Regiões ativas usam Full Simulation; regiões inativas usam Offline/Abstract Simulation.
+- **Motivo:** permitir expansão do mundo sem exigir simulação completa de todas as regiões simultaneamente.
+
+### ADR-021 — Save/Load Multiplayer e Idempotência
+- **Data:** 2026-08-24 | **Status:** ATIVA
+- **Decisão:** `WorldState` persistido pelo Host; `PlayerState` individual preservado para o jogador. Transações de itens utilizam `TransactionId` idempotente e rollback em falha.
+- **Reconexão:** reserva do jogador por até 60 segundos e restauração via snapshot atual.
+
+### ADR-022 — Baseline Visual da Playable Build
+- **Data:** 2026-08-24 | **Status:** ATIVA
+- **Decisão:** Pixel Art Neons/Chiaroscuro, resolução-base 640 × 360, tiles 16 × 16, Player 32 × 32, Pixel Snap e iluminação 2D nativa.
+- **Impactos:** pipeline de assets, UI, cenas, minimapa e construção do Posto Avançado da Garganta de Ferro.
+
+### ADR-023 — Critérios da Playable Build
+- **Data:** 2026-08-24 | **Status:** ATIVA
+- **Decisão:** os critérios de aceite estão definidos, mas ainda não são considerados validados.
+- **Regra:** nenhum critério pode ser marcado como aprovado sem execução, resultado registrado e evidência.
+- **Impactos:** QA, testes manuais, distribuição interna e Definition of Done.
+
+### ADR-027 — Construção da Cena Física e Reintegração do Minimapa (GATE 25.1 / TASK-409)
+- **Data:** 2026-08-26 | **Status:** ATIVA
+- **Contexto:** O minimapa possuía apenas o script de lógica `res://ui/minimap/minimap.gd`, sem a existência da cena física `.tscn` necessária para a instanciação no nó visual do orquestrador `boot.gd`.
+- **Problema:** Ausência do arquivo de cena `res://ui/minimap/minimap.tscn`, impedindo a exibição do minimapa na árvore visual do jogo.
+- **Decisão:** Construir a cena física `.tscn` contendo `CanvasLayer`, `MarginContainer`, `PanelContainer`, `SubViewportContainer`, `SubViewport`, `Camera2D` (`MinimapCamera2D`) e nó `Control` (`IconsLayer`), anexando o script `minimap.gd` existente sem alterar regras de domínio. Atualizar o `boot.gd` para carregar, instanciar a cena na camada de UI e associar o `CharacterBody2D` do jogador ao campo `target_player`.
+- **Motivo:** Sanar a dependência visual e garantir a representação no minimapa com suporte à Regra do Setor Escuro conforme TIS/GDD.
+- **Consequências Positivas:** Interface do minimapa visualmente funcional, com atualização contínua da câmera ortográfica e visibilidade dinâmica de marcadores de inimigos por nível de luz.
+- **Arquivos Afetados:**
+  - `res://ui/minimap/minimap.tscn` (Criado)
+  - `res://ui/minimap/minimap.gd` (Preservado)
+  - `res://boot.gd` (Atualizado)
