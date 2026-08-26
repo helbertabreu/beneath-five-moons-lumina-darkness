@@ -2,6 +2,7 @@
 ## Script anexado à cena principal de Boot (Boot.tscn).
 ## Instancia serviços, executa validações de infraestrutura, integração, profissões,
 ## economia, relacionamentos, loja do jogador, ilhas bioluminescentes,
+## instancia o Farol do Alinhamento, registra teclas globais de Save (F5) e Load (F9),
 ## e gerencia a transição segura para a Playable Build (Gate 25).
 
 extends Node2D
@@ -27,6 +28,7 @@ const ProfessionServiceScript = preload("res://progression/professions/professio
 const RelationshipServiceScript = preload("res://social/relationships/relationship_service.gd")
 const PlayerMarketServiceScript = preload("res://economy/market/player_market_service.gd")
 const BioluminescentFloraScript = preload("res://entities/environment/bioluminescent_flora_node.gd")
+const AlignmentBeaconScript = preload("res://entities/interactables/alignment_beacon_node.gd")
 
 const HUDScene: PackedScene = preload("res://ui/hud/hud.tscn")
 const InventoryUIScene: PackedScene = preload("res://ui/inventory/inventory_ui.tscn")
@@ -63,6 +65,38 @@ func _ready() -> void:
 		_start_world_simulation()
 		_spawn_test_environment()
 		_transition_to_first_playable_region_safe()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_F5:
+			_trigger_manual_save()
+		elif event.keycode == KEY_F9:
+			_trigger_manual_load()
+
+
+func _trigger_manual_save() -> void:
+	print("[Boot] Atalho F5 acionado: Executando salvamento manual do estado...")
+	if SaveService and SaveService.has_method("save_game"):
+		var err = SaveService.save_game()
+		if err == OK:
+			print("[Boot] Jogo salvo com sucesso via F5!")
+		else:
+			push_error("[Boot] Erro ao salvar o jogo via F5: código %d" % err)
+	else:
+		push_warning("[Boot] SaveService indisponível para salvamento manual.")
+
+
+func _trigger_manual_load() -> void:
+	print("[Boot] Atalho F9 acionado: Executando carregamento do último save...")
+	if SaveService and SaveService.has_method("load_game"):
+		var success = SaveService.load_game()
+		if success:
+			print("[Boot] Jogo carregado com sucesso via F9!")
+		else:
+			push_error("[Boot] Falha ao carregar o jogo via F9.")
+	else:
+		push_warning("[Boot] SaveService indisponível para carregamento manual.")
 
 
 func _run_bootstrap_and_relationship_tests() -> bool:
@@ -261,7 +295,15 @@ func _spawn_test_environment() -> void:
 	bio_plant.position = center_pos + Vector2(-60, -40)
 	add_child(bio_plant)
 	
-	# 8. Notifica a UI com os dados iniciais do ambiente via EventBus
+	# 8. Farol do Alinhamento (Alignment Beacon - Save/Respawn Point)
+	var alignment_beacon = Area2D.new()
+	alignment_beacon.set_script(AlignmentBeaconScript)
+	alignment_beacon.name = "AlignmentBeacon"
+	alignment_beacon.position = center_pos + Vector2(-90, 0)
+	add_child(alignment_beacon)
+	print("[Boot] Farol do Alinhamento (AlignmentBeacon) instanciado na posição: ", alignment_beacon.position)
+	
+	# 9. Notifica a UI com os dados iniciais do ambiente via EventBus
 	if EventBus and EventBus.has_signal("event_emitted"):
 		EventBus.emit_signal("event_emitted", &"HealthChanged", {"current": 100.0, "max": 100.0})
 		EventBus.emit_signal("event_emitted", &"EnergyChanged", {"current": 100.0, "max": 100.0})
