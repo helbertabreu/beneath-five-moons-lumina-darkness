@@ -62,32 +62,41 @@ func _setup_visual_nodes() -> void:
 		placeholder.visible = false
 	
 	# Busca ou instancia o Sprite2D do jogador (Asset 32x32)
-	_sprite_node = get_node_or_null("PlayerSprite") as Sprite2D
+	_sprite_node = get_node_or_null("Sprite2D") as Sprite2D
+	if not _sprite_node:
+		_sprite_node = get_node_or_null("PlayerSprite") as Sprite2D
+		
 	if not _sprite_node:
 		_sprite_node = Sprite2D.new()
-		_sprite_node.name = "PlayerSprite"
+		_sprite_node.name = "Sprite2D"
 		_sprite_node.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		_sprite_node.texture = load("res://assets/textures/SpriteSheetPlayer.png") as Texture2D
+		_sprite_node.hframes = 4
+		_sprite_node.vframes = 4
 		add_child(_sprite_node)
 		move_child(_sprite_node, 0)
 	
 	# Configura a sombra projetada no pé do personagem
-	_shadow_sprite = get_node_or_null("ShadowSprite") as Sprite2D
+	_shadow_sprite = get_node_or_null("ShadowSprite2D") as Sprite2D
+	if not _shadow_sprite:
+		_shadow_sprite = get_node_or_null("ShadowSprite") as Sprite2D
+		
 	if not _shadow_sprite:
 		_shadow_sprite = Sprite2D.new()
-		_shadow_sprite.name = "ShadowSprite"
-		_shadow_sprite.position = Vector2(0, 10)
-		_shadow_sprite.modulate = Color(0, 0, 0, 0.4)
+		_shadow_sprite.name = "ShadowSprite2D"
+		_shadow_sprite.position = Vector2(0, 11)
 		_shadow_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		
-		# Cria uma textura oval discreta para a sombra
 		var gradient_tex = GradientTexture2D.new()
 		var grad = Gradient.new()
-		grad.set_color(0, Color(1, 1, 1, 1))
-		grad.set_color(1, Color(1, 1, 1, 0))
+		grad.set_color(0, Color(0, 0, 0, 0.45))
+		grad.set_color(1, Color(0, 0, 0, 0))
 		gradient_tex.gradient = grad
 		gradient_tex.fill = GradientTexture2D.FILL_RADIAL
-		gradient_tex.width = 16
-		gradient_tex.height = 8
+		gradient_tex.fill_from = Vector2(0.5, 0.5)
+		gradient_tex.fill_to = Vector2(1, 0.5)
+		gradient_tex.width = 18
+		gradient_tex.height = 10
 		_shadow_sprite.texture = gradient_tex
 		add_child(_shadow_sprite)
 		move_child(_shadow_sprite, 0)
@@ -109,61 +118,65 @@ func _setup_visual_nodes() -> void:
 
 ## Configura o nó de iluminação portátil dinâmico (PointLight2D)
 func _setup_portable_light() -> void:
-	_light_node = PointLight2D.new()
-	_light_node.name = "PortableLantern"
-	_light_node.energy = 1.2
-	_light_node.texture_scale = 1.5
-	_light_node.color = Color(1.0, 0.9, 0.65, 1.0)
-	
-	var light_texture = GradientTexture2D.new()
-	var gradient = Gradient.new()
-	gradient.set_color(0, Color(1, 1, 1, 1))
-	gradient.set_color(1, Color(0, 0, 0, 0))
-	light_texture.gradient = gradient
-	light_texture.fill = GradientTexture2D.FILL_RADIAL
-	light_texture.fill_from = Vector2(0.5, 0.5)
-	light_texture.fill_to = Vector2(0.5, 0.0)
-	light_texture.width = 128
-	light_texture.height = 128
-	
-	_light_node.texture = light_texture
-	_light_node.enabled = false
-	
-	if _lantern_anchor:
-		_lantern_anchor.add_child(_light_node)
-	else:
-		add_child(_light_node)
+	_light_node = get_node_or_null("LanternPointLight2D") as PointLight2D
+	if not _light_node:
+		_light_node = get_node_or_null("PortableLantern") as PointLight2D
+		
+	if not _light_node:
+		_light_node = PointLight2D.new()
+		_light_node.name = "LanternPointLight2D"
+		_light_node.energy = 1.1
+		_light_node.texture_scale = 1.2
+		_light_node.color = Color(1.0, 0.85, 0.6, 1.0)
+		
+		var light_texture = GradientTexture2D.new()
+		var gradient = Gradient.new()
+		gradient.set_color(0, Color(1, 0.9, 0.65, 1))
+		gradient.set_offset(1, 0.45)
+		gradient.set_color(1, Color(0.8, 0.5, 0.2, 0.4))
+		light_texture.gradient = gradient
+		light_texture.fill = GradientTexture2D.FILL_RADIAL
+		light_texture.fill_from = Vector2(0.5, 0.5)
+		light_texture.fill_to = Vector2(1, 0.5)
+		light_texture.width = 256
+		light_texture.height = 256
+		
+		_light_node.texture = light_texture
+		_light_node.enabled = false
+		
+		if _lantern_anchor:
+			_lantern_anchor.add_child(_light_node)
+		else:
+			add_child(_light_node)
 
 
 ## Configura a área física de ataque Melee ao redor do jogador
 func _setup_attack_area() -> void:
-	_attack_area = Area2D.new()
-	_attack_area.name = "MeleeAttackArea"
-	_attack_area.monitorable = false
-	_attack_area.monitoring = true
-	
-	var col_shape = CollisionShape2D.new()
-	var circle = CircleShape2D.new()
-	circle.radius = 45.0 # Alcance de ataque de 45px
-	col_shape.shape = circle
-	_attack_area.add_child(col_shape)
-	add_child(_attack_area)
+	_attack_area = get_node_or_null("MeleeAttackArea") as Area2D
+	if not _attack_area:
+		_attack_area = Area2D.new()
+		_attack_area.name = "MeleeAttackArea"
+		_attack_area.monitorable = false
+		_attack_area.monitoring = true
+		
+		var col_shape = CollisionShape2D.new()
+		var circle = CircleShape2D.new()
+		circle.radius = 45.0
+		col_shape.shape = circle
+		_attack_area.add_child(col_shape)
+		add_child(_attack_area)
 
 
-## Atualiza os estados visuais, espelhamento do sprite e rotação da lanterna
+## Atualiza os estados visuais, rotação da lanterna e toca animação direcional
 func _update_presentation() -> void:
 	if _lantern_anchor and _last_facing_direction != Vector2.ZERO:
 		_lantern_anchor.position = _last_facing_direction * 12.0
-	
-	# Espelhamento horizontal do Sprite para a esquerda
-	if _sprite_node and _last_facing_direction.x != 0:
-		_sprite_node.flip_h = (_last_facing_direction.x < 0)
 		
-	# Toca a animação correspondente
+	# Toca a animação correspondente no AnimationPlayer
+	# O AnimationPlayer é o responsável exclusivo por controlar frames e flip_h do Sprite2D
 	if _animation_player and not _is_attacking:
-		var state_prefix = "sprint_" if Input.is_action_pressed(&"sprint") else "walk_"
 		var dir_suffix = _get_direction_suffix(_last_facing_direction)
-		var anim_name = state_prefix + dir_suffix if velocity.length() > 5.0 else "idle"
+		var anim_name = "walk_" + dir_suffix if velocity.length() > 5.0 else "idle"
 		
 		if _animation_player.has_animation(anim_name) and _animation_player.current_animation != anim_name:
 			_animation_player.play(anim_name)
@@ -194,7 +207,7 @@ func toggle_light() -> void:
 		print("[Player] Lanterna ", "LIGADA" if _is_light_on else "DESLIGADA", " (Serviço de Iluminação Indisponível)")
 
 
-## Executa o golpe Melee com a barra de Espaço (attack)
+## Executa o golpe Melee com a tecla Espaço (attack)
 func perform_attack() -> void:
 	print("[Player] Executando Ataque Melee!")
 	if not _attack_area:
@@ -216,5 +229,4 @@ func perform_attack() -> void:
 	if hit_count == 0:
 		print("[Player] Ataque no ar (Nenhum inimigo atingido).")
 		
-	# Libera o estado de ataque após cooldown visual
 	get_tree().create_timer(0.25).timeout.connect(func(): _is_attacking = false)

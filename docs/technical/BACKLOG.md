@@ -26,7 +26,7 @@
 
 # 1. SPRINT ATUAL — FASE B: APRESENTAÇÃO VISUAL
 
-**Sprint:** Gate 8 — Player Visual Concluído / Gate 11 — Inventário Visual Concluído / Gate 12 — Mochila & Equipamentos (Sprint 17 / Fase B)
+**Sprint:** Gate 10 — HUD Minimalista Concluída / Gate 11 — Inventário Visual Concluído / Gate 12 — Mochila & Equipamentos (Sprint 17 / Fase B)
 
 **Objetivo:** Integrar a camada visual do personagem e as interfaces de inventário/equipamentos no bootstrap da Playable Build.
 
@@ -38,8 +38,8 @@
 | TASK-404 | Reconexão de cliente | Multiplayer | P1 | 17 | TASK-403 | TODO | Cliente reconecta em até 60s e recebe snapshot atual |
 | TASK-405 | Transações idempotentes multiplayer | Multiplayer | P1 | 17 | TASK-403 | TODO | Trocas não produzem duplicação após falha de conexão |
 | TASK-406 | Estrutura oficial de cenas 2D | Technical | P1 | 17 | TASK-401 | DONE | Player2D (`player.gd`) atualizado com sufixos direcionais, lanterna e sombra |
-| TASK-407 | UIManager + HUD contextual | UI | P1 | 17 | TASK-406 | IN PROGRESS | HUD exibe HP, Estamina, Energia, Lanterna e Luz desacoplados |
-| TASK-408 | Inventário visual | UI | P1 | 17 | TASK-407 | DONE | Grid, drag-and-drop, split, atalho 'I' e janelas funcionam via comandos no boot.gd |
+| TASK-407 | UIManager + HUD contextual | UI | P1 | 17 | TASK-406 | DONE | HUD exibe HP, Estamina, Energia, Lanterna e Luz desacoplados com tema gráfico |
+| TASK-408 | Inventário visual | UI | P1 | 17 | TASK-407 | DONE | Grid, drag-and-drop, split, atalho 'I' e janelas funcionam no `boot.gd` |
 | TASK-409 | Minimap | UI | P2 | 17 | TASK-407 | TODO | Jogador e marcadores definidos aparecem no minimapa |
 | TASK-410 | Posto Avançado da Garganta de Ferro | World | P1 | 17 | TASK-406 | TODO | Região possui os elementos mínimos definidos no TIS e LDD |
 | TASK-411 | Matriz de testes manuais TM-001/TM-002/TM-003 | QA | P1 | 17 | TASK-410 | IN PROGRESS | Testes manuais executados com evidências registradas |
@@ -86,6 +86,7 @@
 | BUG-003 | Incompatibilidade de assinatura de sinais no EventBus (`event_emitted`) | ALTA       | P1         | 17     | DONE   |
 | BUG-004 | Ausência de cena inicial válida registrada em `project.godot`           | BLOQUEADOR | P0         | 17     | DONE   |
 | BUG-005 | Chamada a método inexistente `resume()` do TimeService no `boot.gd`     | ALTA       | P1         | 17     | DONE   |
+| BUG-006 | Exceção de cast nulo C++ (`rp_child`) em `add_child()` em `hud.gd`       | BLOQUEADOR | P0         | 17     | DONE   |
 
 ---
 
@@ -107,13 +108,17 @@ _(Nenhuma dívida técnica registrada no momento)_
 
 ## Gate 8 (Player Visual — TASK-406)
 - Atualizado o arquivo `res://entities/player/player.gd` com o helper `_get_direction_suffix(dir: Vector2)`.
-- Adicionado suporte às animações octodirecionais de caminhada (`walk_`) e corrida (`sprint_`) consumindo o asset `AST-002`.
+- Adicionado suporte às animações octodirecionais de caminhada e corrida.
 - **Resultado:** GATE 8 CONCLUÍDO E VALIDADO.
+
+## Gate 10 (HUD Contextual — TASK-407)
+- Corrigida a tipagem da subjanela de inventário para `CanvasLayer` em `hud.gd`.
+- Vinculado o recurso de tema `main_theme.tres` ao nó raiz da HUD.
+- **Resultado:** TASK-407 CONCLUÍDA E VALIDADA.
 
 ## Gate 11 (Inventário Visual — TASK-408)
 - Instanciada a cena `InventoryUI.tscn` no bootstrap do projeto (`boot.gd`) na camada `CanvasLayer 15`.
 - Adicionado o sinal `inventory_toggle_requested` no `EventBus` e tratamento do atalho físico/semântico da tecla **"I"**.
-- Corrigida a instrução de simulação de tempo para `TimeService.resume_time()`.
 - **Resultado:** TASK-408 CONCLUÍDA E VALIDADA.
 
 ---

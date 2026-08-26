@@ -53,7 +53,7 @@
 1. Adicionar os sinais `inventory_toggle_requested`, `inventory_opened` e `inventory_closed` no `event_bus.gd`.
 2. Instanciar programmaticamente a cena `res://ui/inventory/InventoryUI.tscn` no script `boot.gd` na camada `CanvasLayer 15` para habilitar a escuta permanente de inputs.
 3. Ajustar a inicialização do relógio no `boot.gd` para utilizar o método oficial `TimeService.resume_time()`.  
-**Motivo:** Garantir que a pressionar da tecla **"I"** ative e desative a interface do inventário sem acoplamento direto nem dependência de foco prévio.  
+**Motivo:** Garantir que o acionamento da tecla **"I"** ative e desative a interface do inventário sem acoplamento direto nem dependência de foco prévio.  
 **Impactos:** `res://autoload/event_bus.gd`, `res://boot.gd`, `res://ui/inventory/inventory_ui.gd`, `res://autoload/time_service.gd`.
 
 ## ADR-025 — Suporte a Animações Direcionais e Estado Visual no Player (GATE 8 / TASK-406)
@@ -65,3 +65,13 @@
 3. Preservar o espelhamento do `Sprite2D` via `flip_h` para direções à esquerda e manter desacoplada a posição da lanterna no `LanternAnchor`.  
 **Motivo:** Garantir alinhamento com o asset `SpriteSheetPlayer.png` (`AST-002`) e responder com precisão visual às ações de caminhada e corrida sem violar o `MovementComponent2D`.  
 **Impactos:** `res://entities/player/player.gd`, `res://assets/textures/entities/SpriteSheetPlayer.png`.
+
+## ADR-026 — Compatibilização de Tipagem em Controladores de UI para Subjanelas CanvasLayer (GATE 10 / BUG-006)
+**Data:** 2026-08-25 | **Status:** ATIVA  
+**Contexto:** Ao carregar a subjanela `inventory_ui.tscn` dentro de `hud.gd`, a engine emitia um erro fatal C++ (`rp_child is null`) devido ao cast estrito `as Control` aplicado sobre uma cena com nó raiz do tipo `CanvasLayer`.  
+**Decisão:** 
+1. Ajustar a declaração da variável `_inventory_ui_instance` em `hud.gd` para o tipo `CanvasLayer` (ou nó base compatível).
+2. Adicionar o teste de validação de instância `is_instance_valid()` antes de invocar `add_child()`.
+3. Implementar um fallback de instanciação por código via `InventoryUI.new()` em caso de falha de carregamento da cena.  
+**Motivo:** Assegurar que janelas flutuantes e sobreposições baseadas em `CanvasLayer` possam ser acopladas na hierarquia de UI sem quebras de cast de tipo em tempo de execução.  
+**Impactos:** `res://ui/hud/hud.gd`, `res://ui/inventory/inventory_ui.gd`, `res://ui/inventory/inventory_ui.tscn`.

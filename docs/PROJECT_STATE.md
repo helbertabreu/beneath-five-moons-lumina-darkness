@@ -13,8 +13,8 @@
 - **Plataformas alvo:** PC (Windows / Linux / macOS)
 - **Gênero:** RPG de Ação Sandbox 2D / Survival Leve / Simulação Social / Progressão por Uso
 - **Perspectiva:** Top-Down 2D
-- **Ponto de Entrada Atual:** `res://boot.gd` (Cena de Boot / Testes Integrados) [cite: 18, 27]
-- **Status geral:** FASE B — APRESENTAÇÃO VISUAL | INVENTÁRIO VISUAL E ATALHO 'I' FUNCIONAIS (GATE 11) [cite: 21, 23, 24, 27]
+- **Ponto de Entrada Atual:** `res://boot.gd` (Cena de Boot / Testes Integrados)
+- **Status geral:** FASE B — APRESENTAÇÃO VISUAL | HUD E INVENTÁRIO VISUAL INTEGRADOS E COMPATIBILIZADOS (GATE 10/11)
 - **Última atualização:** 2026-08-25
 
 ---
@@ -30,17 +30,17 @@ VIVER → EXPLORAR → COLETAR → PRODUZIR → NEGOCIAR → DESENVOLVER → REL
 ```
 
 ### Objetivo atual do projeto
-Evoluir a Playable Build Vertical Slice no Posto Avançado da Garganta de Ferro, integrando o Inventário Visual e HUD à árvore de nós do bootstrap e preparando o ambiente para validação manual cooperativa.
+Evoluir a Playable Build Vertical Slice no Posto Avançado da Garganta de Ferro, garantindo a instanciação segura de UIs (CanvasLayer), aplicando a direção de arte Chiaroscuro (`main_theme.tres`) e preparando o ambiente para validação manual cooperativa.
 
 ---
 
 ## 3. ESTADO DA SPRINT
 
-- **Sprint anterior:** Gate 11 — Inventário Visual (Sprint 17 / Fase B)
-  - **Status:** CONCLUÍDA COM SUCESSO (Janela InventoryUI.tscn instanciada e operando via atalho "I").
+- **Sprint anterior:** Gate 10 — HUD Contextual Minimalista / Gate 11 — Inventário Visual (Sprint 17 / Fase B)
+  - **Status:** CONCLUÍDA COM SUCESSO (Corrigido o cast de tipo C++ `rp_child` em `hud.gd`, habilitando `InventoryUI.tscn` de tipo CanvasLayer).
 - **Nova fase:** Gate 12 — Mochila e Expansão Visual / Gate 13 — Equipamentos (FASE B)
   - **Status:** A INICIAR.
-  - **Objetivo:** Dar sequência ao polimento visual e à apresentação dos slots de equipamento e itens visuais no ambiente 2D.
+  - **Objetivo:** Dar sequência ao polimento visual, tooltips gráficos e apresentação dos slots de equipamento no ambiente 2D.
 
 ---
 
@@ -59,17 +59,16 @@ Evoluir a Playable Build Vertical Slice no Posto Avançado da Garganta de Ferro,
 | Loja do Jogador | FUNCIONAL | ALTA | PlayerMarketService com anúncios e taxas |
 | Iluminação / Flora | FUNCIONAL | ALTA | BioluminescentFloraNode com pulso senoidal suave |
 | Save/Load | FUNCIONAL | ALTA | Persistência atômica, backup e migração JSON |
-| EventBus | FUNCIONAL | ALTA | Suporte a event_emitted e sinais de janela (inventory_toggle_requested) |
-| Bootstrap / Time | FUNCIONAL | ALTA | Sequência de boot validada com chamada corrigida a resume_time() |
-| Inventário Visual | FUNCIONAL | ALTA | Grid de slots, drag-and-drop, atalho 'I' e divisão de stacks (GATE 11 / TASK-408) [cite: 21, 23, 24, 28] |
+| EventBus | FUNCIONAL | ALTA | Suporte a `event_emitted` e sinais de janela (`inventory_toggle_requested`) |
+| Bootstrap / Time | FUNCIONAL | ALTA | Sequência de boot validada via `TimeService.resume_time()` |
+| HUD & Theme | FUNCIONAL | ALTA | HUDView integrada com `main_theme.tres` e barras de vida, energia e iluminação |
+| Inventário Visual | FUNCIONAL | ALTA | Grid de slots, drag-and-drop, atalho 'I' e divisão de stacks (GATE 11 / TASK-408) |
 | Multiplayer Core | ARQUITETURA DEFINIDA | — | ENetMultiplayerPeer + Listen Server / Host Autoritativo |
 | Navegação 2D | ARQUITETURA DEFINIDA | — | NavigationServer2D + regiões/agentes + NavigationService |
 | World Streaming | ARQUITETURA DEFINIDA | — | Grid-Based Chunks + Offline/Abstract Simulation |
-| UI / HUD | FUNCIONAL EM BOOT | MÉDIA | HUDView e InventoryUI instanciados no boot.gd |
-| Player Visual | ESPECIFICADO | — | Auditoria visual realizada |
 | Minimap | ESPECIFICADO | — | Implementação visual pendente |
 | Primeiro Local | ESPECIFICADO | — | Posto Avançado da Garganta de Ferro |
-| Testes Manuais | PLANEJADOS (TM-001/004) | NOT TESTED | Passo a passo definido; aguardando FASE B/C/D [cite: 27] |
+| Testes Manuais | PLANEJADOS (TM-001/004) | NOT TESTED | Passo a passo definido; aguardando FASE B/C/D |
 | Playable Build | EM PREPARAÇÃO | — | Critérios definidos, revalidação em progresso |
 
 ---
@@ -80,8 +79,8 @@ Evoluir a Playable Build Vertical Slice no Posto Avançado da Garganta de Ferro,
 
 | Autoload | Função | Status |
 | :--- | :--- | :--- |
-| EventBus | Barramento de eventos desacoplados com suporte a event_emitted e atalhos de janela | FUNCIONAL |
-| TimeService | Relógio lógico e agendador de ticks do mundo via resume_time() | FUNCIONAL |
+| EventBus | Barramento de eventos desacoplados com suporte a `event_emitted` e atalhos de janela | FUNCIONAL |
+| TimeService | Relógio lógico e agendador de ticks do mundo via `resume_time()` | FUNCIONAL |
 | GameState | Estado global persistente serializável | FUNCIONAL |
 | SaveService | Persistência atômica, backup e migração em JSON | FUNCIONAL |
 | SceneManager | Carregamento e transição de cenas/regiões | FUNCIONAL |
@@ -98,7 +97,7 @@ Evoluir a Playable Build Vertical Slice no Posto Avançado da Garganta de Ferro,
 - **Save do personagem:** PlayerState individual com HMAC.
 
 ### Baseline Visual
-- Pixel Art Neons/Chiaroscuro.
+- Pixel Art Neons/Chiaroscuro (`main_theme.tres`).
 - **Resolução-base:** 640 × 360 (Canvas Stretch).
 - **Tiles:** 16 × 16.
 - **Player:** 32 × 32.
@@ -109,10 +108,10 @@ Evoluir a Playable Build Vertical Slice no Posto Avançado da Garganta de Ferro,
 
 ## 6. DECISÕES IMPORTANTES RECENTES
 
-- **GATE 11 Concluído:** InventoryUI.tscn instanciado e adicionado à SceneTree pelo boot.gd no CanvasLayer 15.
-- **Atalho Semântico 'I':** Conectado via EventBus (inventory_toggle_requested) para exibição/ocultação reativa do inventário visual [cite: 21, 23].
-- **Boot TimeService Fix:** Corrigida a chamada no boot.gd para utilizar a API pública oficial TimeService.resume_time().
-- **BUG-003 e BUG-004:** Resolvidos com sucesso em fases anteriores.
+- **HUD e Instanciação de UI Fix (GATE 10):** Tipagem de subjanelas em `hud.gd` corrigida para `CanvasLayer` para aceitar `inventory_ui.tscn` sem exceção de cast C++ (`rp_child`).
+- **Tema Global da UI (GATE 7):** Criado o recurso `res://ui/theme/main_theme.tres` para padronização gráfica da HUD, botões, modais e tooltips em estilo Chiaroscuro/Neon.
+- **Atalho Semântico 'I' (GATE 11):** Conectado via EventBus (`inventory_toggle_requested`) para exibição/ocultação reativa do inventário visual.
+- **Boot TimeService Fix:** Corrigida a chamada no `boot.gd` para utilizar a API pública oficial `TimeService.resume_time()`.
 
 ---
 
@@ -121,10 +120,10 @@ Evoluir a Playable Build Vertical Slice no Posto Avançado da Garganta de Ferro,
 | Risco | Severidade | Mitigação |
 | :--- | :--- | :--- |
 | Desacoplamento de UI sem UIManager | MÉDIA | Organização explícita de CanvasLayer (HUD layer 10, Janelas layer 15) |
-| Complexidade multiplayer | ALTA | Implementação incremental Host/Client na Fase D [cite: 27, 33] |
-| Desync de estado | ALTA | Autoridade central, classificação de estado e reconciliação [cite: 27, 33] |
-| Duplicação de itens | ALTA | TransactionId idempotente + rollback [cite: 27, 33] |
-| Performance | MÉDIA | Metas de 60 FPS e profiling contínuo [cite: 27, 33] |
+| Complexidade multiplayer | ALTA | Implementação incremental Host/Client na Fase D |
+| Desync de estado | ALTA | Autoridade central, classificação de estado e reconciliação |
+| Duplicação de itens | ALTA | TransactionId idempotente + rollback |
+| Performance | MÉDIA | Metas de 60 FPS e profiling contínuo |
 
 ---
 
@@ -132,6 +131,6 @@ Evoluir a Playable Build Vertical Slice no Posto Avançado da Garganta de Ferro,
 
 1. Gate 12 / 13 — Visualização da Mochila, Slots de Equipamento e Dicas Contextuais.
 2. Gate 21 — Minimapa.
-3. Gate 22 a 25 — LDD e Construção do Posto Avançado da Garganta de Ferro [cite: 27, 33].
-4. Gate 28 a 34 — Fundação Multiplayer Cooperativa (ENet Host/Client) [cite: 27, 33].
-5. Gate 35 a 39 — Release Interno e Playable Build Final [cite: 27, 33].
+3. Gate 22 a 25 — LDD e Construção do Posto Avançado da Garganta de Ferro.
+4. Gate 28 a 34 — Fundação Multiplayer Cooperativa (ENet Host/Client).
+5. Gate 35 a 39 — Release Interno e Playable Build Final.
