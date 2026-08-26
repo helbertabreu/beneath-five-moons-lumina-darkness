@@ -23,11 +23,18 @@ var _shadow_sprite: Sprite2D = null
 var _last_facing_direction: Vector2 = Vector2.DOWN
 var _is_attacking: bool = false
 
+# Cache de Texturas para Spritesheets Direcionais
+var _tex_walk: Texture2D = null
+var _tex_idle: Texture2D = null
+var _tex_slash: Texture2D = null
+
 
 func _ready() -> void:
+	_load_animation_textures()
 	_setup_visual_nodes()
 	_setup_portable_light()
 	_setup_attack_area()
+	_update_presentation()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -54,14 +61,28 @@ func _handle_movement(delta: float) -> void:
 			_last_facing_direction = input_vector.normalized()
 
 
+## Carrega e valida no cache os recursos de textura dos spritesheets direcionais
+func _load_animation_textures() -> void:
+	if ResourceLoader.exists("res://assets/textures/SpriteSheetPlayer.png"):
+		_tex_walk = load("res://assets/textures/SpriteSheetPlayer.png") as Texture2D
+		
+	if ResourceLoader.exists("res://assets/textures/SpriteSheetPlayer_Idle.png"):
+		_tex_idle = load("res://assets/textures/SpriteSheetPlayer_Idle.png") as Texture2D
+	else:
+		_tex_idle = _tex_walk
+		
+	if ResourceLoader.exists("res://assets/textures/SpriteSheetPlayer_Slash.png"):
+		_tex_slash = load("res://assets/textures/SpriteSheetPlayer_Slash.png") as Texture2D
+	else:
+		_tex_slash = _tex_walk
+
+
 ## Configura e inicializa programaticamente a infraestrutura visual do Player
 func _setup_visual_nodes() -> void:
-	# Oculta o ColorRect temporário caso exista na árvore da cena
 	var placeholder = get_node_or_null("PlaceholderVisual")
 	if placeholder:
 		placeholder.visible = false
 	
-	# Busca ou instancia o Sprite2D do jogador (Asset 32x32)
 	_sprite_node = get_node_or_null("Sprite2D") as Sprite2D
 	if not _sprite_node:
 		_sprite_node = get_node_or_null("PlayerSprite") as Sprite2D
@@ -70,13 +91,12 @@ func _setup_visual_nodes() -> void:
 		_sprite_node = Sprite2D.new()
 		_sprite_node.name = "Sprite2D"
 		_sprite_node.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		_sprite_node.texture = load("res://assets/textures/SpriteSheetPlayer.png") as Texture2D
+		_sprite_node.texture = _tex_idle if _tex_idle else load("res://assets/textures/SpriteSheetPlayer_Idle.png")
 		_sprite_node.hframes = 4
 		_sprite_node.vframes = 4
 		add_child(_sprite_node)
 		move_child(_sprite_node, 0)
 	
-	# Configura a sombra projetada no pé do personagem
 	_shadow_sprite = get_node_or_null("ShadowSprite2D") as Sprite2D
 	if not _shadow_sprite:
 		_shadow_sprite = get_node_or_null("ShadowSprite") as Sprite2D
@@ -101,14 +121,12 @@ func _setup_visual_nodes() -> void:
 		add_child(_shadow_sprite)
 		move_child(_shadow_sprite, 0)
 		
-	# Busca ou cria o AnimationPlayer
 	_animation_player = get_node_or_null("AnimationPlayer") as AnimationPlayer
 	if not _animation_player:
 		_animation_player = AnimationPlayer.new()
 		_animation_player.name = "AnimationPlayer"
 		add_child(_animation_player)
 		
-	# Busca ou cria o nó de ancoragem da lanterna
 	_lantern_anchor = get_node_or_null("LanternAnchor") as Marker2D
 	if not _lantern_anchor:
 		_lantern_anchor = Marker2D.new()
@@ -172,11 +190,10 @@ func _update_presentation() -> void:
 	if _lantern_anchor and _last_facing_direction != Vector2.ZERO:
 		_lantern_anchor.position = _last_facing_direction * 12.0
 		
-	# Toca a animação correspondente no AnimationPlayer
-	# O AnimationPlayer é o responsável exclusivo por controlar frames e flip_h do Sprite2D
 	if _animation_player and not _is_attacking:
 		var dir_suffix = _get_direction_suffix(_last_facing_direction)
-		var anim_name = "walk_" + dir_suffix if velocity.length() > 5.0 else "idle"
+		var is_moving = velocity.length() > 5.0
+		var anim_name = "walk_" + dir_suffix if is_moving else "idle_" + dir_suffix
 		
 		if _animation_player.has_animation(anim_name) and _animation_player.current_animation != anim_name:
 			_animation_player.play(anim_name)
@@ -210,12 +227,15 @@ func toggle_light() -> void:
 ## Executa o golpe Melee com a tecla Espaço (attack)
 func perform_attack() -> void:
 	print("[Player] Executando Ataque Melee!")
-	if not _attack_area:
+	if not _attack_area or _is_attacking:
 		return
 		
 	_is_attacking = true
-	if _animation_player and _animation_player.has_animation("attack"):
-		_animation_player.play("attack")
+	var dir_suffix = _get_direction_suffix(_last_facing_direction)
+	var anim_name = "attack_" + dir_suffix
+	
+	if _animation_player and _animation_player.has_animation(anim_name):
+		_animation_player.play(anim_name)
 		
 	var overlapping_areas = _attack_area.get_overlapping_areas()
 	var damage_ctx = DamageContext.new(15.0, self, false)
@@ -229,4 +249,7 @@ func perform_attack() -> void:
 	if hit_count == 0:
 		print("[Player] Ataque no ar (Nenhum inimigo atingido).")
 		
-	get_tree().create_timer(0.25).timeout.connect(func(): _is_attacking = false)
+	get_tree().create_timer(0.3).timeout.connect(func():
+		_is_attacking = false
+		_update_presentation()
+	)
